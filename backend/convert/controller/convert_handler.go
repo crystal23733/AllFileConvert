@@ -2,6 +2,7 @@ package controller
 
 import (
 	"convert/model"
+	"convert/worker"
 	"net/http"
 	"time"
 
@@ -37,5 +38,17 @@ func ConvertHandler(db *gorm.DB) gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "변환 요청 저장 실패"})
 			return
 		}
+
+		var file model.File
+		if err := db.First(&file, "id = ?", req.FileID).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "해당 file_id의 원본 파일을 찾을 수 없습니다"})
+			return
+		}
+
+		// ✅ 비동기 변환 시작
+		go worker.RunConversion(db, conversion, file)
+
+		// 클라이언트에 conversion_id 반환
+		c.JSON(http.StatusOK, gin.H{"conversion_id": conversionID})
 	}
 }
