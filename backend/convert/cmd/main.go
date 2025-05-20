@@ -2,7 +2,9 @@ package main
 
 import (
 	"convert/config"
+	"convert/controller"
 	"convert/model"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -24,6 +26,15 @@ func main() {
 			"message": "OK",
 		})
 	})
+	router.POST("/convert", controller.ConvertHandler(db))
 
-	router.Run()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8081"
+	}
+
+	log.Info().Str("address", "0.0.0.0:"+port).Msg("Convert Service 실행")
+	if err := router.Run(":" + port); err != nil {
+		log.Fatal().Err(err).Msg("서버 실행 실패")
+	}
 }
