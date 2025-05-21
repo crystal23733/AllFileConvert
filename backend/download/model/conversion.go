@@ -9,6 +9,7 @@ type Conversion struct {
 	Status        string
 	DownloadURL   string
 	DownloadCount int
-	CreateAt      time.Time
+	CreatedAt     time.Time
 	UpdatedAt     time.Time
+	DeleteAfter   time.Time // 변환 완료 후 삭제 예정 시각
 }
