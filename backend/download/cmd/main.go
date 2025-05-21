@@ -1,6 +1,9 @@
 package main
 
 import (
+	"download/config"
+	"download/controller"
+	"download/model"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -11,12 +14,18 @@ import (
 func main() {
 	_ = godotenv.Load()
 
+	db := config.ConnectDB()
+	if err := db.AutoMigrate(&model.Conversion{}); err != nil {
+		log.Err(err).Msg("마이그레이션 실패")
+	}
+
 	router := gin.Default()
 	router.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "OK",
 		})
 	})
+	router.GET("/download/:id", controller.DownloadHandler(db))
 
 	port := os.Getenv("PORT")
 	if port == "" {
