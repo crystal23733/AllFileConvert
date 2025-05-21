@@ -108,5 +108,6 @@ func RunConversion(db *gorm.DB, conv *model.Conversion, file model.File) {
 			"status":       "completed",
 			"download_url": downloadURL,
 			"updated_at":   time.Now(),
+			"delete_after": time.Now().Add(1 * time.Hour),
 		})
 }
