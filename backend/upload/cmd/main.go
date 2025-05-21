@@ -12,6 +12,7 @@ import (
 )
 
 func main() {
+	config.SetupLogger()
 	_ = godotenv.Load()
 
 	// DB 연결 및 마이그레이션
