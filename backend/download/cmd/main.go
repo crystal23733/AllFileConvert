@@ -3,6 +3,7 @@ package main
 import (
 	"download/config"
 	"download/controller"
+	"download/cron"
 	"download/model"
 	"os"
 
@@ -19,6 +20,7 @@ func main() {
 	if err := db.AutoMigrate(&model.Conversion{}); err != nil {
 		log.Err(err).Msg("마이그레이션 실패")
 	}
+	cron.StartCleanupWorker(db)
 
 	router := gin.Default()
 	router.GET("/health", func(c *gin.Context) {
