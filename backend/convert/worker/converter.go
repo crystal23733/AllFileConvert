@@ -2,6 +2,7 @@ package worker
 
 import (
 	"convert/model"
+	"convert/storage"
 	"fmt"
 	"os"
 	"os/exec"
@@ -102,11 +103,18 @@ func RunConversion(db *gorm.DB, conv *model.Conversion, file model.File) {
 		return
 	}
 
-	downloadURL := fmt.Sprintf("/download/%s", conv.ID) // 추후 S3, CDN 경로로 변경 가능
+	s3url, err := storage.UploadToS3(outputPath, outputName)
+
+	if err != nil {
+		db.Model(&model.Conversion{}).Where("id = ?", conv.ID).Updates(map[string]interface{}{
+			"status":     "failed",
+			"updated_at": time.Now(),
+		})
+	}
 	db.Model(&model.Conversion{}).Where("id = ?", conv.ID).
 		Updates(map[string]interface{}{
 			"status":       "completed",
-			"download_url": downloadURL,
+			"download_url": s3url,
 			"updated_at":   time.Now(),
 			"delete_after": time.Now().Add(1 * time.Hour),
 		})
