@@ -1,0 +1,29 @@
+openapi: 3.0.3
+info:
+  title: AllFileConvert - Download API
+  version: 1.0.0
+  description: 변환 완료된 파일을 다운로드하는 API
+
+paths:
+  /download/{id}:
+    get:
+      summary: 파일 다운로드
+      description: 변환된 파일을 다운로드합니다.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 다운로드 성공
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: 해당 ID의 변환 파일이 존재하지 않음
+        '500':
+          description: 서버 오류
