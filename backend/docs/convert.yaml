@@ -1,0 +1,71 @@
+openapi: 3.0.3
+info:
+  title: AllFileConvert - Convert API
+  version: 1.0.0
+  description: 파일 변환 요청 및 상태 확인 API
+
+paths:
+  /convert:
+    post:
+      summary: 파일 변환 요청
+      description: 업로드된 파일을 변환 대기열에 등록합니다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - file_id
+                - target_format
+              properties:
+                file_id:
+                  type: string
+                  example: "1c23dd8e-c872-46ab-b1d2-66b2a0cd3c82"
+                target_format:
+                  type: string
+                  example: "mp4"
+      responses:
+        '200':
+          description: 변환 요청 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversion_id:
+                    type: string
+                    example: "12fa7a4b-c9c6-4f88-a935-662f5794d123"
+        '400':
+          description: 잘못된 요청
+        '500':
+          description: 서버 오류
+
+  /convert/status/{id}:
+    get:
+      summary: 변환 상태 확인
+      description: 변환 상태(pending, processing, completed 등)를 확인합니다.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 상태 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "completed"
+                  download_url:
+                    type: string
+                    example: "https://cdn.allfileconvert.com/converted/xxx.mp4"
+        '404':
+          description: 변환 ID 없음
+        '500':
+          description: 서버 오류
