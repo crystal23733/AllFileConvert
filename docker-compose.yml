@@ -1,0 +1,74 @@
+version: '3.9'
+
+services:
+  upload:
+    build:
+      context: ./backend/upload
+    container_name: upload-service
+    ports:
+      - "8081:8080"
+    environment:
+      - DATABASE_DSN=${DATABASE_DSN}
+    volumes:
+      - upload_data:/app/uploads
+    depends_on:
+      - postgres
+
+  convert:
+    build: 
+      context: ./backend/convert
+    container_name: convert-service
+    ports:
+      - "8082:8080"
+    environment:
+      - S3_ENDPOINT=${S3_ENDPOINT}
+      - S3_ACCESS_KEY=${S3_ACCESS_KEY}
+      - S3_SECRET_KEY=${S3_SECRET_KEY}
+      - S3_BUCKET=${S3_BUCKET}
+      - S3_USE_SSL=${S3_USE_SSL}
+    volumes:
+      - convert_data:/app/uploads
+    depends_on:
+      - postgres
+
+  download:
+    build:
+      context: ./backend/download
+    container_name: download-service
+    ports:
+      - "8083:8080"
+    environment:
+      - DATABASE_DSN=${DATABASE_DSN}
+    volumes:
+      - upload_data:/app/uploads
+    depends_on:
+      - postgres
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-gateway
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - upload
+      - convert
+      - download
+
+  postgres:
+    image: postgres:17
+    container_name: postgres-db
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: convert_db
+
+volumes:
+  pgdata:
+  upload_data:
