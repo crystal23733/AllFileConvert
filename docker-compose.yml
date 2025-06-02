@@ -1,0 +1,81 @@
+services:
+  upload:
+    build:
+      context: ./backend/upload
+    container_name: upload-service
+    ports:
+      - "8081:8080"
+    env_file:
+      - .env
+    volumes:
+      - upload_data:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  convert:
+    build: 
+      context: ./backend/convert
+    container_name: convert-service
+    ports:
+      - "8082:8080"
+    env_file:
+      - .env
+    volumes:
+      - convert_data:/app/uploads
+    depends_on:
+      upload:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+
+  download:
+    build:
+      context: ./backend/download
+    container_name: download-service
+    ports:
+      - "8083:8080"
+    env_file:
+      - .env
+    volumes:
+      - upload_data:/app/uploads
+    depends_on:
+      convert:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-gateway
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - upload
+      - convert
+      - download
+
+  postgres:
+    image: postgres:17
+    container_name: postgres-db
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: convert_db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d convert_db || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
+  upload_data:
+  convert_data:
