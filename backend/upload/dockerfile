@@ -10,7 +10,7 @@ RUN go mod download
 
 # 소스코드 복사 및 빌드
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main ./cmd
 
 # 실행 스테이지
 FROM alpine:latest
