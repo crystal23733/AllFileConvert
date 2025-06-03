@@ -5,7 +5,6 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 
 	"upload/config"
@@ -16,7 +15,6 @@ import (
 )
 
 func TestUploadEndpoint(t *testing.T) {
-	os.Setenv("DATABASE_DSN", os.Getenv("TEST_DATABASE_DSN"))
 	db := config.ConnectDB()
 	_ = db.AutoMigrate(&model.File{})
 
