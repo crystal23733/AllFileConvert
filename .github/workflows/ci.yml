@@ -10,6 +10,20 @@ jobs:
   backend-upload:
     name: Backend - Upload Service
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: pass
+          POSTGRES_DB: convert_db
+        options: >-
+          --health-cmd="pg_isready"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
     env:
       DATABASE_DSN: ${{ secrets.DATABASE_DSN }}
     defaults:
@@ -32,6 +46,20 @@ jobs:
   backend-convert:
     name: Backend - Convert Service
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: pass
+          POSTGRES_DB: convert_db
+        options: >-
+          --health-cmd="pg_isready"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
     env:
       DATABASE_DSN: ${{ secrets.DATABASE_DSN }}
     defaults:
@@ -54,6 +82,20 @@ jobs:
   backend-download:
     name: Backend - Download Service
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: pass
+          POSTGRES_DB: convert_db
+        options: >-
+          --health-cmd="pg_isready"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
     env:
       DATABASE_DSN: ${{ secrets.DATABASE_DSN }}
     defaults:
