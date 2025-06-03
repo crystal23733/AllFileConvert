@@ -10,6 +10,8 @@ jobs:
   backend-upload:
     name: Backend - Upload Service
     runs-on: ubuntu-latest
+    env:
+      DATABASE_DSN: ${{ secrets.DATABASE_DSN }}
     defaults:
       run:
         working-directory: backend/upload
@@ -30,6 +32,8 @@ jobs:
   backend-convert:
     name: Backend - Convert Service
     runs-on: ubuntu-latest
+    env:
+      DATABASE_DSN: ${{ secrets.DATABASE_DSN }}
     defaults:
       run:
         working-directory: backend/convert
@@ -50,6 +54,8 @@ jobs:
   backend-download:
     name: Backend - Download Service
     runs-on: ubuntu-latest
+    env:
+      DATABASE_DSN: ${{ secrets.DATABASE_DSN }}
     defaults:
       run:
         working-directory: backend/download
