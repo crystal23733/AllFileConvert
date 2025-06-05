@@ -6,6 +6,6 @@ const baseStyle: Record<string, string> = {
   subtitle: "text-lg font-semibold text-gray-700",
   body: "text-base text-gray-700",
   label: "text-xs text-gray-500",
-}
+};
 
 export default baseStyle;
