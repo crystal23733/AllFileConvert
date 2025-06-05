@@ -1,4 +1,4 @@
-import { Status } from "../ProgressBar.types";
+import { Status } from "../../../common/ProgressBar.types";
 
 /**
  * 동영상 변환 상태에 따른 스타일 정의
