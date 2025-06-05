@@ -14,10 +14,9 @@ const createJestConfig = nextJest({
  * @type {import('jest').Config}
  */
 const config = {
+  setupFilesAfterEnv: ["<rootDir>/src/setupTests.ts"],
   // jsdom 환경에서 테스트 실행 (브라우저 API 시뮬레이션)
   testEnvironment: 'jest-environment-jsdom',
-  // 테스트 실행 전 추가 설정을 로드할 파일
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   // 테스트 대상에서 제외할 경로
   modulePathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
   // 테스트 파일 패턴
