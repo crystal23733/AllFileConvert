@@ -1,9 +1,9 @@
 import { FC } from "react";
 import UploadFormProps from "./UploadForm.types";
-import AdArea from "../atoms/AdArea/AdArea";
-import Dropzone from "../molecules/DropZone/Dropzone";
-import FormatSelect from "../molecules/FormatSelect/FormatSelect";
-import Button from "../atoms/Button/Button";
+import AdArea from "../../atoms/AdArea/AdArea";
+import Dropzone from "../../molecules/DropZone/Dropzone";
+import FormatSelect from "../../molecules/FormatSelect/FormatSelect";
+import Button from "../../atoms/Button/Button";
 
 const UploadForm: FC<UploadFormProps> = ({
   onFileDrop,

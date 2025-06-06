@@ -1,4 +1,4 @@
-import Option from "../common/Option.types";
+import Option from "../../common/Option.types";
 
 /**
  * @property {(files: File[]) => void} onFileDrop - 파일 드롭시 호출 함수
