@@ -1,9 +1,28 @@
-import Button from "@/components/atoms/Button/Button";
+"use client";
+
+import Dropzone from "@/components/molecules/DropZone/Dropzone";
+import { useState } from "react";
 
 export default function Home() {
+  const [files, setFiles] = useState<File[]>([]);
+
+  const handleDrop = (accepted: File[]) => {
+    setFiles(accepted);
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <Button variant="secondary">버튼</Button>
+    <div className="min-h-screen flex flex-col items-center justify-center p-8">
+      <h1 className="text-2xl font-bold mb-6">DropZone 렌더링 테스트</h1>
+      <Dropzone onDrop={handleDrop} />
+      {files.length > 0 && (
+        <ul className="mt-6">
+          {files.map((file, idx) => (
+            <li key={idx} className="text-sm text-gray-600">
+              {file.name} ({file.size} bytes)
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

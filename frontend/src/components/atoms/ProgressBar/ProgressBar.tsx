@@ -1,5 +1,5 @@
 import { FC } from "react";
-import ProgressBarProps from "./ProgressBar.types";
+import ProgressBarProps from "../../common/ProgressBar.types";
 import getBarProps from "./style/getBarProps";
 
 const ProgressBar: FC<ProgressBarProps> = ({ status }) => {
