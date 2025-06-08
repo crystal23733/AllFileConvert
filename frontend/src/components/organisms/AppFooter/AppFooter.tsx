@@ -8,6 +8,6 @@ const AppFooter: FC = () => (
     </Typography>
     {/* 필요시 개인정보처리방침, 이용약관 등 링크 추가 */}
   </footer>
-)
+);
 
 export default AppFooter;
