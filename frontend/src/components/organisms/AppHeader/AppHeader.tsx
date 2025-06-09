@@ -1,4 +1,5 @@
 import Typography from "@/components/atoms/Typography/Typography";
+import LanguageSwitcher from "@/components/molecules/LanguageSwitcher/LanguageSwitcher";
 import { FC } from "react";
 
 const AppHeader: FC = () => (
@@ -13,7 +14,10 @@ const AppHeader: FC = () => (
       </Typography>
     </div>
     {/* 네비게이션/언어선택 등 (필요시) */}
-    <nav>{/* 나중에 다국어, FAQ 등 추가 가능 */}</nav>
+    <nav className="flex items-center gap-4">
+      <LanguageSwitcher />
+      {/* 나중에 로그인, FAQ 등 추가 가능 */}
+    </nav>
   </header>
 );
 
