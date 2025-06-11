@@ -1,6 +1,5 @@
 import { FC } from "react";
 import StatusPanelProps from "./StatusPanel.types";
-import AdArea from "@/components/atoms/AdArea/AdArea";
 import Typography from "@/components/atoms/Typography/Typography";
 import ProgressBarWithLabel from "@/components/molecules/ProgressBarWithLabel/ProgressBarWithLabel";
 import Spinner from "@/components/atoms/Spinner/Spinner";
@@ -19,9 +18,6 @@ const StatusPanel: FC<StatusPanelProps> = ({
       className={`max-w-lg mx-auto p-4 bg-white rounded shadow space-y-4 mt-4 ${className}`}
       role="status"
     >
-      {/* 광고 영역 */}
-      <AdArea position="top" />
-
       {/* 상태에 따라 UI 분기 */}
       {status === "idle" && (
         <Typography variant="body" className="text-center">
@@ -69,9 +65,6 @@ const StatusPanel: FC<StatusPanelProps> = ({
           )}
         </>
       )}
-
-      {/* 광고영역 */}
-      <AdArea position="bottom" />
     </section>
   );
 };
