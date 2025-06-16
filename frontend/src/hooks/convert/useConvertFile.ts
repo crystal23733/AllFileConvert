@@ -1,4 +1,4 @@
-import ConvertService, { ConvertRequest, ConvertResponse } from "@/services/ConvertService";
+import ConvertService, { ConvertRequest, ConvertResponse } from "@/services/convert/ConvertService";
 import { useMutation } from "@tanstack/react-query";
 
 export default () => {

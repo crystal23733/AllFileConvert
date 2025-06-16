@@ -1,4 +1,4 @@
-import FileService, { FileUploadResponse } from "@/services/FileService";
+import FileService, { FileUploadResponse } from "@/services/upload/FileService";
 import { useMutation } from "@tanstack/react-query";
 
 export default () => {
