@@ -67,10 +67,8 @@ services:
       - pgdata:/var/lib/postgresql/data
     env_file:
       - .env
-    environment:
-      POSTGRES_DB: convert_db
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d convert_db || exit 1"]
+      test: ["CMD-SHELL", "pg_isready -U Ho -d convert_db || exit 1"]
       interval: 5s
       timeout: 5s
       retries: 5
