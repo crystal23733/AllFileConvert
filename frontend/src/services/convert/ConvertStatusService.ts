@@ -35,7 +35,7 @@ class ConvertStatusService {
    */
   async getStatus(conversionId: string): Promise<ConvertStatusResponse> {
     const response: AxiosResponse<ConvertStatusResponse> = await axios.get(
-      `/api/status/${conversionId}`
+      `http://localhost/api/status/${conversionId}`
     );
     return response.data;
   }

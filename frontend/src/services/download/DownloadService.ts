@@ -22,9 +22,12 @@ class DownloadService {
    * @returns {Promise<Blob>} 다운로드된 Blob 객체
    */
   async download(conversionId: string): Promise<Blob> {
-    const response: AxiosResponse<Blob> = await axios.get(`/api/download/${conversionId}`, {
-      responseType: "blob",
-    });
+    const response: AxiosResponse<Blob> = await axios.get(
+      `http://localhost/api/download/${conversionId}`,
+      {
+        responseType: "blob",
+      }
+    );
     return response.data;
   }
 }

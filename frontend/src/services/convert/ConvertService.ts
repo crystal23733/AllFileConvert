@@ -45,7 +45,10 @@ class ConvertService {
    * @returns {Promise<ConvertResponse>} 변환 작업 ID 반환
    */
   async convert(data: ConvertRequest): Promise<ConvertResponse> {
-    const response: AxiosResponse<ConvertResponse> = await axios.post("/api/convert", data);
+    const response: AxiosResponse<ConvertResponse> = await axios.post(
+      "http://localhost/api/convert",
+      data
+    );
     return response.data;
   }
 }
