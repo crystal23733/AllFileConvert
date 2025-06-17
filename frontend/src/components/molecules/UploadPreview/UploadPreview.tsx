@@ -1,7 +1,7 @@
 import { FC } from "react";
 import UploadPreviewProps from "./UploadPreview.types";
 import Typography from "@/components/atoms/Typography/Typography";
-import formatSize from "./util/formatSize";
+import formatSize from "@/util/formatSize";
 
 const UploadPreview: FC<UploadPreviewProps> = ({ files, onRemove, className = "" }) => {
   if (files.length === 0) return null;
