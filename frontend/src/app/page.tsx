@@ -1,37 +1,53 @@
 "use client";
 
+import AlertModal from "@/components/atoms/AlertModal/AlertModal";
 import UploadPreview from "@/components/molecules/UploadPreview/UploadPreview";
 import StatusPanel from "@/components/organisms/StatusPanel/StatusPanel";
 import UploadForm from "@/components/organisms/UploadForm/UploadForm";
+import useFileConvertFlow from "@/hooks/home/useFileConvertFlow";
 import { useState } from "react";
 
 export default function Home() {
-  // 더미 상태
-  const [files, setFiles] = useState([{ name: "sample.mp4", size: 12345678, type: "video/mp4" }]);
-  const [format, setFormat] = useState("mp4");
-  const [status, setStatus] = useState<"idle" | "pending" | "processing" | "completed" | "failed">(
-    "idle"
-  );
+  const flow = useFileConvertFlow();
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMsg, setAlertMsg] = useState("");
 
   return (
     <div>
       <UploadForm
-        onFileDrop={dropped =>
-          setFiles(dropped.map(f => ({ name: f.name, size: f.size, type: f.type })))
+        onFileDrop={flow.handleFileDrop}
+        selectedFormat={flow.format}
+        onFormatChange={flow.setFormat}
+        onSubmit={() =>
+          flow.handleSubmit(undefined, msg => {
+            setAlertMsg(msg);
+            setShowAlert(true);
+          })
         }
-        selectedFormat={format}
-        onFormatChange={setFormat}
-        onSubmit={() => setStatus("pending")}
-        isSubmitting={status === "pending"}
-        disabled={status === "pending"}
-        formatOptions={[
-          { value: "mp4", label: "MP4(동영상)" },
-          { value: "pdf", label: "PDF(문서)" },
-          { value: "jpg", label: "JPG(이미지)" },
-        ]}
+        isSubmitting={flow.uploadFile.isPending || flow.convertFile.isPending}
+        disabled={
+          flow.uploadFile.isPending || flow.convertFile.isPending || flow.status === "processing"
+        }
+        formatOptions={flow.formatOptions}
       />
-      <UploadPreview files={files} />
-      <StatusPanel status={status} />
+      <UploadPreview
+        files={flow.files.map(f => ({
+          name: f.name,
+          size: f.size,
+          type: f.type,
+        }))}
+      />
+      <StatusPanel
+        status={flow.status}
+        downloadUrl={flow.downloadUrl}
+        onDownload={() =>
+          flow.handleDownload(msg => {
+            setAlertMsg(msg);
+            setShowAlert(true);
+          })
+        }
+      />
+      <AlertModal open={showAlert} message={alertMsg} onClose={() => setShowAlert(false)} />
     </div>
   );
 }
