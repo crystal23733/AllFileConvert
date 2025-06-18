@@ -46,7 +46,7 @@ class ConvertService {
    */
   async convert(data: ConvertRequest): Promise<ConvertResponse> {
     const response: AxiosResponse<ConvertResponse> = await axios.post(
-      "http://localhost/api/convert",
+      "http://localhost/convert",
       data
     );
     return response.data;

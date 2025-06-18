@@ -23,7 +23,7 @@ class DownloadService {
    */
   async download(conversionId: string): Promise<Blob> {
     const response: AxiosResponse<Blob> = await axios.get(
-      `http://localhost/api/download/${conversionId}`,
+      `http://localhost/download/${conversionId}`,
       {
         responseType: "blob",
       }

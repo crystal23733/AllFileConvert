@@ -20,7 +20,7 @@ describe("ConvertStatusService", () => {
     const result = await ConvertStatusService.getStatus("123");
     expect(result.status).toBe("completed");
     expect(result.download_url).toBe("/files/abc.mp4");
-    expect(mockedAxios.get).toHaveBeenCalledWith("http://localhost/api/status/123");
+    expect(mockedAxios.get).toHaveBeenCalledWith("http://localhost/status/123");
   });
 
   it("변환 상태 요청이 실패하면 예외가 발생한다", async () => {

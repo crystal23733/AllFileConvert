@@ -42,7 +42,7 @@ class FileService {
     formData.append("file", file);
 
     const response: AxiosResponse<FileUploadResponse> = await axios.post(
-      "http://localhost/api/upload",
+      "http://localhost/upload",
       formData,
       {
         headers: { "Content-Type": "multipart/form-data" },

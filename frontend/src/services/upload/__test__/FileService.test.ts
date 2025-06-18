@@ -16,7 +16,7 @@ describe("FileService", () => {
     const result = await FileService.upload(dummyFile);
 
     expect(axios.post).toHaveBeenCalledWith(
-      "http://localhost/api/upload",
+      "http://localhost/upload",
       expect.any(FormData),
       expect.objectContaining({ headers: { "Content-Type": "multipart/form-data" } })
     );
