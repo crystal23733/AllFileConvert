@@ -14,6 +14,13 @@ export default (conversionId: string | null, pollingMs: number = 2000) => {
       return ConvertStatusService.getStatus(conversionId);
     },
     enabled: !!conversionId,
-    refetchInterval: conversionId ? pollingMs : false,
+    refetchInterval: (query) => {
+      // failed나 completed 상태일 때는 polling 중단
+      const status = query.state.data?.status;
+      if (status === "failed" || status === "completed") {
+        return false;
+      }
+      return conversionId ? pollingMs : false
+    },
   });
 };
