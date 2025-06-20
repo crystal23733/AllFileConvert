@@ -29,6 +29,7 @@ func main() {
 	})
 	router.POST("/convert", controller.ConvertHandler(db))
 	router.POST("/convert/status/:id", controller.ConvertStatusHandler(db))
+	router.GET("/convert/status/:id", controller.ConvertStatusHandler(db))
 
 	port := os.Getenv("PORT")
 	if port == "" {
