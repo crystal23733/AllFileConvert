@@ -8,7 +8,7 @@ services:
     env_file:
       - .env
     volumes:
-      - upload_data:/app/uploads
+      - shared_files:/app/uploads
     depends_on:
       postgres:
         condition: service_healthy
@@ -22,7 +22,8 @@ services:
     env_file:
       - .env
     volumes:
-      - convert_data:/app/uploads
+      - shared_files:/app/uploads
+      - convert_output:/app/converted
     depends_on:
       upload:
         condition: service_started
@@ -38,7 +39,8 @@ services:
     env_file:
       - .env
     volumes:
-      - upload_data:/app/uploads
+      - shared_files:/app/uploads
+      - convert_output:/app/converted
     depends_on:
       convert:
         condition: service_started
@@ -75,5 +77,5 @@ services:
 
 volumes:
   pgdata:
-  upload_data:
-  convert_data:
+  shared_files:
+  convert_output:
