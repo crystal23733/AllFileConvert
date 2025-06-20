@@ -17,7 +17,7 @@ import (
 func UploadHandler(db *gorm.DB) gin.HandlerFunc {
 	uploadDir := os.Getenv("UPLOAD_DIR")
 	if uploadDir == "" {
-		uploadDir = "uploads"
+		uploadDir = "/app/uploads"
 	}
 	_ = os.MkdirAll(uploadDir, 0o755)
 
