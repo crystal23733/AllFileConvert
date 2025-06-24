@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -82,15 +83,9 @@ func UploadToS3(localPath, objectName string) (string, error) {
 	// 보안을 위해 presigned URL 대신 Download API 경로 반환
 	// objectName에서 conversion ID 추출 (형식: conversionId.extension)
 	conversionId := objectName
-	if dotIndex := len(objectName) - 4; dotIndex > 0 {
-		if objectName[dotIndex] == '.' {
-			conversionId = objectName[:dotIndex]
-		}
-	}
-	if dotIndex := len(objectName) - 5; dotIndex > 0 {
-		if objectName[dotIndex] == '.' {
-			conversionId = objectName[:dotIndex]
-		}
+	// 마지막 점(.)을 찾아서 확장자 제거 (어떤 길이든 처리 가능)
+	if lastDot := strings.LastIndex(objectName, "."); lastDot != -1 {
+		conversionId = objectName[:lastDot]
 	}
 
 	downloadURL := fmt.Sprintf("/download/%s", conversionId)
