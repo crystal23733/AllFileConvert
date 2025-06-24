@@ -93,24 +93,7 @@ export default ({ initialCategory = "video" }: UseFileConvertFlowOptions = {}) =
   const handleDownload = (onError?: (msg: string) => void) => {
     if (!conversionId) return;
     
-    // R2 URL이 있으면 직접 다운로드
-    const downloadUrl = convertStatus.data?.download_url;
-    if (downloadUrl && downloadUrl.startsWith('https://')) {
-      try {
-        const a = document.createElement("a");
-        a.href = downloadUrl;
-        a.download = downloadFileName || "result";
-        a.target = "_blank"; // 새 탭에서 다운로드
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-      } catch (err) {
-        onError?.("R2 다운로드 실패");
-      }
-      return;
-    }
-    
-    // R2 URL이 없으면 백업 로컬 다운로드 API 사용
+    // 모든 다운로드를 Download API를 통해 처리 (보안 강화)
     downloadFile.mutate(conversionId, {
       onSuccess: blob => {
         const url = window.URL.createObjectURL(blob);
