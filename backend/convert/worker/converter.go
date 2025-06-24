@@ -3,6 +3,8 @@ package worker
 import (
 	"convert/model"
 	"convert/storage"
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"os/exec"
@@ -72,6 +74,13 @@ func fileExists(path string) bool {
 	exists := err == nil && !info.IsDir()
 	log.Info().Str("path", path).Bool("exists", exists).Msg("📁 파일 존재 확인")
 	return exists
+}
+
+// generateSecureToken은 보안 다운로드 토큰을 생성합니다.
+func generateSecureToken() string {
+	bytes := make([]byte, 16)
+	rand.Read(bytes)
+	return hex.EncodeToString(bytes)
 }
 
 // 고루틴에서 호출, 성공/실패 시 DB를 업데이트하는 함수입니다.
@@ -174,13 +183,18 @@ func RunConversion(db *gorm.DB, conv *model.Conversion, file model.File) {
 
 	// 7. 완료 처리
 	log.Info().Str("url", s3url).Msg("✅ S3 업로드 완료")
+	
+	// 보안 토큰 생성
+	downloadToken := generateSecureToken()
+	
 	db.Model(&model.Conversion{}).Where("id = ?", conv.ID).
 		Updates(map[string]interface{}{
-			"status":       "completed",
-			"download_url": s3url,
-			"updated_at":   time.Now(),
-			"delete_after": time.Now().Add(1 * time.Hour),
+			"status":         "completed",
+			"download_url":   s3url,
+			"download_token": downloadToken,
+			"updated_at":     time.Now(),
+			"delete_after":   time.Now().Add(1 * time.Hour),
 		})
 
-	log.Info().Str("conversion_id", conv.ID).Msg("🎉 변환 작업 완료")
+	log.Info().Str("conversion_id", conv.ID).Str("download_token", downloadToken).Msg("🎉 변환 작업 완료")
 }
