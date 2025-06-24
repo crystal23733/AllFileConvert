@@ -1,13 +1,17 @@
 package controller
 
 import (
+	"context"
 	"download/model"
 	"download/util"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 )
@@ -34,35 +38,109 @@ func DownloadHandler(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		// 3.DownloadURL이 R2 URL이면 리다이렉트
-		if strings.HasPrefix(conv.DownloadURL, "https://") {
-			c.Redirect(http.StatusTemporaryRedirect, conv.DownloadURL)
-			return
-		}
-
-		// 4.로컬 파일 경로 생성 (target_format 사용)
-		ext := conv.TargetFormat
-		filePath := fmt.Sprintf("converted/%s.%s", conv.ID, ext)
-		log.Info().Str("filePath", filePath).Msg("📂 파일 경로 생성")
-
-		// 5. 파일 존재 확인
-		if !util.FileExists(filePath) {
-			log.Error().Str("filePath", filePath).Msg("❌ 파일이 존재하지 않음")
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "파일이 존재하지 않습니다"})
-			return
-		}
-		log.Info().Str("filePath", filePath).Msg("✅ 파일 존재 확인")
-
-		// 6.다운로드 수 증가
+		// 3.다운로드 수 증가
 		log.Info().Int("download_count", conv.DownloadCount).Msg("📈 다운로드 수 증가 시작")
 		if err := db.Model(&conv).Update("download_count", conv.DownloadCount+1).Error; err != nil {
 			log.Error().Err(err).Msg("❌ 다운로드 수 업데이트 실패")
 		}
 
-		// 7.파일 응답
-		filename := fmt.Sprintf("converted.%s", ext)
-		log.Info().Str("filename", filename).Str("filePath", filePath).Msg("📤 파일 다운로드 시작")
+		// 4.파일명 생성
+		filename := fmt.Sprintf("converted.%s", conv.TargetFormat)
+
+		// 5.R2에서 다운로드 시도 (새로운 방식)
+		if err := downloadFromR2(c, id, conv.TargetFormat, filename); err == nil {
+			log.Info().Str("conversion_id", id).Msg("✅ R2에서 파일 다운로드 완료")
+			return
+		}
+
+		// 6.R2 실패 시 로컬 파일 경로 생성 (target_format 사용)
+		ext := conv.TargetFormat
+		filePath := fmt.Sprintf("converted/%s.%s", conv.ID, ext)
+		log.Info().Str("filePath", filePath).Msg("📂 로컬 파일 경로 생성")
+
+		// 7. 로컬 파일 존재 확인
+		if !util.FileExists(filePath) {
+			log.Error().Str("filePath", filePath).Msg("❌ 파일이 존재하지 않음")
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "파일이 존재하지 않습니다"})
+			return
+		}
+		log.Info().Str("filePath", filePath).Msg("✅ 로컬 파일 존재 확인")
+
+		// 8.로컬 파일 응답 (브라우저 다운로드 강제)
+		log.Info().Str("filename", filename).Str("filePath", filePath).Msg("📤 로컬 파일 다운로드 시작")
+		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
 		c.FileAttachment(filePath, filename)
-		log.Info().Msg("✅ 파일 다운로드 완료")
+		log.Info().Msg("✅ 로컬 파일 다운로드 완료")
 	}
+}
+
+// downloadFromR2는 R2 스토리지에서 파일을 스트리밍하여 다운로드합니다.
+func downloadFromR2(c *gin.Context, conversionId, targetFormat, filename string) error {
+	endpoint := os.Getenv("S3_ENDPOINT")
+	accessKey := os.Getenv("S3_ACCESS_KEY")
+	secretKey := os.Getenv("S3_SECRET_KEY")
+	bucket := os.Getenv("S3_BUCKET")
+	useSSL := os.Getenv("S3_USE_SSL") == "true"
+
+	// R2 클라이언트 생성
+	client, err := minio.New(endpoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(accessKey, secretKey, ""),
+		Secure: useSSL,
+		Region: "auto",
+	})
+	if err != nil {
+		log.Error().Err(err).Msg("❌ R2 클라이언트 생성 실패")
+		return err
+	}
+
+	// 객체명 생성 (conversionId.extension)
+	objectName := fmt.Sprintf("%s.%s", conversionId, targetFormat)
+	log.Info().Str("objectName", objectName).Msg("🔍 R2에서 파일 검색 중...")
+
+	// R2에서 객체 가져오기
+	object, err := client.GetObject(context.Background(), bucket, objectName, minio.GetObjectOptions{})
+	if err != nil {
+		log.Error().Err(err).Str("objectName", objectName).Msg("❌ R2에서 객체 가져오기 실패")
+		return err
+	}
+	defer object.Close()
+
+	// 객체 정보 확인
+	stat, err := object.Stat()
+	if err != nil {
+		log.Error().Err(err).Str("objectName", objectName).Msg("❌ R2 객체 정보 조회 실패")
+		return err
+	}
+
+	// Content-Type 설정
+	contentType := "application/octet-stream"
+	if strings.HasSuffix(objectName, ".png") {
+		contentType = "image/png"
+	} else if strings.HasSuffix(objectName, ".webp") {
+		contentType = "image/webp"
+	} else if strings.HasSuffix(objectName, ".jpg") || strings.HasSuffix(objectName, ".jpeg") {
+		contentType = "image/jpeg"
+	} else if strings.HasSuffix(objectName, ".mp4") {
+		contentType = "video/mp4"
+	} else if strings.HasSuffix(objectName, ".pdf") {
+		contentType = "application/pdf"
+	}
+
+	// 응답 헤더 설정 (브라우저 다운로드 강제)
+	c.Header("Content-Type", contentType)
+	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
+	c.Header("Content-Length", fmt.Sprintf("%d", stat.Size))
+
+	log.Info().
+		Str("filename", filename).
+		Str("contentType", contentType).
+		Int64("size", stat.Size).
+		Msg("📤 R2에서 파일 스트리밍 시작")
+
+	// R2에서 클라이언트로 직접 스트리밍
+	c.DataFromReader(http.StatusOK, stat.Size, contentType, object, map[string]string{
+		"Content-Disposition": fmt.Sprintf("attachment; filename=\"%s\"", filename),
+	})
+
+	return nil
 }
