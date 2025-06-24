@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -80,13 +79,21 @@ func UploadToS3(localPath, objectName string) (string, error) {
 		return "", err
 	}
 
-	// CloudFlare R2 Presigned URL 생성 (24시간 유효, 보안)
-	presignedURL, err := client.PresignedGetObject(context.Background(), bucket, objectName, time.Hour*24, nil)
-	if err != nil {
-		log.Error().Err(err).Str("objectName", objectName).Msg("❌ Presigned URL 생성 실패")
-		return "", err
+	// 보안을 위해 presigned URL 대신 Download API 경로 반환
+	// objectName에서 conversion ID 추출 (형식: conversionId.extension)
+	conversionId := objectName
+	if dotIndex := len(objectName) - 4; dotIndex > 0 {
+		if objectName[dotIndex] == '.' {
+			conversionId = objectName[:dotIndex]
+		}
+	}
+	if dotIndex := len(objectName) - 5; dotIndex > 0 {
+		if objectName[dotIndex] == '.' {
+			conversionId = objectName[:dotIndex]
+		}
 	}
 
-	log.Info().Str("presignedURL", presignedURL.String()).Msg("✅ R2 업로드 완료 (Presigned URL)")
-	return presignedURL.String(), nil
+	downloadURL := fmt.Sprintf("/download/%s", conversionId)
+	log.Info().Str("downloadURL", downloadURL).Str("objectName", objectName).Msg("✅ R2 업로드 완료 (Download API 경로)")
+	return downloadURL, nil
 }
