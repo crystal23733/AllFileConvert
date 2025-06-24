@@ -27,11 +27,13 @@ export default ({ initialCategory = "video" }: UseFileConvertFlowOptions = {}) =
     "idle"
   );
   const [downloadFileName, setDownloadFileName] = useState<string>("");
+  const [downloadCompleted, setDownloadCompleted] = useState<boolean>(false);
+  const [originalFileName, setOriginalFileName] = useState<string>(""); // 원본 파일명 저장
 
-  // API 훅
+  // API 훅 - 다운로드 완료시 폴링 중단
   const uploadFile = useUploadFile();
   const convertFile = useConvertFile();
-  const convertStatus = useConvertStatus(conversionId);
+  const convertStatus = useConvertStatus(downloadCompleted ? null : conversionId);
   const downloadFile = useDownloadFile();
 
   /**
@@ -43,12 +45,24 @@ export default ({ initialCategory = "video" }: UseFileConvertFlowOptions = {}) =
     setFileId(null);
     setConversionId(null);
     setStatus("idle");
+    setDownloadCompleted(false);
     if (selected[0]) {
       const mime = selected[0].type;
-      if (mime.startsWith("video/")) setCategory("video");
-      else if (mime.startsWith("image/")) setCategory("image");
-      else setCategory("document");
-      setFormat(FormatManager.getFormats(category)[0]?.value ?? "");
+      let newCategory: FileCategory;
+      if (mime.startsWith("video/")) newCategory = "video";
+      else if (mime.startsWith("image/")) newCategory = "image";
+      else newCategory = "document";
+      
+      setCategory(newCategory);
+      const initialFormat = FormatManager.getFormats(newCategory)[0]?.value ?? "";
+      setFormat(initialFormat);
+      
+      // 원본 파일명 저장 및 초기 다운로드 파일명 설정
+      setOriginalFileName(selected[0].name);
+      if (initialFormat) {
+        const nameWithoutExt = selected[0].name.substring(0, selected[0].name.lastIndexOf('.')) || selected[0].name;
+        setDownloadFileName(`${nameWithoutExt}.${initialFormat}`);
+      }
     }
   };
 
@@ -60,10 +74,17 @@ export default ({ initialCategory = "video" }: UseFileConvertFlowOptions = {}) =
   const handleSubmit = (onSuccess?: () => void, onError?: (msg: string) => void) => {
     if (!files[0] || !format) return;
     setStatus("pending");
+    setDownloadCompleted(false);
+    
+    // 원본 파일명에서 확장자 제거 후 새 확장자 추가
+    const originalName = files[0].name;
+    const nameWithoutExt = originalName.substring(0, originalName.lastIndexOf('.')) || originalName;
+    const newFileName = `${nameWithoutExt}.${format}`;
+    
     uploadFile.mutate(files[0], {
       onSuccess: data => {
         setFileId(data.file_id);
-        setDownloadFileName(files[0].name);
+        setDownloadFileName(newFileName); // 변환된 포맷에 맞는 파일명
         convertFile.mutate(
           { file_id: data.file_id, target_format: format },
           {
@@ -93,8 +114,10 @@ export default ({ initialCategory = "video" }: UseFileConvertFlowOptions = {}) =
   const handleDownload = (onError?: (msg: string) => void) => {
     if (!conversionId) return;
     
+    const downloadToken = convertStatus.data?.download_token;
+    
     // 모든 다운로드를 Download API를 통해 처리 (보안 강화)
-    downloadFile.mutate(conversionId, {
+    downloadFile.mutate({ conversionId, token: downloadToken }, {
       onSuccess: blob => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -104,6 +127,9 @@ export default ({ initialCategory = "video" }: UseFileConvertFlowOptions = {}) =
         a.click();
         a.remove();
         window.URL.revokeObjectURL(url);
+        
+        // 다운로드 완료 후 폴링 중단
+        setDownloadCompleted(true);
       },
       onError: err => {
         onError?.(err.message);
@@ -120,6 +146,21 @@ export default ({ initialCategory = "video" }: UseFileConvertFlowOptions = {}) =
   // 포맷 리스트
   const formatOptions = FormatManager.getFormats(category);
 
+  // 포맷이 변경될 때마다 다운로드 파일명 업데이트
+  const updateDownloadFileName = (newFormat: string) => {
+    if (originalFileName) {
+      const nameWithoutExt = originalFileName.substring(0, originalFileName.lastIndexOf('.')) || originalFileName;
+      const newFileName = `${nameWithoutExt}.${newFormat}`;
+      setDownloadFileName(newFileName);
+    }
+  };
+
+  // 포맷 설정 함수 (외부에서 호출)
+  const setFormatWithUpdate = (newFormat: string) => {
+    setFormat(newFormat);
+    updateDownloadFileName(newFormat);
+  };
+
   return {
     // 상태
     files,
@@ -129,7 +170,8 @@ export default ({ initialCategory = "video" }: UseFileConvertFlowOptions = {}) =
     conversionId,
     status,
     downloadFileName,
-    setFormat,
+    downloadCompleted,
+    setFormat: setFormatWithUpdate,
     // API 상태
     uploadFile,
     convertFile,
