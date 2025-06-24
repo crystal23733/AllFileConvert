@@ -10,6 +10,7 @@ type Conversion struct {
 	TargetFormat  string // 변환 목표 포맷 (mp4, pdf 등)
 	Status        string // pending, processing, completed, failed
 	DownloadURL   string // 완료 시 다운로드 경로
+	DownloadToken string // 다운로드 보안 토큰
 	DownloadCount int    // 다운로드 횟수
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
