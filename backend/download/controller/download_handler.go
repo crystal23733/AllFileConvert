@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/minio/minio-go/v7"
@@ -20,7 +21,8 @@ import (
 func DownloadHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
-		log.Info().Str("conversion_id", id).Msg("📥 다운로드 요청 시작")
+		token := c.Query("token") // 쿼리 파라미터에서 토큰 추출
+		log.Info().Str("conversion_id", id).Str("token", token).Msg("📥 다운로드 요청 시작")
 
 		// 1.DB에서 conversion 조회
 		var conv model.Conversion
@@ -38,27 +40,44 @@ func DownloadHandler(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		// 3.다운로드 수 증가
+		// 3.보안 토큰 검증 (빈 토큰이 아닌 경우에만 검증)
+		if conv.DownloadToken != "" && token != conv.DownloadToken {
+			log.Warn().Str("expected", conv.DownloadToken).Str("received", token).Msg("❌ 다운로드 토큰 불일치")
+			c.JSON(http.StatusForbidden, gin.H{"error": "유효하지 않은 다운로드 토큰입니다"})
+			return
+		}
+
+		// 4.다운로드 수 증가 및 즉시 삭제 예약
 		log.Info().Int("download_count", conv.DownloadCount).Msg("📈 다운로드 수 증가 시작")
-		if err := db.Model(&conv).Update("download_count", conv.DownloadCount+1).Error; err != nil {
+		updates := map[string]interface{}{
+			"download_count": conv.DownloadCount + 1,
+		}
+		
+		// 첫 번째 다운로드 시 즉시 삭제 예약 (5분 후)
+		if conv.DownloadCount == 0 {
+			updates["delete_after"] = time.Now().Add(5 * time.Minute)
+			log.Info().Msg("🗑️ 첫 다운로드 완료 - 5분 후 파일 삭제 예약")
+		}
+		
+		if err := db.Model(&conv).Updates(updates).Error; err != nil {
 			log.Error().Err(err).Msg("❌ 다운로드 수 업데이트 실패")
 		}
 
-		// 4.파일명 생성
+		// 5.파일명 생성
 		filename := fmt.Sprintf("converted.%s", conv.TargetFormat)
 
-		// 5.R2에서 다운로드 시도 (새로운 방식)
+		// 6.R2에서 다운로드 시도 (새로운 방식)
 		if err := downloadFromR2(c, id, conv.TargetFormat, filename); err == nil {
 			log.Info().Str("conversion_id", id).Msg("✅ R2에서 파일 다운로드 완료")
 			return
 		}
 
-		// 6.R2 실패 시 로컬 파일 경로 생성 (target_format 사용)
+		// 7.R2 실패 시 로컬 파일 경로 생성 (target_format 사용)
 		ext := conv.TargetFormat
 		filePath := fmt.Sprintf("converted/%s.%s", conv.ID, ext)
 		log.Info().Str("filePath", filePath).Msg("📂 로컬 파일 경로 생성")
 
-		// 7. 로컬 파일 존재 확인
+		// 8. 로컬 파일 존재 확인
 		if !util.FileExists(filePath) {
 			log.Error().Str("filePath", filePath).Msg("❌ 파일이 존재하지 않음")
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "파일이 존재하지 않습니다"})
@@ -66,7 +85,7 @@ func DownloadHandler(db *gorm.DB) gin.HandlerFunc {
 		}
 		log.Info().Str("filePath", filePath).Msg("✅ 로컬 파일 존재 확인")
 
-		// 8.로컬 파일 응답 (브라우저 다운로드 강제)
+		// 9.로컬 파일 응답 (브라우저 다운로드 강제)
 		log.Info().Str("filename", filename).Str("filePath", filePath).Msg("📤 로컬 파일 다운로드 시작")
 		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
 		c.FileAttachment(filePath, filename)
