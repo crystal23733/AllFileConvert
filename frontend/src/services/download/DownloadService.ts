@@ -19,15 +19,17 @@ class DownloadService {
   /**
    * 변환 파일을 다운로드
    * @param {string} conversionId - 변환 작업의 UUID
+   * @param {string} token - 다운로드 보안 토큰
    * @returns {Promise<Blob>} 다운로드된 Blob 객체
    */
-  async download(conversionId: string): Promise<Blob> {
-    const response: AxiosResponse<Blob> = await axios.get(
-      `http://localhost/download/${conversionId}`,
-      {
-        responseType: "blob",
-      }
-    );
+  async download(conversionId: string, token?: string): Promise<Blob> {
+    const url = `http://localhost/download/${conversionId}`;
+    const params = token ? { token } : {};
+    
+    const response: AxiosResponse<Blob> = await axios.get(url, {
+      params,
+      responseType: "blob",
+    });
     return response.data;
   }
 }
