@@ -112,11 +112,20 @@ export default ({ initialCategory = "video" }: UseFileConvertFlowOptions = {}) =
    * @param {(msg: string) => void} [onError] - 에러 콜백
    */
   const handleDownload = (onError?: (msg: string) => void) => {
-    if (!conversionId) return;
+    if (!conversionId) {
+      onError?.("변환 ID가 없습니다.");
+      return;
+    }
     
     const downloadToken = convertStatus.data?.download_token;
     
-    // 모든 다운로드를 Download API를 통해 처리 (보안 강화)
+    // 토큰이 없으면 다운로드 차단 (보안 강화)
+    if (!downloadToken) {
+      onError?.("다운로드 토큰이 만료되었거나 유효하지 않습니다. 파일을 다시 변환해주세요.");
+      return;
+    }
+    
+    // POST 방식으로 토큰을 body에 포함하여 다운로드 (보안 강화)
     downloadFile.mutate({ conversionId, token: downloadToken }, {
       onSuccess: blob => {
         const url = window.URL.createObjectURL(blob);
@@ -128,11 +137,16 @@ export default ({ initialCategory = "video" }: UseFileConvertFlowOptions = {}) =
         a.remove();
         window.URL.revokeObjectURL(url);
         
-        // 다운로드 완료 후 폴링 중단
+        // 다운로드 완료 후 폴링 중단 (일회용 토큰으로 재다운로드 불가)
         setDownloadCompleted(true);
       },
       onError: err => {
-        onError?.(err.message);
+        // 토큰 만료 시 사용자에게 명확한 안내
+        if (err.message.includes("403") || err.message.includes("토큰")) {
+          onError?.("다운로드 토큰이 만료되었습니다. 보안을 위해 파일을 다시 변환해주세요.");
+        } else {
+          onError?.(err.message);
+        }
       },
     });
   };
