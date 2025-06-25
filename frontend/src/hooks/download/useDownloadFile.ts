@@ -6,7 +6,7 @@ import { useMutation } from "@tanstack/react-query";
  */
 interface DownloadRequest {
   conversionId: string;
-  token?: string;
+  token: string;
 }
 
 export default () => {
