@@ -193,7 +193,7 @@ func RunConversion(db *gorm.DB, conv *model.Conversion, file model.File) {
 			"download_url":   s3url,
 			"download_token": downloadToken,
 			"updated_at":     time.Now(),
-			"delete_after":   time.Now().Add(1 * time.Hour),
+			"delete_after":   time.Now().Add(30 * time.Minute),
 		})
 
 	log.Info().Str("conversion_id", conv.ID).Str("download_token", downloadToken).Msg("🎉 변환 작업 완료")
