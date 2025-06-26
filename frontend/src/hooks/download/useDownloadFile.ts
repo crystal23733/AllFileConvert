@@ -11,7 +11,7 @@ interface DownloadRequest {
 
 export default () => {
   return useMutation<Blob, Error, DownloadRequest>({
-    mutationFn: ({ conversionId, token }: DownloadRequest) => 
+    mutationFn: ({ conversionId, token }: DownloadRequest) =>
       DownloadService.download(conversionId, token),
   });
 };

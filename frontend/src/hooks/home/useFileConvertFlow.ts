@@ -52,15 +52,16 @@ export default ({ initialCategory = "video" }: UseFileConvertFlowOptions = {}) =
       if (mime.startsWith("video/")) newCategory = "video";
       else if (mime.startsWith("image/")) newCategory = "image";
       else newCategory = "document";
-      
+
       setCategory(newCategory);
       const initialFormat = FormatManager.getFormats(newCategory)[0]?.value ?? "";
       setFormat(initialFormat);
-      
+
       // 원본 파일명 저장 및 초기 다운로드 파일명 설정
       setOriginalFileName(selected[0].name);
       if (initialFormat) {
-        const nameWithoutExt = selected[0].name.substring(0, selected[0].name.lastIndexOf('.')) || selected[0].name;
+        const nameWithoutExt =
+          selected[0].name.substring(0, selected[0].name.lastIndexOf(".")) || selected[0].name;
         setDownloadFileName(`${nameWithoutExt}.${initialFormat}`);
       }
     }
@@ -75,12 +76,12 @@ export default ({ initialCategory = "video" }: UseFileConvertFlowOptions = {}) =
     if (!files[0] || !format) return;
     setStatus("pending");
     setDownloadCompleted(false);
-    
+
     // 원본 파일명에서 확장자 제거 후 새 확장자 추가
     const originalName = files[0].name;
-    const nameWithoutExt = originalName.substring(0, originalName.lastIndexOf('.')) || originalName;
+    const nameWithoutExt = originalName.substring(0, originalName.lastIndexOf(".")) || originalName;
     const newFileName = `${nameWithoutExt}.${format}`;
-    
+
     uploadFile.mutate(files[0], {
       onSuccess: data => {
         setFileId(data.file_id);
@@ -116,39 +117,42 @@ export default ({ initialCategory = "video" }: UseFileConvertFlowOptions = {}) =
       onError?.("변환 ID가 없습니다.");
       return;
     }
-    
+
     const downloadToken = convertStatus.data?.download_token;
-    
+
     // 토큰이 없으면 다운로드 차단 (보안 강화)
     if (!downloadToken) {
       onError?.("다운로드 토큰이 만료되었거나 유효하지 않습니다. 파일을 다시 변환해주세요.");
       return;
     }
-    
+
     // POST 방식으로 토큰을 body에 포함하여 다운로드 (보안 강화)
-    downloadFile.mutate({ conversionId, token: downloadToken }, {
-      onSuccess: blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = downloadFileName || "result";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url);
-        
-        // 다운로드 완료 후 폴링 중단 (일회용 토큰으로 재다운로드 불가)
-        setDownloadCompleted(true);
-      },
-      onError: err => {
-        // 토큰 만료 시 사용자에게 명확한 안내
-        if (err.message.includes("403") || err.message.includes("토큰")) {
-          onError?.("다운로드 토큰이 만료되었습니다. 보안을 위해 파일을 다시 변환해주세요.");
-        } else {
-          onError?.(err.message);
-        }
-      },
-    });
+    downloadFile.mutate(
+      { conversionId, token: downloadToken },
+      {
+        onSuccess: blob => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = downloadFileName || "result";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          window.URL.revokeObjectURL(url);
+
+          // 다운로드 완료 후 폴링 중단 (일회용 토큰으로 재다운로드 불가)
+          setDownloadCompleted(true);
+        },
+        onError: err => {
+          // 토큰 만료 시 사용자에게 명확한 안내
+          if (err.message.includes("403") || err.message.includes("토큰")) {
+            onError?.("다운로드 토큰이 만료되었습니다. 보안을 위해 파일을 다시 변환해주세요.");
+          } else {
+            onError?.(err.message);
+          }
+        },
+      }
+    );
   };
 
   // 상태 자동 업데이트
@@ -163,7 +167,8 @@ export default ({ initialCategory = "video" }: UseFileConvertFlowOptions = {}) =
   // 포맷이 변경될 때마다 다운로드 파일명 업데이트
   const updateDownloadFileName = (newFormat: string) => {
     if (originalFileName) {
-      const nameWithoutExt = originalFileName.substring(0, originalFileName.lastIndexOf('.')) || originalFileName;
+      const nameWithoutExt =
+        originalFileName.substring(0, originalFileName.lastIndexOf(".")) || originalFileName;
       const newFileName = `${nameWithoutExt}.${newFormat}`;
       setDownloadFileName(newFileName);
     }

@@ -24,15 +24,16 @@ class DownloadService {
    */
   async download(conversionId: string, token: string): Promise<Blob> {
     const url = `http://localhost/download/${conversionId}`;
-    
+
     // POST 요청으로 토큰을 body에 포함 (보안 강화)
-    const response: AxiosResponse<Blob> = await axios.post(url, 
+    const response: AxiosResponse<Blob> = await axios.post(
+      url,
       { token }, // body에 토큰 포함
       {
         responseType: "blob",
         headers: {
-          'Content-Type': 'application/json'
-        }
+          "Content-Type": "application/json",
+        },
       }
     );
     return response.data;
