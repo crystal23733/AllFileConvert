@@ -26,7 +26,7 @@ type DownloadRequest struct {
 func DownloadHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
-		
+
 		// POST 요청에서 body로 토큰 받기 (보안 강화)
 		var req DownloadRequest
 		if err := c.ShouldBindJSON(&req); err != nil {
@@ -34,7 +34,7 @@ func DownloadHandler(db *gorm.DB) gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "유효하지 않은 요청 형식입니다"})
 			return
 		}
-		
+
 		log.Info().Str("conversion_id", id).Msg("📥 다운로드 요청 시작 (토큰 보안 처리)")
 
 		// 1.DB에서 conversion 조회 (트랜잭션 시작)
@@ -84,7 +84,7 @@ func DownloadHandler(db *gorm.DB) gin.HandlerFunc {
 			"download_count": conv.DownloadCount + 1,
 			"delete_after":   time.Now().Add(1 * time.Minute), // 1분 후 삭제 (즉시 삭제 대비)
 		}
-		
+
 		if err := tx.Model(&conv).Updates(updates).Error; err != nil {
 			tx.Rollback()
 			log.Error().Err(err).Msg("❌ 다운로드 수 업데이트 실패")
@@ -105,7 +105,7 @@ func DownloadHandler(db *gorm.DB) gin.HandlerFunc {
 		// 7.R2에서 다운로드 시도
 		if err := downloadFromR2(c, id, conv.TargetFormat, filename); err == nil {
 			log.Info().Str("conversion_id", id).Msg("✅ R2에서 파일 다운로드 완료")
-			
+
 			// 다운로드 완료 후 즉시 삭제 시도
 			go func() {
 				time.Sleep(10 * time.Second) // 다운로드 완료 대기
@@ -130,13 +130,13 @@ func DownloadHandler(db *gorm.DB) gin.HandlerFunc {
 		log.Info().Str("filename", filename).Str("filePath", filePath).Msg("📤 로컬 파일 다운로드 시작")
 		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
 		c.FileAttachment(filePath, filename)
-		
+
 		// 다운로드 완료 후 즉시 삭제
 		go func() {
 			time.Sleep(5 * time.Second) // 다운로드 완료 대기
 			deleteFileImmediately(db, id, conv.TargetFormat)
 		}()
-		
+
 		log.Info().Msg("✅ 로컬 파일 다운로드 완료 및 삭제 예약")
 	}
 }
@@ -144,7 +144,7 @@ func DownloadHandler(db *gorm.DB) gin.HandlerFunc {
 // deleteFileImmediately는 다운로드 완료 후 즉시 파일을 삭제합니다.
 func deleteFileImmediately(db *gorm.DB, conversionId, targetFormat string) {
 	log.Info().Str("conversion_id", conversionId).Msg("🗑️ 즉시 파일 삭제 시작")
-	
+
 	// 1. 로컬 파일 삭제
 	localPath := fmt.Sprintf("converted/%s.%s", conversionId, targetFormat)
 	if _, err := os.Stat(localPath); err == nil {
@@ -154,12 +154,12 @@ func deleteFileImmediately(db *gorm.DB, conversionId, targetFormat string) {
 			log.Info().Str("path", localPath).Msg("✅ 로컬 파일 삭제 완료")
 		}
 	}
-	
+
 	// 2. R2 파일 삭제
 	if deleteFromR2(conversionId, targetFormat) {
 		log.Info().Str("conversion_id", conversionId).Msg("✅ R2 파일 삭제 완료")
 	}
-	
+
 	// 3. DB에서 레코드 삭제
 	if err := db.Delete(&model.Conversion{}, "id = ?", conversionId).Error; err != nil {
 		log.Error().Err(err).Str("conversion_id", conversionId).Msg("❌ DB 레코드 삭제 실패")
@@ -192,7 +192,7 @@ func deleteFromR2(conversionId, targetFormat string) bool {
 		log.Error().Err(err).Str("object", objectName).Msg("❌ R2 파일 삭제 실패")
 		return false
 	}
-	
+
 	return true
 }
 
