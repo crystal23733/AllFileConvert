@@ -49,13 +49,16 @@ func TestCleanupWorker_DeletesExpiredFiles(t *testing.T) {
 
 	// DB 레코드 생성
 	expired := model.Conversion{
-		ID:           fileID,
-		Status:       "completed",
-		DownloadURL:  "/download/expired123.mp4",
-		TargetFormat: "mp4",
-		DeleteAfter:  time.Now().Add(-1 * time.Minute), // 과거 시점
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
+		ID:            fileID,
+		FileID:        "file-" + fileID,
+		Status:        "completed",
+		DownloadURL:   "/download/expired123.mp4",
+		DownloadToken: "", // 이미 사용된 토큰
+		DownloadCount: 1,  // 다운로드 완료
+		TargetFormat:  "mp4",
+		DeleteAfter:   time.Now().Add(-1 * time.Minute), // 과거 시점
+		CreatedAt:     time.Now(),
+		UpdatedAt:     time.Now(),
 	}
 	db.Create(&expired)
 
