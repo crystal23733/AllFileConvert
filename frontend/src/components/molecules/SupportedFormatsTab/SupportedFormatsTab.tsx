@@ -21,16 +21,10 @@ const SupportedFormatsTab: React.FC = () => {
 
   return (
     <div className="p-6 space-y-6">
-      <p className="text-gray-600 mb-4">
-        다음 포맷들 간의 변환을 지원합니다.
-      </p>
+      <p className="text-gray-600 mb-4">다음 포맷들 간의 변환을 지원합니다.</p>
 
       {supportedCategories.map(category => (
-        <FormatCategoryCard
-          key={category.name}
-          name={category.name}
-          formats={category.formats}
-        />
+        <FormatCategoryCard key={category.name} name={category.name} formats={category.formats} />
       ))}
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6">
@@ -46,4 +40,4 @@ const SupportedFormatsTab: React.FC = () => {
   );
 };
 
-export default SupportedFormatsTab; 
+export default SupportedFormatsTab;

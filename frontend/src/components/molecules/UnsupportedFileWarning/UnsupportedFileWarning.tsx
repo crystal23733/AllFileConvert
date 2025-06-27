@@ -33,11 +33,10 @@ const UnsupportedFileWarning: React.FC<UnsupportedFileWarningProps> = ({
           <span className="text-2xl">⚠️</span>
         </div>
         <div className="flex-1">
-          <h3 className="text-red-800 font-semibold mb-1">
-            지원하지 않는 파일 형식
-          </h3>
+          <h3 className="text-red-800 font-semibold mb-1">지원하지 않는 파일 형식</h3>
           <p className="text-red-700 text-sm mb-2">
-            <strong>{fileName}</strong>은(는) {getFileTypeMessage(mimeType)}으로 현재 변환을 지원하지 않습니다.
+            <strong>{fileName}</strong>은(는) {getFileTypeMessage(mimeType)}으로 현재 변환을
+            지원하지 않습니다.
           </p>
           <div className="text-red-600 text-xs">
             <p>💡 대신 다음 형식의 파일을 사용해보세요:</p>
@@ -54,4 +53,4 @@ const UnsupportedFileWarning: React.FC<UnsupportedFileWarningProps> = ({
   );
 };
 
-export default UnsupportedFileWarning; 
+export default UnsupportedFileWarning;

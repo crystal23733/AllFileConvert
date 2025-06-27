@@ -30,4 +30,4 @@ const FormatCategoryCard: React.FC<FormatCategoryCardProps> = ({
   );
 };
 
-export default FormatCategoryCard; 
+export default FormatCategoryCard;

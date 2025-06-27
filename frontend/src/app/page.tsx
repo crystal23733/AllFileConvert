@@ -32,11 +32,14 @@ export default function Home() {
         }
         isSubmitting={flow.uploadFile.isPending || flow.convertFile.isPending}
         disabled={
-          flow.uploadFile.isPending || flow.convertFile.isPending || flow.status === "processing" || isUnsupportedFile
+          flow.uploadFile.isPending ||
+          flow.convertFile.isPending ||
+          flow.status === "processing" ||
+          isUnsupportedFile
         }
         formatOptions={flow.formatOptions}
       />
-      
+
       {/* 지원하지 않는 파일 경고 */}
       {isUnsupportedFile && (
         <UnsupportedFileWarning
@@ -45,7 +48,7 @@ export default function Home() {
           className="mt-4"
         />
       )}
-      
+
       <UploadPreview
         files={flow.files.map(f => ({
           name: f.name,
@@ -63,12 +66,12 @@ export default function Home() {
           })
         }
       />
-      
+
       {/* 지원 포맷 정보 섹션 */}
       <div className="mt-12">
         <SupportedFormats />
       </div>
-      
+
       <AlertModal open={showAlert} message={alertMsg} onClose={() => setShowAlert(false)} />
     </div>
   );

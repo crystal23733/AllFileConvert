@@ -41,4 +41,4 @@ const UnsupportedFormatsTab: React.FC = () => {
   );
 };
 
-export default UnsupportedFormatsTab; 
+export default UnsupportedFormatsTab;

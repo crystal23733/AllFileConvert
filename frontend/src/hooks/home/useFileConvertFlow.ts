@@ -36,7 +36,7 @@ export default ({ initialCategory = "video" }: UseFileConvertFlowOptions = {}) =
   const convertStatus = useConvertStatus(downloadCompleted ? null : conversionId);
   const downloadFile = useDownloadFile();
 
-    /**
+  /**
    * 파일 드롭 시 호출, 파일/카테고리/포맷 상태 초기화
    * @param {File[]} selected  - 사용자가 업로드한 파일 목록
    */
@@ -48,24 +48,24 @@ export default ({ initialCategory = "video" }: UseFileConvertFlowOptions = {}) =
     setDownloadCompleted(false);
     if (selected[0]) {
       const mime = selected[0].type;
-      
+
       // 지원 여부 확인
       const isSupported = FormatManager.isSupported(mime);
       if (!isSupported) {
         setStatus("failed"); // 지원하지 않는 파일은 바로 실패 상태로
         return;
       }
-      
+
       // 새로운 MIME 기반 카테고리 및 포맷 결정
       const newCategory = FormatManager.getCategoryByMimeType(mime);
       setCategory(newCategory);
-      
+
       // MIME 타입에 따른 지원 가능한 포맷 목록에서 첫 번째를 기본값으로
       const supportedFormats = FormatManager.getFormatsByMimeType(mime);
       const initialFormat =
         supportedFormats[0]?.value ?? FormatManager.getFormats(newCategory)[0]?.value ?? "";
       setFormat(initialFormat);
-      
+
       // 원본 파일명 저장 및 초기 다운로드 파일명 설정
       setOriginalFileName(selected[0].name);
       if (initialFormat) {
