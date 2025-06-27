@@ -14,11 +14,8 @@ const FormatInfoModal: React.FC<FormatInfoModalProps> = ({ isOpen, onClose, chil
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black bg-opacity-50"
-        onClick={onClose}
-      />
-      
+      <div className="absolute inset-0 bg-black bg-opacity-50" onClick={onClose} role="dialog" />
+
       {/* Modal Content */}
       <div className="relative bg-white rounded-lg shadow-xl max-w-4xl max-h-[80vh] w-full mx-4 overflow-hidden">
         {/* Header */}
@@ -31,14 +28,12 @@ const FormatInfoModal: React.FC<FormatInfoModalProps> = ({ isOpen, onClose, chil
             ×
           </button>
         </div>
-        
+
         {/* Body */}
-        <div className="overflow-y-auto max-h-[calc(80vh-140px)]">
-          {children}
-        </div>
+        <div className="overflow-y-auto max-h-[calc(80vh-140px)]">{children}</div>
       </div>
     </div>
   );
 };
 
-export default FormatInfoModal; 
+export default FormatInfoModal;
