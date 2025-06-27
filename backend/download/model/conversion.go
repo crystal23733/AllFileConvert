@@ -8,6 +8,7 @@ type Conversion struct {
 	TargetFormat  string
 	Status        string
 	DownloadURL   string
+	DownloadToken string // 다운로드 보안 토큰
 	DownloadCount int
 	CreatedAt     time.Time
 	UpdatedAt     time.Time

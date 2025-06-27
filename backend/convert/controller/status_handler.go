@@ -24,9 +24,10 @@ func ConvertStatusHandler(db *gorm.DB) gin.HandlerFunc {
 			"status": conv.Status,
 		}
 
-		// 변환 완료 시 다운로드 링크 포함
+		// 변환 완료 시 다운로드 링크 및 토큰 포함
 		if conv.Status == "completed" {
 			resp["download_url"] = conv.DownloadURL
+			resp["download_token"] = conv.DownloadToken
 		}
 
 		c.JSON(http.StatusOK, resp)

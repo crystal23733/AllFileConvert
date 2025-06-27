@@ -5,10 +5,12 @@ import axios, { AxiosResponse } from "axios";
  * 변환 상태 API 응답 타입
  * @property {Status} status - 상태
  * @property {string} download_url - 다운로드 경로
+ * @property {string} download_token - 다운로드 보안 토큰
  */
 export interface ConvertStatusResponse {
   status: Status;
   download_url?: string;
+  download_token?: string;
 }
 
 /**
@@ -35,7 +37,7 @@ class ConvertStatusService {
    */
   async getStatus(conversionId: string): Promise<ConvertStatusResponse> {
     const response: AxiosResponse<ConvertStatusResponse> = await axios.get(
-      `/api/status/${conversionId}`
+      `http://localhost/convert/status/${conversionId}`
     );
     return response.data;
   }

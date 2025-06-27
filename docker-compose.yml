@@ -8,7 +8,7 @@ services:
     env_file:
       - .env
     volumes:
-      - upload_data:/app/uploads
+      - shared_files:/app/uploads
     depends_on:
       postgres:
         condition: service_healthy
@@ -22,7 +22,8 @@ services:
     env_file:
       - .env
     volumes:
-      - convert_data:/app/uploads
+      - shared_files:/app/uploads
+      - convert_output:/app/converted
     depends_on:
       upload:
         condition: service_started
@@ -38,7 +39,8 @@ services:
     env_file:
       - .env
     volumes:
-      - upload_data:/app/uploads
+      - shared_files:/app/uploads
+      - convert_output:/app/converted
     depends_on:
       convert:
         condition: service_started
@@ -67,15 +69,13 @@ services:
       - pgdata:/var/lib/postgresql/data
     env_file:
       - .env
-    environment:
-      POSTGRES_DB: convert_db
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d convert_db || exit 1"]
+      test: ["CMD-SHELL", "pg_isready -U Ho -d convert_db || exit 1"]
       interval: 5s
       timeout: 5s
       retries: 5
 
 volumes:
   pgdata:
-  upload_data:
-  convert_data:
+  shared_files:
+  convert_output:

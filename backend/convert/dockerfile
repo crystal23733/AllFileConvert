@@ -15,7 +15,17 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main ./cmd
 # 실행 스테이지
 FROM alpine:latest
 
-WORKDIR /root/
+# 변환 도구들 설치
+RUN apk update && apk add --no-cache \
+  ffmpeg \
+  libreoffice \
+  imagemagick \
+  && rm -rf /var/cache/apk/*
+
+WORKDIR /app
+
+# 필요한 디렉터리 생성
+RUN mkdir -p uploads converted
 
 # 빌드된 바이너리 복사
 COPY --from=builder /app/main .

@@ -28,7 +28,7 @@ func main() {
 			"message": "OK",
 		})
 	})
-	router.GET("/download/:id", controller.DownloadHandler(db))
+	router.POST("/download/:id", controller.DownloadHandler(db))
 
 	port := os.Getenv("PORT")
 	if port == "" {

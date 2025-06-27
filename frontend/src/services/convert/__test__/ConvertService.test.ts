@@ -13,7 +13,7 @@ describe("ConvertService", () => {
     const request: ConvertRequest = { file_id: "abc123", target_format: "mp4" };
     const response: ConvertResponse = { conversion_id: "xyz789" };
 
-    mock.onPost("/api/convert", request).reply(200, response);
+    mock.onPost("http://localhost/convert", request).reply(200, response);
 
     const result = await ConvertService.convert(request);
 
