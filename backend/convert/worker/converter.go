@@ -27,14 +27,18 @@ type Transformer interface {
 type FFmpegTransformer struct{}
 
 func (f FFmpegTransformer) Supports(mime, target string) bool {
+	// MIME 타입에서 charset 등의 파라미터 제거
+	baseMime := strings.Split(mime, ";")[0]
+	baseMime = strings.TrimSpace(baseMime)
+
 	// 비디오 → 비디오/오디오 변환 지원
-	if strings.HasPrefix(mime, "video/") {
+	if strings.HasPrefix(baseMime, "video/") {
 		videoFormats := []string{"mp4", "avi", "mov", "webm", "mkv", "wmv", "flv", "m4v", "3gp"}
 		audioFormats := []string{"mp3", "wav", "aac", "flac", "ogg", "m4a"}
 		return contains(videoFormats, target) || contains(audioFormats, target)
 	}
 	// 오디오 → 오디오 변환 지원
-	if strings.HasPrefix(mime, "audio/") {
+	if strings.HasPrefix(baseMime, "audio/") {
 		audioFormats := []string{"mp3", "wav", "aac", "flac", "ogg", "m4a"}
 		return contains(audioFormats, target)
 	}
@@ -44,36 +48,64 @@ func (f FFmpegTransformer) Supports(mime, target string) bool {
 func (f FFmpegTransformer) Transform(in, out string) error {
 	// 출력 파일 확장자에 따라 ffmpeg 옵션 조정
 	var cmd *exec.Cmd
-	ext := strings.ToLower(filepath.Ext(out)[1:]) // 확장자 추출 (.mp4 → mp4)
+	ext := safeGetExt(out) // 안전한 확장자 추출
+
+	// 기본 FFmpeg 옵션 (덮어쓰기, 로그 레벨)
+	baseArgs := []string{"-y", "-loglevel", "error", "-i", in}
 
 	switch ext {
 	case "mp3":
-		cmd = exec.Command("ffmpeg", "-i", in, "-codec:a", "libmp3lame", "-b:a", "192k", out)
+		cmd = exec.Command("ffmpeg", append(baseArgs, "-codec:a", "libmp3lame", "-b:a", "192k", "-ar", "44100", out)...)
 	case "wav":
-		cmd = exec.Command("ffmpeg", "-i", in, "-codec:a", "pcm_s16le", out)
+		cmd = exec.Command("ffmpeg", append(baseArgs, "-codec:a", "pcm_s16le", "-ar", "44100", out)...)
 	case "aac":
-		cmd = exec.Command("ffmpeg", "-i", in, "-codec:a", "aac", "-b:a", "128k", out)
+		cmd = exec.Command("ffmpeg", append(baseArgs, "-codec:a", "aac", "-b:a", "128k", "-ar", "44100", out)...)
 	case "flac":
-		cmd = exec.Command("ffmpeg", "-i", in, "-codec:a", "flac", out)
+		cmd = exec.Command("ffmpeg", append(baseArgs, "-codec:a", "flac", "-ar", "44100", out)...)
 	case "ogg":
-		cmd = exec.Command("ffmpeg", "-i", in, "-codec:a", "libvorbis", "-b:a", "192k", out)
+		cmd = exec.Command("ffmpeg", append(baseArgs, "-codec:a", "libvorbis", "-b:a", "192k", "-ar", "44100", out)...)
 	case "m4a":
-		cmd = exec.Command("ffmpeg", "-i", in, "-codec:a", "aac", "-b:a", "128k", out)
+		cmd = exec.Command("ffmpeg", append(baseArgs, "-codec:a", "aac", "-b:a", "128k", "-ar", "44100", out)...)
 	case "webm":
-		cmd = exec.Command("ffmpeg", "-i", in, "-codec:v", "libvpx-vp9", "-codec:a", "libopus", out)
+		cmd = exec.Command("ffmpeg", append(baseArgs, "-codec:v", "libvpx-vp9", "-codec:a", "libopus", "-b:v", "1M", "-b:a", "128k", out)...)
 	case "mkv":
-		cmd = exec.Command("ffmpeg", "-i", in, "-codec:v", "libx264", "-codec:a", "aac", out)
+		cmd = exec.Command("ffmpeg", append(baseArgs, "-codec:v", "libx264", "-codec:a", "aac", "-preset", "fast", "-crf", "23", out)...)
+	case "avi":
+		cmd = exec.Command("ffmpeg", append(baseArgs, "-codec:v", "libx264", "-codec:a", "aac", "-preset", "fast", "-crf", "23", out)...)
+	case "mov":
+		cmd = exec.Command("ffmpeg", append(baseArgs, "-codec:v", "libx264", "-codec:a", "aac", "-preset", "fast", "-crf", "23", out)...)
+	case "wmv":
+		cmd = exec.Command("ffmpeg", append(baseArgs, "-codec:v", "wmv2", "-codec:a", "wmav2", "-b:v", "1M", "-b:a", "128k", out)...)
+	case "flv":
+		cmd = exec.Command("ffmpeg", append(baseArgs, "-codec:v", "libx264", "-codec:a", "aac", "-preset", "fast", "-crf", "23", out)...)
+	case "m4v":
+		cmd = exec.Command("ffmpeg", append(baseArgs, "-codec:v", "libx264", "-codec:a", "aac", "-preset", "fast", "-crf", "23", out)...)
+	case "3gp":
+		cmd = exec.Command("ffmpeg", append(baseArgs, "-codec:v", "h263", "-codec:a", "amr_nb", "-s", "176x144", "-r", "15", out)...)
 	default:
-		// 기본 변환 (mp4, avi, mov, wmv, flv, m4v, 3gp)
-		cmd = exec.Command("ffmpeg", "-i", in, "-codec:v", "libx264", "-codec:a", "aac", out)
+		// 기본 변환 (mp4)
+		cmd = exec.Command("ffmpeg", append(baseArgs, "-codec:v", "libx264", "-codec:a", "aac", "-preset", "fast", "-crf", "23", out)...)
 	}
 
-	return cmd.Run()
+	log.Info().Strs("args", cmd.Args).Msg("🎬 FFmpeg 명령 실행")
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Error().Err(err).Str("output", string(output)).Msg("❌ FFmpeg 변환 실패")
+		return err
+	}
+
+	log.Info().Str("output", string(output)).Msg("✅ FFmpeg 변환 완료")
+	return nil
 }
 
 type LibreOfficeTransformer struct{}
 
 func (l LibreOfficeTransformer) Supports(mime, target string) bool {
+	// MIME 타입에서 charset 등의 파라미터 제거
+	baseMime := strings.Split(mime, ";")[0]
+	baseMime = strings.TrimSpace(baseMime)
+
 	// 문서 포맷 지원 확인
 	documentMimes := []string{
 		"application/pdf",
@@ -93,60 +125,205 @@ func (l LibreOfficeTransformer) Supports(mime, target string) bool {
 
 	documentTargets := []string{"pdf", "docx", "doc", "pptx", "ppt", "xlsx", "xls", "txt", "rtf", "odt", "ods", "odp", "csv"}
 
-	return contains(documentMimes, mime) && contains(documentTargets, target)
+	return contains(documentMimes, baseMime) && contains(documentTargets, target)
 }
 
 func (l LibreOfficeTransformer) Transform(in, out string) error {
 	dir := filepath.Dir(out)
-	ext := strings.ToLower(filepath.Ext(out)[1:]) // 확장자 추출
+	ext := safeGetExt(out) // 안전한 확장자 추출
+	inputExt := safeGetExt(in)
 
-	var format string
-	switch ext {
-	case "pdf":
-		format = "pdf"
-	case "docx":
-		format = "docx"
-	case "doc":
-		format = "doc"
-	case "pptx":
-		format = "pptx"
-	case "ppt":
-		format = "ppt"
-	case "xlsx":
-		format = "xlsx"
-	case "xls":
-		format = "xls"
-	case "txt":
-		format = "txt"
-	case "rtf":
-		format = "rtf"
-	case "odt":
-		format = "odt"
-	case "ods":
-		format = "ods"
-	case "odp":
-		format = "odp"
-	case "csv":
-		format = "csv"
-	default:
-		format = "pdf" // 기본값
+	// 절대 경로로 변환
+	absIn, err := filepath.Abs(in)
+	if err != nil {
+		log.Error().Err(err).Str("path", in).Msg("❌ 입력 파일 절대 경로 변환 실패")
+		return err
 	}
 
-	cmd := exec.Command("libreoffice", "--headless", "--convert-to", format, "--outdir", dir, in)
-	return cmd.Run()
+	absDir, err := filepath.Abs(dir)
+	if err != nil {
+		log.Error().Err(err).Str("path", dir).Msg("❌ 출력 디렉터리 절대 경로 변환 실패")
+		return err
+	}
+
+	// 파일 내용으로 CSV 여부 확인 (확장자가 없는 경우)
+	isCSV := inputExt == "csv"
+	if !isCSV {
+		// 파일 첫 몇 줄을 읽어서 CSV 형태인지 확인
+		if content, err := os.ReadFile(absIn); err == nil {
+			firstLine := strings.Split(string(content), "\n")[0]
+			// CSV 특징: 쉼표로 구분된 필드
+			if strings.Contains(firstLine, ",") && len(strings.Split(firstLine, ",")) > 1 {
+				isCSV = true
+			}
+		}
+	}
+
+	var format string
+	var args []string
+
+	// 기본 LibreOffice 인수
+	args = append(args, "libreoffice", "--headless", "--invisible", "--nodefault", "--nolockcheck")
+
+	// 입력 파일이 CSV인 경우 특별 처리 (확장자 없는 파일 포함)
+	if isCSV {
+		switch ext {
+		case "xlsx":
+			// CSV → XLSX: 입력 필터 지정으로 확장자 없는 파일 처리
+			args = append(args, "--infilter=Text - txt - csv (StarCalc)", "--convert-to", "xlsx", "--outdir", absDir, absIn)
+		case "xls":
+			// CSV → XLS: Excel 97 형식
+			args = append(args, "--infilter=Text - txt - csv (StarCalc)", "--convert-to", "xls", "--outdir", absDir, absIn)
+		case "ods":
+			// CSV → ODS: OpenDocument Spreadsheet
+			args = append(args, "--infilter=Text - txt - csv (StarCalc)", "--convert-to", "ods", "--outdir", absDir, absIn)
+		case "pdf":
+			// CSV → PDF: 직접 변환
+			args = append(args, "--infilter=Text - txt - csv (StarCalc)", "--convert-to", "pdf", "--outdir", absDir, absIn)
+		default:
+			args = append(args, "--infilter=Text - txt - csv (StarCalc)", "--convert-to", ext, "--outdir", absDir, absIn)
+		}
+	} else {
+		// 일반 문서 변환
+		switch ext {
+		case "pdf":
+			format = "pdf"
+		case "docx":
+			format = "docx"
+		case "doc":
+			format = "doc"
+		case "pptx":
+			format = "pptx"
+		case "ppt":
+			format = "ppt"
+		case "xlsx":
+			format = "xlsx"
+		case "xls":
+			format = "xls"
+		case "txt":
+			format = "txt"
+		case "rtf":
+			format = "rtf"
+		case "odt":
+			format = "odt"
+		case "ods":
+			format = "ods"
+		case "odp":
+			format = "odp"
+		case "csv":
+			format = "csv"
+		default:
+			format = "pdf" // 기본값
+		}
+		args = append(args, "--convert-to", format, "--outdir", absDir, absIn)
+	}
+
+	log.Info().Strs("args", args).Msg("🔧 LibreOffice 명령 실행")
+	cmd := exec.Command(args[0], args[1:]...)
+
+	// 환경변수 설정 (LibreOffice가 headless 모드에서 안정적으로 실행되도록)
+	cmd.Env = append(os.Environ(),
+		"HOME=/tmp",
+		"TMPDIR=/tmp",
+		"DISPLAY=",
+	)
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Error().Err(err).Str("output", string(output)).Msg("❌ LibreOffice 변환 실패")
+		return err
+	}
+
+	log.Info().Str("output", string(output)).Msg("✅ LibreOffice 변환 완료")
+
+	// LibreOffice는 입력 파일명을 기준으로 출력 파일을 생성하므로 이름 변경 필요
+	inputBasename := filepath.Base(absIn)
+	inputNameWithoutExt := strings.TrimSuffix(inputBasename, filepath.Ext(inputBasename))
+	libreOfficeOutput := filepath.Join(absDir, inputNameWithoutExt+"."+ext)
+
+	// LibreOffice가 생성한 파일이 존재하고, 목표 파일명과 다르면 이름 변경
+	if libreOfficeOutput != out && fileExists(libreOfficeOutput) {
+		log.Info().
+			Str("from", libreOfficeOutput).
+			Str("to", out).
+			Msg("🔄 LibreOffice 출력 파일명 변경")
+
+		if err := os.Rename(libreOfficeOutput, out); err != nil {
+			log.Error().Err(err).Msg("❌ 파일명 변경 실패")
+			return err
+		}
+	}
+
+	return nil
 }
 
 type ImageMagickTransformer struct{}
 
 func (i ImageMagickTransformer) Supports(mime, target string) bool {
+	// MIME 타입에서 charset 등의 파라미터 제거
+	baseMime := strings.Split(mime, ";")[0]
+	baseMime = strings.TrimSpace(baseMime)
+
 	imageFormats := []string{"jpg", "jpeg", "png", "webp", "bmp", "gif", "svg", "tiff", "ico", "avif"}
-	return strings.HasPrefix(mime, "image/") && contains(imageFormats, target)
+	return strings.HasPrefix(baseMime, "image/") && contains(imageFormats, target)
 }
 
 func (i ImageMagickTransformer) Transform(in, out string) error {
-	// ImageMagick convert 명령 사용
-	cmd := exec.Command("convert", in, out)
-	return cmd.Run()
+	inputExt := safeGetExt(in)
+	outputExt := safeGetExt(out)
+
+	var cmd *exec.Cmd
+
+	// 파일 내용으로 GIF 여부 확인 (확장자가 없는 경우)
+	isGif := inputExt == "gif"
+	if inputExt == "" {
+		// 파일 내용 확인
+		if content, err := exec.Command("file", in).Output(); err == nil {
+			isGif = strings.Contains(strings.ToLower(string(content)), "gif")
+		}
+	}
+
+	// GIF 파일 특별 처리
+	if isGif {
+		switch outputExt {
+		case "jpg", "jpeg":
+			// GIF → JPG: 첫 번째 프레임만 추출, 배경색 지정
+			cmd = exec.Command("/usr/bin/magick", in+"[0]", "-background", "white", "-flatten", out)
+		case "png":
+			// GIF → PNG: 첫 번째 프레임만 추출, 투명도 유지
+			cmd = exec.Command("/usr/bin/magick", in+"[0]", out)
+		case "bmp":
+			// GIF → BMP: 첫 번째 프레임만 추출, 배경색 지정
+			cmd = exec.Command("/usr/bin/magick", in+"[0]", "-background", "white", "-flatten", out)
+		default:
+			// 기본 변환 (webp, tiff, ico, avif 등)
+			cmd = exec.Command("/usr/bin/magick", in, out)
+		}
+	} else {
+		// 일반 이미지 변환
+		switch outputExt {
+		case "ico":
+			// ICO 변환: 여러 크기 생성
+			cmd = exec.Command("/usr/bin/magick", in, "-resize", "256x256", "-compress", "None", out)
+		case "avif":
+			// AVIF 변환: 품질 설정
+			cmd = exec.Command("/usr/bin/magick", in, "-quality", "80", out)
+		default:
+			// 기본 ImageMagick magick 명령
+			cmd = exec.Command("/usr/bin/magick", in, out)
+		}
+	}
+
+	log.Info().Strs("args", cmd.Args).Msg("🖼️ ImageMagick 명령 실행")
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Error().Err(err).Str("output", string(output)).Msg("❌ ImageMagick 변환 실패")
+		return err
+	}
+
+	log.Info().Str("output", string(output)).Msg("✅ ImageMagick 변환 완료")
+	return nil
 }
 
 // 헬퍼 함수: 슬라이스에서 요소 찾기
@@ -157,6 +334,15 @@ func contains(slice []string, item string) bool {
 		}
 	}
 	return false
+}
+
+// safeGetExt는 파일 경로에서 안전하게 확장자를 추출합니다
+func safeGetExt(path string) string {
+	ext := filepath.Ext(path)
+	if len(ext) > 1 {
+		return strings.ToLower(ext[1:]) // 점(.) 제거하고 소문자로
+	}
+	return "" // 확장자가 없으면 빈 문자열
 }
 
 // 파일 변환 실패 시 DB 업데이트
