@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { UNSUPPORTED_FORMATS } from "@/constants/convertFormats";
 
 interface UnsupportedFileWarningProps {
   fileName: string;
@@ -14,15 +15,33 @@ const UnsupportedFileWarning: React.FC<UnsupportedFileWarningProps> = ({
   className = "",
 }) => {
   const getFileTypeMessage = (mime: string) => {
-    if (mime.includes("apple")) {
+    // 동적으로 UNSUPPORTED_FORMATS 체크
+    if (UNSUPPORTED_FORMATS.includes(mime)) {
+      if (mime.includes("executable") || mime.includes("msdownload")) {
+        return "실행 파일";
+      }
+      if (mime.includes("sqlite") || mime.includes("access")) {
+        return "데이터베이스 파일";
+      }
+      if (mime.includes("font")) {
+        return "폰트 파일";
+      }
+      if (mime.includes("pkcs") || mime.includes("cert")) {
+        return "인증서 파일";
+      }
+      if (mime.includes("flash")) {
+        return "Flash 파일";
+      }
+    }
+    
+    // 일반적인 카테고리별 메시지
+    if (mime.startsWith("application/") && mime.includes("apple")) {
       return "Apple 전용 포맷 (Pages, Numbers, Keynote)";
     }
-    if (mime === "application/zip") {
-      return "ZIP 압축 파일";
+    if (mime === "application/zip" || mime.includes("compress") || mime.includes("archive")) {
+      return "압축 파일";
     }
-    if (mime.includes("executable") || mime.includes("msdownload")) {
-      return "실행 파일";
-    }
+    
     return "지원하지 않는 파일 형식";
   };
 
