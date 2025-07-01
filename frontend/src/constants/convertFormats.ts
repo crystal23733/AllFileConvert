@@ -11,7 +11,6 @@ export const VIDEO_FORMATS = [
   { value: "wmv", label: "WMV" },
   { value: "flv", label: "FLV" },
   { value: "m4v", label: "M4V" },
-  { value: "3gp", label: "3GP" },
 ];
 
 /**
@@ -40,7 +39,6 @@ export const IMAGE_FORMATS = [
   { value: "svg", label: "SVG" },
   { value: "tiff", label: "TIFF" },
   { value: "ico", label: "ICO" },
-  { value: "heic", label: "HEIC" },
   { value: "avif", label: "AVIF" },
 ];
 
@@ -64,21 +62,17 @@ export const DOCUMENT_FORMATS = [
 ];
 
 /**
- * 압축 포맷
+ * 압축 포맷 (현재 백엔드에서 지원하지 않음)
  */
-export const ARCHIVE_FORMATS = [
-  { value: "zip", label: "ZIP" },
-  { value: "7z", label: "7Z" },
-  { value: "tar", label: "TAR" },
-  { value: "tar.gz", label: "TAR.GZ" },
-  { value: "rar", label: "RAR" },
+export const ARCHIVE_FORMATS: Array<{ value: string; label: string }> = [
+  // 백엔드 지원 없음 - 비활성화
 ];
 
 /**
  * 지원하는 입력 포맷 (MIME Type별)
  */
 export const SUPPORTED_INPUT_FORMATS = {
-  // 이미지
+  // 이미지 - 백엔드 ImageMagickTransformer 지원 포맷
   "image/jpeg": ["jpg", "png", "webp", "bmp", "gif", "tiff", "ico", "avif"],
   "image/png": ["jpg", "png", "webp", "bmp", "gif", "tiff", "ico", "avif"],
   "image/webp": ["jpg", "png", "webp", "bmp", "gif", "tiff", "ico", "avif"],
@@ -86,112 +80,48 @@ export const SUPPORTED_INPUT_FORMATS = {
   "image/gif": ["jpg", "png", "webp", "bmp", "gif", "tiff", "ico", "avif"],
   "image/svg+xml": ["jpg", "png", "webp", "bmp", "gif", "tiff", "ico", "avif"],
   "image/tiff": ["jpg", "png", "webp", "bmp", "gif", "tiff", "ico", "avif"],
-  "image/heic": ["jpg", "png", "webp", "bmp", "gif", "tiff", "ico", "avif"],
+  "image/vnd.microsoft.icon": ["jpg", "png", "webp", "bmp", "gif", "tiff", "ico", "avif"], // ICO 파일
+  "image/x-icon": ["jpg", "png", "webp", "bmp", "gif", "tiff", "ico", "avif"], // ICO 대체 MIME
+  "image/avif": ["jpg", "png", "webp", "bmp", "gif", "tiff", "ico", "avif"], // AVIF
 
-  // 비디오
-  "video/mp4": [
-    "mp4",
-    "avi",
-    "mov",
-    "webm",
-    "mkv",
-    "wmv",
-    "flv",
-    "m4v",
-    "3gp",
-    "mp3",
-    "wav",
-    "aac",
-  ],
-  "video/avi": [
-    "mp4",
-    "avi",
-    "mov",
-    "webm",
-    "mkv",
-    "wmv",
-    "flv",
-    "m4v",
-    "3gp",
-    "mp3",
-    "wav",
-    "aac",
-  ],
-  "video/quicktime": [
-    "mp4",
-    "avi",
-    "mov",
-    "webm",
-    "mkv",
-    "wmv",
-    "flv",
-    "m4v",
-    "3gp",
-    "mp3",
-    "wav",
-    "aac",
-  ],
-  "video/webm": [
-    "mp4",
-    "avi",
-    "mov",
-    "webm",
-    "mkv",
-    "wmv",
-    "flv",
-    "m4v",
-    "3gp",
-    "mp3",
-    "wav",
-    "aac",
-  ],
-  "video/x-msvideo": [
-    "mp4",
-    "avi",
-    "mov",
-    "webm",
-    "mkv",
-    "wmv",
-    "flv",
-    "m4v",
-    "3gp",
-    "mp3",
-    "wav",
-    "aac",
-  ],
+  // 비디오 - 백엔드 FFmpegTransformer 지원 포맷
+  "video/mp4": ["mp4", "avi", "mov", "webm", "mkv", "wmv", "flv", "m4v", "mp3", "wav", "aac"],
+  "video/avi": ["mp4", "avi", "mov", "webm", "mkv", "wmv", "flv", "m4v", "mp3", "wav", "aac"],
+  "video/x-msvideo": ["mp4", "avi", "mov", "webm", "mkv", "wmv", "flv", "m4v", "mp3", "wav", "aac"], // AVI 표준 MIME
+  "video/quicktime": ["mp4", "avi", "mov", "webm", "mkv", "wmv", "flv", "m4v", "mp3", "wav", "aac"], // MOV
+  "video/webm": ["mp4", "avi", "mov", "webm", "mkv", "wmv", "flv", "m4v", "mp3", "wav", "aac"],
+  "video/x-matroska": ["mp4", "avi", "mov", "webm", "mkv", "wmv", "flv", "m4v", "mp3", "wav", "aac"], // MKV
+  "video/x-ms-wmv": ["mp4", "avi", "mov", "webm", "mkv", "wmv", "flv", "m4v", "mp3", "wav", "aac"], // WMV
+  "video/x-flv": ["mp4", "avi", "mov", "webm", "mkv", "wmv", "flv", "m4v", "mp3", "wav", "aac"], // FLV
+  "video/x-m4v": ["mp4", "avi", "mov", "webm", "mkv", "wmv", "flv", "m4v", "mp3", "wav", "aac"], // M4V
 
-  // 오디오
-  "audio/mpeg": ["mp3", "wav", "aac", "flac", "ogg", "m4a"],
-  "audio/wav": ["mp3", "wav", "aac", "flac", "ogg", "m4a"],
+  // 오디오 - 백엔드 FFmpegTransformer 지원 포맷 (정규화된 MIME 타입 포함)
+  "audio/mpeg": ["mp3", "wav", "aac", "flac", "ogg", "m4a"], // MP3
+  "audio/wav": ["mp3", "wav", "aac", "flac", "ogg", "m4a"], // 정규화된 WAV
+  "audio/x-wav": ["mp3", "wav", "aac", "flac", "ogg", "m4a"], // 원본 WAV MIME
   "audio/aac": ["mp3", "wav", "aac", "flac", "ogg", "m4a"],
-  "audio/flac": ["mp3", "wav", "aac", "flac", "ogg", "m4a"],
+  "audio/flac": ["mp3", "wav", "aac", "flac", "ogg", "m4a"], // 정규화된 FLAC
+  "audio/x-flac": ["mp3", "wav", "aac", "flac", "ogg", "m4a"], // 원본 FLAC MIME
   "audio/ogg": ["mp3", "wav", "aac", "flac", "ogg", "m4a"],
-  "audio/mp4": ["mp3", "wav", "aac", "flac", "ogg", "m4a"],
+  "audio/mp4": ["mp3", "wav", "aac", "flac", "ogg", "m4a"], // M4A
+  "audio/m4a": ["mp3", "wav", "aac", "flac", "ogg", "m4a"], // 정규화된 M4A
+  "audio/x-m4a": ["mp3", "wav", "aac", "flac", "ogg", "m4a"], // 원본 M4A MIME
 
-  // 문서
+  // 문서 - 백엔드 LibreOfficeTransformer 지원 포맷 (정규화된 MIME 타입 포함)
   "application/pdf": ["docx", "doc", "txt", "rtf", "odt"],
-  "application/msword": ["pdf", "docx", "txt", "rtf", "odt"],
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [
-    "pdf",
-    "doc",
-    "txt",
-    "rtf",
-    "odt",
-  ],
-  "application/vnd.ms-powerpoint": ["pdf", "pptx", "odp"],
-  "application/vnd.openxmlformats-officedocument.presentationml.presentation": [
-    "pdf",
-    "ppt",
-    "odp",
-  ],
-  "application/vnd.ms-excel": ["pdf", "xlsx", "csv", "ods"],
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": ["pdf", "xls", "csv", "ods"],
-  "application/vnd.oasis.opendocument.text": ["pdf", "docx", "doc", "txt", "rtf"],
-  "application/vnd.oasis.opendocument.spreadsheet": ["pdf", "xlsx", "xls", "csv"],
-  "application/vnd.oasis.opendocument.presentation": ["pdf", "pptx", "ppt"],
-  "text/plain": ["pdf", "docx", "doc", "rtf", "odt"],
-  "text/rtf": ["pdf", "docx", "doc", "txt", "odt"],
-  "text/csv": ["pdf", "xlsx", "xls", "ods"],
+  "application/msword": ["pdf", "docx", "txt", "rtf", "odt"], // DOC
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": ["pdf", "doc", "txt", "rtf", "odt"], // DOCX
+  "application/vnd.ms-powerpoint": ["pdf", "pptx", "odp"], // PPT
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation": ["pdf", "ppt", "odp"], // PPTX
+  "application/vnd.ms-excel": ["pdf", "xlsx", "csv", "ods"], // XLS
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": ["pdf", "xls", "csv", "ods"], // XLSX
+  "application/vnd.oasis.opendocument.text": ["pdf", "docx", "doc", "txt", "rtf"], // ODT
+  "application/vnd.oasis.opendocument.spreadsheet": ["pdf", "xlsx", "xls", "csv"], // ODS
+  "application/vnd.oasis.opendocument.presentation": ["pdf", "pptx", "ppt"], // ODP
+  "text/plain": ["pdf", "docx", "doc", "rtf", "odt"], // TXT
+  "text/rtf": ["pdf", "docx", "doc", "txt", "odt"], // 정규화된 RTF
+  "application/rtf": ["pdf", "docx", "doc", "txt", "odt"], // 원본 RTF MIME
+  "text/csv": ["pdf", "xlsx", "xls", "ods"], // CSV
 };
 
 /**
@@ -229,7 +159,6 @@ export const FORMAT_CATEGORIES = {
   video: VIDEO_FORMATS,
   audio: AUDIO_FORMATS,
   document: DOCUMENT_FORMATS,
-  archive: ARCHIVE_FORMATS,
 };
 
 /**
@@ -240,7 +169,7 @@ export const getFormatCategory = (mimeType: string): string => {
   if (mimeType.startsWith("video/")) return "video";
   if (mimeType.startsWith("audio/")) return "audio";
   if (mimeType.startsWith("application/") || mimeType.startsWith("text/")) return "document";
-  return "unknown";
+  return "document"; // archive 제거, 기본값은 document
 };
 
 /**
