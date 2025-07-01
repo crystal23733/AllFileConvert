@@ -274,43 +274,99 @@ func (i ImageMagickTransformer) Transform(in, out string) error {
 
 	var cmd *exec.Cmd
 
-	// 파일 내용으로 GIF 여부 확인 (확장자가 없는 경우)
-	isGif := inputExt == "gif"
+	// 확장자가 없는 경우 파일 내용으로 포맷 감지
+	var inputFormat string
 	if inputExt == "" {
-		// 파일 내용 확인
+		// 파일 내용으로 포맷 감지
 		if content, err := exec.Command("file", in).Output(); err == nil {
-			isGif = strings.Contains(strings.ToLower(string(content)), "gif")
+			fileInfo := strings.ToLower(string(content))
+			// ICO 파일 우선 감지 (PNG보다 먼저 체크)
+			if strings.Contains(fileInfo, "icon") || strings.Contains(fileInfo, "ico") || strings.Contains(fileInfo, "ms windows icon") {
+				inputFormat = "ico"
+			} else if strings.Contains(fileInfo, "gif") {
+				inputFormat = "gif"
+			} else if strings.Contains(fileInfo, "png") {
+				inputFormat = "png"
+			} else if strings.Contains(fileInfo, "jpeg") || strings.Contains(fileInfo, "jpg") {
+				inputFormat = "jpeg"
+			} else if strings.Contains(fileInfo, "webp") {
+				inputFormat = "webp"
+			} else if strings.Contains(fileInfo, "bmp") {
+				inputFormat = "bmp"
+			} else if strings.Contains(fileInfo, "tiff") {
+				inputFormat = "tiff"
+			}
 		}
+	} else {
+		inputFormat = inputExt
 	}
+
+	// 파일 내용으로 GIF 여부 확인 (확장자가 없는 경우)
+	isGif := inputFormat == "gif"
 
 	// GIF 파일 특별 처리
 	if isGif {
 		switch outputExt {
 		case "jpg", "jpeg":
 			// GIF → JPG: 첫 번째 프레임만 추출, 배경색 지정
-			cmd = exec.Command("/usr/bin/magick", in+"[0]", "-background", "white", "-flatten", out)
+			if inputFormat != "" && inputExt == "" {
+				// 확장자가 없는 경우 포맷 명시
+				cmd = exec.Command("/usr/bin/magick", fmt.Sprintf("%s:%s[0]", inputFormat, in), "-background", "white", "-flatten", out)
+			} else {
+				cmd = exec.Command("/usr/bin/magick", in+"[0]", "-background", "white", "-flatten", out)
+			}
 		case "png":
 			// GIF → PNG: 첫 번째 프레임만 추출, 투명도 유지
-			cmd = exec.Command("/usr/bin/magick", in+"[0]", out)
+			if inputFormat != "" && inputExt == "" {
+				cmd = exec.Command("/usr/bin/magick", fmt.Sprintf("%s:%s[0]", inputFormat, in), out)
+			} else {
+				cmd = exec.Command("/usr/bin/magick", in+"[0]", out)
+			}
 		case "bmp":
 			// GIF → BMP: 첫 번째 프레임만 추출, 배경색 지정
-			cmd = exec.Command("/usr/bin/magick", in+"[0]", "-background", "white", "-flatten", out)
+			if inputFormat != "" && inputExt == "" {
+				cmd = exec.Command("/usr/bin/magick", fmt.Sprintf("%s:%s[0]", inputFormat, in), "-background", "white", "-flatten", out)
+			} else {
+				cmd = exec.Command("/usr/bin/magick", in+"[0]", "-background", "white", "-flatten", out)
+			}
 		default:
 			// 기본 변환 (webp, tiff, ico, avif 등)
-			cmd = exec.Command("/usr/bin/magick", in, out)
+			if inputFormat != "" && inputExt == "" {
+				cmd = exec.Command("/usr/bin/magick", fmt.Sprintf("%s:%s", inputFormat, in), out)
+			} else {
+				cmd = exec.Command("/usr/bin/magick", in, out)
+			}
 		}
 	} else {
 		// 일반 이미지 변환
 		switch outputExt {
 		case "ico":
 			// ICO 변환: 여러 크기 생성
-			cmd = exec.Command("/usr/bin/magick", in, "-resize", "256x256", "-compress", "None", out)
+			if inputFormat != "" && inputExt == "" {
+				cmd = exec.Command("/usr/bin/magick", fmt.Sprintf("%s:%s", inputFormat, in), "-resize", "256x256", "-compress", "None", out)
+			} else {
+				cmd = exec.Command("/usr/bin/magick", in, "-resize", "256x256", "-compress", "None", out)
+			}
 		case "avif":
 			// AVIF 변환: 품질 설정
-			cmd = exec.Command("/usr/bin/magick", in, "-quality", "80", out)
+			if inputFormat != "" && inputExt == "" {
+				cmd = exec.Command("/usr/bin/magick", fmt.Sprintf("%s:%s", inputFormat, in), "-quality", "80", out)
+			} else {
+				cmd = exec.Command("/usr/bin/magick", in, "-quality", "80", out)
+			}
 		default:
 			// 기본 ImageMagick magick 명령
-			cmd = exec.Command("/usr/bin/magick", in, out)
+			if inputFormat != "" && inputExt == "" {
+				// 확장자가 없는 경우 포맷 명시: format:filename
+				if inputFormat == "ico" {
+					// ICO 파일의 경우 가장 큰 크기 선택 (일반적으로 마지막 인덱스)
+					cmd = exec.Command("/usr/bin/magick", fmt.Sprintf("%s:%s[2]", inputFormat, in), out)
+				} else {
+					cmd = exec.Command("/usr/bin/magick", fmt.Sprintf("%s:%s", inputFormat, in), out)
+				}
+			} else {
+				cmd = exec.Command("/usr/bin/magick", in, out)
+			}
 		}
 	}
 
