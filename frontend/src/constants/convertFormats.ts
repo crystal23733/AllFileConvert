@@ -90,7 +90,19 @@ export const SUPPORTED_INPUT_FORMATS = {
   "video/x-msvideo": ["mp4", "avi", "mov", "webm", "mkv", "wmv", "flv", "m4v", "mp3", "wav", "aac"], // AVI 표준 MIME
   "video/quicktime": ["mp4", "avi", "mov", "webm", "mkv", "wmv", "flv", "m4v", "mp3", "wav", "aac"], // MOV
   "video/webm": ["mp4", "avi", "mov", "webm", "mkv", "wmv", "flv", "m4v", "mp3", "wav", "aac"],
-  "video/x-matroska": ["mp4", "avi", "mov", "webm", "mkv", "wmv", "flv", "m4v", "mp3", "wav", "aac"], // MKV
+  "video/x-matroska": [
+    "mp4",
+    "avi",
+    "mov",
+    "webm",
+    "mkv",
+    "wmv",
+    "flv",
+    "m4v",
+    "mp3",
+    "wav",
+    "aac",
+  ], // MKV
   "video/x-ms-wmv": ["mp4", "avi", "mov", "webm", "mkv", "wmv", "flv", "m4v", "mp3", "wav", "aac"], // WMV
   "video/x-flv": ["mp4", "avi", "mov", "webm", "mkv", "wmv", "flv", "m4v", "mp3", "wav", "aac"], // FLV
   "video/x-m4v": ["mp4", "avi", "mov", "webm", "mkv", "wmv", "flv", "m4v", "mp3", "wav", "aac"], // M4V
@@ -110,9 +122,19 @@ export const SUPPORTED_INPUT_FORMATS = {
   // 문서 - 백엔드 LibreOfficeTransformer 지원 포맷 (정규화된 MIME 타입 포함)
   "application/pdf": ["docx", "doc", "txt", "rtf", "odt"],
   "application/msword": ["pdf", "docx", "txt", "rtf", "odt"], // DOC
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": ["pdf", "doc", "txt", "rtf", "odt"], // DOCX
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [
+    "pdf",
+    "doc",
+    "txt",
+    "rtf",
+    "odt",
+  ], // DOCX
   "application/vnd.ms-powerpoint": ["pdf", "pptx", "odp"], // PPT
-  "application/vnd.openxmlformats-officedocument.presentationml.presentation": ["pdf", "ppt", "odp"], // PPTX
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation": [
+    "pdf",
+    "ppt",
+    "odp",
+  ], // PPTX
   "application/vnd.ms-excel": ["pdf", "xlsx", "csv", "ods"], // XLS
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": ["pdf", "xls", "csv", "ods"], // XLSX
   "application/vnd.oasis.opendocument.text": ["pdf", "docx", "doc", "txt", "rtf"], // ODT

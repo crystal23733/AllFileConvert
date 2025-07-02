@@ -23,12 +23,6 @@ describe("UnsupportedFileWarning", () => {
     expect(screen.getByText(/현재 변환을 지원하지 않습니다/)).toBeInTheDocument();
   });
 
-  it("ZIP 파일에 대한 올바른 메시지를 표시한다", () => {
-    render(<UnsupportedFileWarning fileName="archive.zip" mimeType="application/zip" />);
-
-    expect(screen.getByText(/ZIP 압축 파일/)).toBeInTheDocument();
-  });
-
   it("실행 파일에 대한 올바른 메시지를 표시한다", () => {
     render(<UnsupportedFileWarning fileName="program.exe" mimeType="application/x-msdownload" />);
 

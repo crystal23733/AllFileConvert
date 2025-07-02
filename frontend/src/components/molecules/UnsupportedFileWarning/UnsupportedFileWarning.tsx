@@ -33,7 +33,7 @@ const UnsupportedFileWarning: React.FC<UnsupportedFileWarningProps> = ({
         return "Flash 파일";
       }
     }
-    
+
     // 일반적인 카테고리별 메시지
     if (mime.startsWith("application/") && mime.includes("apple")) {
       return "Apple 전용 포맷 (Pages, Numbers, Keynote)";
@@ -41,7 +41,7 @@ const UnsupportedFileWarning: React.FC<UnsupportedFileWarningProps> = ({
     if (mime === "application/zip" || mime.includes("compress") || mime.includes("archive")) {
       return "압축 파일";
     }
-    
+
     return "지원하지 않는 파일 형식";
   };
 
