@@ -15,6 +15,11 @@ const UnsupportedFileWarning: React.FC<UnsupportedFileWarningProps> = ({
   className = "",
 }) => {
   const getFileTypeMessage = (mime: string) => {
+    // PDF 특별 케이스
+    if (mime === "application/pdf") {
+      return "PDF 파일 (입력 변환 지원 안함)";
+    }
+
     // 동적으로 UNSUPPORTED_FORMATS 체크
     if (UNSUPPORTED_FORMATS.includes(mime)) {
       if (mime.includes("executable") || mime.includes("msdownload")) {
@@ -57,15 +62,30 @@ const UnsupportedFileWarning: React.FC<UnsupportedFileWarningProps> = ({
             <strong>{fileName}</strong>은(는) {getFileTypeMessage(mimeType)}으로 현재 변환을
             지원하지 않습니다.
           </p>
-          <div className="text-red-600 text-xs">
-            <p>💡 대신 다음 형식의 파일을 사용해보세요:</p>
-            <ul className="list-disc ml-4 mt-1">
-              <li>문서: PDF, DOCX, PPTX, XLSX, TXT</li>
-              <li>이미지: JPG, PNG, WebP, GIF, BMP</li>
-              <li>비디오: MP4, AVI, MOV, WebM</li>
-              <li>오디오: MP3, WAV, AAC, FLAC</li>
-            </ul>
-          </div>
+          {mimeType === "application/pdf" ? (
+            <div className="text-red-600 text-xs">
+              <p>
+                📄 <strong>PDF 변환 안내:</strong>
+              </p>
+              <ul className="list-disc ml-4 mt-1">
+                <li>
+                  PDF는 변환의 <strong>출력 대상</strong>으로만 사용할 수 있습니다
+                </li>
+                <li>다른 문서를 PDF로 변환: DOCX → PDF, XLSX → PDF, PPTX → PDF</li>
+                <li>PDF에서 다른 포맷으로는 기술적 제약으로 변환할 수 없습니다</li>
+              </ul>
+            </div>
+          ) : (
+            <div className="text-red-600 text-xs">
+              <p>💡 대신 다음 형식의 파일을 사용해보세요:</p>
+              <ul className="list-disc ml-4 mt-1">
+                <li>문서: DOCX, PPTX, XLSX, TXT (PDF로 변환 가능)</li>
+                <li>이미지: JPG, PNG, WebP, GIF, BMP</li>
+                <li>비디오: MP4, AVI, MOV, WebM</li>
+                <li>오디오: MP3, WAV, AAC, FLAC</li>
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     </div>
