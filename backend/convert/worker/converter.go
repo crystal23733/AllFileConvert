@@ -187,7 +187,12 @@ func (l LibreOfficeTransformer) Transform(in, out string) error {
 		// 일반 문서 변환
 		switch ext {
 		case "pdf":
-			format = "pdf"
+			// PDF 변환 시 한글 폰트 지원을 위한 안정적인 변환
+			args = append(args,
+				"--convert-to", "pdf",
+				"--outdir", absDir,
+				"-env:UserInstallation=file:///tmp/libreoffice",
+				absIn)
 		case "docx":
 			format = "docx"
 		case "doc":
@@ -215,17 +220,24 @@ func (l LibreOfficeTransformer) Transform(in, out string) error {
 		default:
 			format = "pdf" // 기본값
 		}
-		args = append(args, "--convert-to", format, "--outdir", absDir, absIn)
+
+		// PDF가 아닌 경우 기본 변환 명령 사용
+		if ext != "pdf" {
+			args = append(args, "--convert-to", format, "--outdir", absDir, absIn)
+		}
 	}
 
 	log.Info().Strs("args", args).Msg("🔧 LibreOffice 명령 실행")
 	cmd := exec.Command(args[0], args[1:]...)
 
-	// 환경변수 설정 (LibreOffice가 headless 모드에서 안정적으로 실행되도록)
+	// 환경변수 설정 (LibreOffice가 headless 모드에서 안정적으로 실행되고 한글 폰트를 찾도록)
 	cmd.Env = append(os.Environ(),
 		"HOME=/tmp",
 		"TMPDIR=/tmp",
 		"DISPLAY=",
+		"LANG=ko_KR.UTF-8",
+		"LC_ALL=ko_KR.UTF-8",
+		"FONTCONFIG_PATH=/etc/fonts",
 	)
 
 	output, err := cmd.CombinedOutput()
