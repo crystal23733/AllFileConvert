@@ -168,12 +168,7 @@ export const SUPPORTED_INPUT_FORMATS = {
 
   // Calc 스프레드시트들 (PDF 변환 제외 - LibreOffice에서 실패)
   "application/vnd.ms-excel": ["xlsx", "ods", "csv", "txt"], // XLS
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
-    "xls",
-    "ods",
-    "csv",
-    "txt",
-  ], // XLSX
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": ["xls", "ods", "csv", "txt"], // XLSX
   "application/vnd.oasis.opendocument.spreadsheet": ["xlsx", "xls", "csv", "txt"], // ODS
   "text/csv": ["xlsx", "xls", "ods"], // CSV
 
@@ -273,7 +268,7 @@ export const getSupportedFormats = (mimeType: string): Array<{ value: string; la
         formatPool = SPREADSHEET_FORMATS;
         break;
 
-              // Impress 프레젠테이션들 - LibreOffice에서 지원하지 않음
+      // Impress 프레젠테이션들 - LibreOffice에서 지원하지 않음
       case "application/vnd.ms-powerpoint":
       case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
       case "application/vnd.oasis.opendocument.presentation":

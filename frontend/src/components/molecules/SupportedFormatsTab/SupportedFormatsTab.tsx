@@ -8,7 +8,6 @@ import {
   IMAGE_FORMATS,
   WRITER_FORMATS,
   SPREADSHEET_FORMATS,
-  PRESENTATION_FORMATS,
 } from "@/constants/convertFormats";
 
 const SupportedFormatsTab: React.FC = () => {
@@ -33,23 +32,23 @@ const SupportedFormatsTab: React.FC = () => {
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6">
         <h4 className="font-semibold text-blue-800 mb-2">💡 변환 예시</h4>
-                  <ul className="text-blue-700 space-y-1">
-            <li>
-              • <strong>비디오:</strong> MP4 → AVI, MOV, WebM, MP3, WAV 등
-            </li>
-            <li>
-              • <strong>문서:</strong> DOCX → PDF, DOC, ODT, RTF, TXT
-            </li>
-            <li>
-              • <strong>스프레드시트:</strong> XLSX → XLS, ODS, CSV, TXT (PDF 제외)
-            </li>
-            <li>
-              • <strong>이미지:</strong> PNG → JPG, WebP, AVIF 등
-            </li>
-            <li>
-              • <strong>오디오:</strong> MP3 → WAV, FLAC, AAC 등
-            </li>
-          </ul>
+        <ul className="text-blue-700 space-y-1">
+          <li>
+            • <strong>비디오:</strong> MP4 → AVI, MOV, WebM, MP3, WAV 등
+          </li>
+          <li>
+            • <strong>문서:</strong> DOCX → PDF, DOC, ODT, RTF, TXT
+          </li>
+          <li>
+            • <strong>스프레드시트:</strong> XLSX → XLS, ODS, CSV, TXT (PDF 제외)
+          </li>
+          <li>
+            • <strong>이미지:</strong> PNG → JPG, WebP, AVIF 등
+          </li>
+          <li>
+            • <strong>오디오:</strong> MP3 → WAV, FLAC, AAC 등
+          </li>
+        </ul>
       </div>
 
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-4">

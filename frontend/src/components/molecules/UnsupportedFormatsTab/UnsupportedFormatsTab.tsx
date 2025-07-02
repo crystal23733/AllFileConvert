@@ -35,8 +35,14 @@ const UnsupportedFormatsTab: React.FC = () => {
             • <strong>PDF:</strong> 다른 포맷에서 PDF로 변환은 가능하지만, PDF에서 다른 포맷으로는
             변환할 수 없습니다
           </li>
-          <li>• <strong>프레젠테이션:</strong> PPT, PPTX, ODP 파일은 LibreOffice에서 변환을 지원하지 않습니다</li>
-          <li>• <strong>스프레드시트 PDF:</strong> Excel 파일에서 PDF로의 변환은 현재 지원하지 않습니다</li>
+          <li>
+            • <strong>프레젠테이션:</strong> PPT, PPTX, ODP 파일은 LibreOffice에서 변환을 지원하지
+            않습니다
+          </li>
+          <li>
+            • <strong>스프레드시트 PDF:</strong> Excel 파일에서 PDF로의 변환은 현재 지원하지
+            않습니다
+          </li>
           <li>• Apple 포맷은 호환성 문제로 현재 지원하지 않습니다</li>
           <li>• 압축 파일은 내용 확인이 어려워 지원하지 않습니다</li>
           <li>• 실행 파일은 보안상 업로드가 차단됩니다</li>
