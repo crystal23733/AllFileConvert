@@ -3,3 +3,5 @@
 test-scripts/
 test-files/
 test-results/
+generate-test-report.py
+create-video-sample.py
