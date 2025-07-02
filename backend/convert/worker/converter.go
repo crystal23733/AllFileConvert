@@ -106,26 +106,35 @@ func (l LibreOfficeTransformer) Supports(mime, target string) bool {
 	baseMime := strings.Split(mime, ";")[0]
 	baseMime = strings.TrimSpace(baseMime)
 
-	// 문서 포맷 지원 확인
-	documentMimes := []string{
-		"application/pdf",
-		"application/msword",
-		"application/vnd.openxmlformats-officedocument.wordprocessingml.document", // docx
-		"application/vnd.ms-powerpoint",
-		"application/vnd.openxmlformats-officedocument.presentationml.presentation", // pptx
-		"application/vnd.ms-excel",
-		"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // xlsx
-		"application/vnd.oasis.opendocument.text",                           // odt
-		"application/vnd.oasis.opendocument.spreadsheet",                    // ods
-		"application/vnd.oasis.opendocument.presentation",                   // odp
-		"text/plain",
-		"text/rtf",
-		"text/csv",
+	// LibreOffice 변환 매트릭스 (실제 테스트 완료된 변환만 포함)
+	supportedConversions := map[string][]string{
+		// Writer 문서들 (텍스트 기반) - 실제 작동 확인됨
+		"application/msword":        {"pdf", "docx", "odt", "rtf", "txt"},
+		"application/x-ole-storage": {"pdf", "docx", "odt", "rtf", "txt"}, // 구버전 DOC 파일
+		"application/vnd.openxmlformats-officedocument.wordprocessingml.document": {"pdf", "doc", "odt", "rtf", "txt"},
+		"application/vnd.oasis.opendocument.text":                                 {"pdf", "docx", "doc", "rtf", "txt"},
+		"text/plain": {"pdf", "docx", "doc", "odt", "rtf"},
+		"text/rtf":   {"pdf", "docx", "doc", "odt", "txt"},
+
+		// Calc 스프레드시트들 (PDF 변환 제외 - 실패함)
+		"application/vnd.ms-excel": {"xlsx", "ods", "csv", "txt"},
+		"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {"xls", "ods", "csv", "txt"},
+		"application/vnd.oasis.opendocument.spreadsheet":                    {"xlsx", "xls", "csv", "txt"},
+		"text/csv": {"xlsx", "xls", "ods"},
+
+		// Impress 프레젠테이션들 - LibreOffice에서 지원하지 않음 (모든 변환 실패)
+		// "application/vnd.ms-powerpoint": {},
+		// "application/vnd.openxmlformats-officedocument.presentationml.presentation": {},
+		// "application/vnd.oasis.opendocument.presentation": {},
+
+		// PDF는 LibreOffice에서 변환 지원하지 않음 (import만 가능, export filter 없음)
 	}
 
-	documentTargets := []string{"pdf", "docx", "doc", "pptx", "ppt", "xlsx", "xls", "txt", "rtf", "odt", "ods", "odp", "csv"}
+	if supportedTargets, exists := supportedConversions[baseMime]; exists {
+		return contains(supportedTargets, target)
+	}
 
-	return contains(documentMimes, baseMime) && contains(documentTargets, target)
+	return false
 }
 
 func (l LibreOfficeTransformer) Transform(in, out string) error {
@@ -146,18 +155,8 @@ func (l LibreOfficeTransformer) Transform(in, out string) error {
 		return err
 	}
 
-	// 파일 내용으로 CSV 여부 확인 (확장자가 없는 경우)
+	// CSV 파일 확인 (확장자 기반으로만 판단 - 내용 분석 제거)
 	isCSV := inputExt == "csv"
-	if !isCSV {
-		// 파일 첫 몇 줄을 읽어서 CSV 형태인지 확인
-		if content, err := os.ReadFile(absIn); err == nil {
-			firstLine := strings.Split(string(content), "\n")[0]
-			// CSV 특징: 쉼표로 구분된 필드
-			if strings.Contains(firstLine, ",") && len(strings.Split(firstLine, ",")) > 1 {
-				isCSV = true
-			}
-		}
-	}
 
 	var format string
 	var args []string
