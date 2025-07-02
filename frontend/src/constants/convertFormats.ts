@@ -43,22 +43,53 @@ export const IMAGE_FORMATS = [
 ];
 
 /**
- * 문서 변환 포맷
+ * Writer 문서 포맷 (텍스트 기반)
  */
-export const DOCUMENT_FORMATS = [
+export const WRITER_FORMATS = [
   { value: "pdf", label: "PDF" },
   { value: "docx", label: "DOCX" },
   { value: "doc", label: "DOC" },
-  { value: "pptx", label: "PPTX" },
-  { value: "ppt", label: "PPT" },
+  { value: "odt", label: "ODT (OpenDocument Text)" },
+  { value: "rtf", label: "RTF" },
+  { value: "txt", label: "TXT" },
+];
+
+/**
+ * Calc 스프레드시트 포맷
+ */
+export const SPREADSHEET_FORMATS = [
   { value: "xlsx", label: "XLSX" },
   { value: "xls", label: "XLS" },
-  { value: "txt", label: "TXT" },
-  { value: "rtf", label: "RTF" },
-  { value: "csv", label: "CSV" },
-  { value: "odt", label: "ODT (OpenDocument Text)" },
   { value: "ods", label: "ODS (OpenDocument Spreadsheet)" },
-  { value: "odp", label: "ODP (OpenDocument Presentation)" },
+  { value: "csv", label: "CSV" },
+  { value: "txt", label: "TXT" },
+]; // PDF 제외 - LibreOffice에서 실패
+
+/**
+ * Impress 프레젠테이션 포맷
+ */
+export const PRESENTATION_FORMATS: Array<{ value: string; label: string }> = [
+  // LibreOffice에서 프레젠테이션 변환 지원하지 않음 (모든 변환 실패)
+];
+
+/**
+ * PDF 변환 포맷 (제한적)
+ */
+export const PDF_FORMATS = [
+  { value: "txt", label: "TXT" }, // PDF는 텍스트 추출만 가능
+];
+
+/**
+ * 모든 문서 포맷 (레거시 호환성용)
+ */
+export const DOCUMENT_FORMATS = [
+  ...WRITER_FORMATS,
+  ...SPREADSHEET_FORMATS.filter(f => !WRITER_FORMATS.find(w => w.value === f.value)),
+  ...PRESENTATION_FORMATS.filter(
+    f =>
+      !WRITER_FORMATS.find(w => w.value === f.value) &&
+      !SPREADSHEET_FORMATS.find(s => s.value === f.value)
+  ),
 ];
 
 /**
@@ -119,31 +150,37 @@ export const SUPPORTED_INPUT_FORMATS = {
   "audio/m4a": ["mp3", "wav", "aac", "flac", "ogg", "m4a"], // 정규화된 M4A
   "audio/x-m4a": ["mp3", "wav", "aac", "flac", "ogg", "m4a"], // 원본 M4A MIME
 
-  // 문서 - 백엔드 LibreOfficeTransformer 지원 포맷 (정규화된 MIME 타입 포함)
-  "application/pdf": ["docx", "doc", "txt", "rtf", "odt"],
-  "application/msword": ["pdf", "docx", "txt", "rtf", "odt"], // DOC
+  // 문서 - 백엔드 LibreOfficeTransformer 지원 포맷 (실제 지원되는 변환만)
+  // Writer 문서들 (텍스트 기반)
+  "application/msword": ["pdf", "docx", "odt", "rtf", "txt"], // DOC
+  "application/x-ole-storage": ["pdf", "docx", "odt", "rtf", "txt"], // 구버전 DOC 파일
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [
     "pdf",
     "doc",
-    "txt",
-    "rtf",
     "odt",
+    "rtf",
+    "txt",
   ], // DOCX
-  "application/vnd.ms-powerpoint": ["pdf", "pptx", "odp"], // PPT
-  "application/vnd.openxmlformats-officedocument.presentationml.presentation": [
-    "pdf",
-    "ppt",
-    "odp",
-  ], // PPTX
-  "application/vnd.ms-excel": ["pdf", "xlsx", "csv", "ods"], // XLS
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": ["pdf", "xls", "csv", "ods"], // XLSX
-  "application/vnd.oasis.opendocument.text": ["pdf", "docx", "doc", "txt", "rtf"], // ODT
-  "application/vnd.oasis.opendocument.spreadsheet": ["pdf", "xlsx", "xls", "csv"], // ODS
-  "application/vnd.oasis.opendocument.presentation": ["pdf", "pptx", "ppt"], // ODP
-  "text/plain": ["pdf", "docx", "doc", "rtf", "odt"], // TXT
-  "text/rtf": ["pdf", "docx", "doc", "txt", "odt"], // 정규화된 RTF
-  "application/rtf": ["pdf", "docx", "doc", "txt", "odt"], // 원본 RTF MIME
-  "text/csv": ["pdf", "xlsx", "xls", "ods"], // CSV
+  "application/vnd.oasis.opendocument.text": ["pdf", "docx", "doc", "rtf", "txt"], // ODT
+  "text/plain": ["pdf", "docx", "doc", "odt", "rtf"], // TXT
+  "text/rtf": ["pdf", "docx", "doc", "odt", "txt"], // 정규화된 RTF
+  "application/rtf": ["pdf", "docx", "doc", "odt", "txt"], // 원본 RTF MIME
+
+  // Calc 스프레드시트들 (PDF 변환 제외 - LibreOffice에서 실패)
+  "application/vnd.ms-excel": ["xlsx", "ods", "csv", "txt"], // XLS
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
+    "xls",
+    "ods",
+    "csv",
+    "txt",
+  ], // XLSX
+  "application/vnd.oasis.opendocument.spreadsheet": ["xlsx", "xls", "csv", "txt"], // ODS
+  "text/csv": ["xlsx", "xls", "ods"], // CSV
+
+  // Impress 프레젠테이션들 - LibreOffice에서 지원하지 않음 (모든 변환 실패)
+  // "application/vnd.ms-powerpoint": [], // PPT
+  // "application/vnd.openxmlformats-officedocument.presentationml.presentation": [], // PPTX
+  // "application/vnd.oasis.opendocument.presentation": [], // ODP
 };
 
 /**
@@ -181,6 +218,10 @@ export const FORMAT_CATEGORIES = {
   video: VIDEO_FORMATS,
   audio: AUDIO_FORMATS,
   document: DOCUMENT_FORMATS,
+  writer: WRITER_FORMATS,
+  spreadsheet: SPREADSHEET_FORMATS,
+  presentation: PRESENTATION_FORMATS,
+  pdf: PDF_FORMATS,
 };
 
 /**
@@ -195,15 +236,61 @@ export const getFormatCategory = (mimeType: string): string => {
 };
 
 /**
- * 지원하는 변환 포맷 목록 가져오기
+ * 지원하는 변환 포맷 목록 가져오기 (MIME 타입별 정확한 매칭)
  */
 export const getSupportedFormats = (mimeType: string): Array<{ value: string; label: string }> => {
   const supportedExtensions =
     SUPPORTED_INPUT_FORMATS[mimeType as keyof typeof SUPPORTED_INPUT_FORMATS] || [];
-  const category = getFormatCategory(mimeType);
-  const allFormats = FORMAT_CATEGORIES[category as keyof typeof FORMAT_CATEGORIES] || [];
 
-  return allFormats.filter((format: { value: string; label: string }) =>
+  // MIME 타입별로 적절한 포맷 풀 선택
+  let formatPool: Array<{ value: string; label: string }> = [];
+
+  if (mimeType.startsWith("image/")) {
+    formatPool = IMAGE_FORMATS;
+  } else if (mimeType.startsWith("video/")) {
+    formatPool = VIDEO_FORMATS;
+  } else if (mimeType.startsWith("audio/")) {
+    formatPool = AUDIO_FORMATS;
+  } else {
+    // 문서 타입별 세분화
+    switch (mimeType) {
+      // Writer 문서들
+      case "application/msword":
+      case "application/x-ole-storage": // 구버전 DOC 파일
+      case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+      case "application/vnd.oasis.opendocument.text":
+      case "text/plain":
+      case "text/rtf":
+      case "application/rtf":
+        formatPool = WRITER_FORMATS;
+        break;
+
+      // Calc 스프레드시트들
+      case "application/vnd.ms-excel":
+      case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+      case "application/vnd.oasis.opendocument.spreadsheet":
+      case "text/csv":
+        formatPool = SPREADSHEET_FORMATS;
+        break;
+
+              // Impress 프레젠테이션들 - LibreOffice에서 지원하지 않음
+      case "application/vnd.ms-powerpoint":
+      case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+      case "application/vnd.oasis.opendocument.presentation":
+        formatPool = []; // 빈 배열로 지원하지 않음을 표시
+        break;
+
+      // PDF는 변환 지원하지 않음 (LibreOffice export filter 없음)
+      case "application/pdf":
+        formatPool = []; // 빈 배열로 지원하지 않음을 표시
+        break;
+
+      default:
+        formatPool = DOCUMENT_FORMATS; // 폴백
+    }
+  }
+
+  return formatPool.filter((format: { value: string; label: string }) =>
     supportedExtensions.includes(format.value)
   );
 };
