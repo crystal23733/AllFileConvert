@@ -15,12 +15,18 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main ./cmd
 # 실행 스테이지
 FROM alpine:latest
 
-# 변환 도구들 설치
+# 변환 도구들 및 한글 폰트 설치
 RUN apk update && apk add --no-cache \
   ffmpeg \
   libreoffice \
   imagemagick \
+  fontconfig \
+  font-noto-cjk \
+  font-noto-cjk-extra \
   && rm -rf /var/cache/apk/*
+
+# 폰트 캐시 재생성
+RUN fc-cache -fv
 
 WORKDIR /app
 
