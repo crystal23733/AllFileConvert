@@ -1,0 +1,238 @@
+{
+  "common": {
+    "loading": "読み込み中...",
+    "error": "エラー",
+    "success": "成功",
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "close": "閉じる",
+    "save": "保存",
+    "delete": "削除",
+    "edit": "編集",
+    "back": "戻る",
+    "next": "次へ",
+    "previous": "前へ",
+    "submit": "送信",
+    "reset": "リセット",
+    "search": "検索",
+    "filter": "フィルター",
+    "sort": "並び替え",
+    "upload": "アップロード",
+    "download": "ダウンロード",
+    "retry": "再試行",
+    "refresh": "更新"
+  },
+  "header": {
+    "title": "AllFileConvert",
+    "subtitle": "ファイル変換サービス",
+    "languageSelect": "言語選択"
+  },
+  "footer": {
+    "copyright": "© {{year}} AllFileConvert | ファイル変換サービス",
+    "privacy": "プライバシーポリシー",
+    "terms": "利用規約"
+  },
+  "upload": {
+    "title": "ファイルアップロード",
+    "dropzone": {
+      "text": "ファイルをドラッグ＆ドロップするか<1>クリック</1>して選択してください",
+      "hint": "最大200MB、mp4/pdf/jpg等対応",
+      "label": "ファイルアップロード"
+    },
+    "format": {
+      "label": "変換形式を選択",
+      "placeholder": "形式を選択してください"
+    },
+    "button": {
+      "convert": "変換開始",
+      "converting": "アップロード中…"
+    },
+    "preview": {
+      "title": "アップロードされたファイル",
+      "remove": "削除"
+    }
+  },
+  "conversion": {
+    "status": {
+      "idle": "ファイルをアップロードしてください。",
+      "pending": "アップロード中",
+      "processing": "変換中",
+      "completed": "変換完了",
+      "failed": "変換失敗"
+    },
+    "progress": {
+      "uploading": "ファイルをアップロード中...",
+      "converting": "ファイルを変換中...",
+      "completed": "変換が完了しました！",
+      "failed": "変換に失敗しました。もう一度お試しください。",
+      "processing": "変換処理中です。しばらくお待ちください。",
+      "checking": "状態確認中…"
+    },
+    "download": {
+      "button": "ファイルをダウンロード",
+      "completed": "ダウンロード完了",
+      "error": "ダウンロード中にエラーが発生しました。"
+    }
+  },
+  "formats": {
+    "video": {
+      "mp4": "MP4",
+      "avi": "AVI",
+      "mov": "MOV",
+      "webm": "WEBM",
+      "mkv": "MKV",
+      "wmv": "WMV",
+      "flv": "FLV",
+      "m4v": "M4V"
+    },
+    "audio": {
+      "mp3": "MP3",
+      "wav": "WAV",
+      "aac": "AAC",
+      "flac": "FLAC",
+      "ogg": "OGG",
+      "m4a": "M4A"
+    },
+    "image": {
+      "jpg": "JPG",
+      "png": "PNG",
+      "webp": "WEBP",
+      "bmp": "BMP",
+      "gif": "GIF",
+      "svg": "SVG",
+      "tiff": "TIFF",
+      "ico": "ICO",
+      "avif": "AVIF"
+    },
+    "document": {
+      "pdf": "PDF",
+      "docx": "DOCX",
+      "doc": "DOC",
+      "odt": "ODT (OpenDocument Text)",
+      "rtf": "RTF",
+      "txt": "TXT",
+      "xlsx": "XLSX",
+      "xls": "XLS",
+      "ods": "ODS (OpenDocument Spreadsheet)",
+      "csv": "CSV"
+    }
+  },
+  "formatInfo": {
+    "title": "対応形式情報",
+    "tabs": {
+      "supported": "✅ 対応形式",
+      "unsupported": "❌ 非対応形式"
+    },
+    "supported": {
+      "description": "以下の形式間での変換をサポートしています：",
+      "categories": {
+        "video": "🎬 動画",
+        "audio": "🎵 音声",
+        "image": "🖼️ 画像",
+        "document": "📝 文書",
+        "spreadsheet": "📊 スプレッドシート"
+      },
+      "examples": {
+        "title": "💡 変換例",
+        "video": "• **動画:** MP4 → AVI, MOV, WebM, MP3, WAV など",
+        "document": "• **文書:** DOCX → PDF, DOC, ODT, RTF, TXT",
+        "spreadsheet": "• **スプレッドシート:** XLSX → XLS, ODS, CSV, TXT (PDF除く)",
+        "image": "• **画像:** PNG → JPG, WebP, AVIF など",
+        "audio": "• **音声:** MP3 → WAV, FLAC, AAC など"
+      },
+      "pdfWarning": {
+        "title": "⚠️ PDF変換制限",
+        "description": "**PDFから他の形式への変換はサポートされていません。**\nPDFは他の形式から変換する出力先としてのみ使用できます。（例：DOCX → PDF、XLSX → PDF）"
+      },
+      "koreanSupport": {
+        "title": "🎯 韓国語サポート",
+        "description": "すべての文書変換で韓国語が完全にサポートされています。PDF変換時も韓国語が四角（□）で表示されることなく正常に表示されます。"
+      }
+    },
+    "unsupported": {
+      "description": "セキュリティ上の理由により、以下のファイル形式はサポートされていません：",
+      "types": {
+        "pdf": "⚠️ PDFファイル (.pdf) - 入力として使用不可",
+        "presentation": "⚠️ プレゼンテーションファイル (.ppt, .pptx, .odp) - LibreOfficeサポートなし",
+        "apple": "🚫 Apple専用形式 (.pages, .numbers, .keynote)",
+        "archive": "🚫 圧縮ファイル (.zip, .rar, .7z)",
+        "executable": "🚫 実行ファイル (.exe, .app, .deb)",
+        "system": "🚫 システムファイル (.dll, .so, .dylib)",
+        "encrypted": "🚫 暗号化ファイル (.p7c, .cer)",
+        "database": "🚫 データベースファイル (.sqlite, .mdb)",
+        "font": "🚫 フォントファイル (.ttf, .woff)",
+        "flash": "🚫 Flashファイル (.swf)"
+      },
+      "warnings": {
+        "title": "⚠️ 注意事項",
+        "pdf": "• **PDF:** 他の形式からPDFへの変換は可能ですが、PDFから他の形式への変換はサポートされていません",
+        "presentation": "• **プレゼンテーション:** PPT、PPTX、ODPファイルはLibreOfficeコンバーターでサポートされていません",
+        "spreadsheetPdf": "• **スプレッドシートPDF:** ExcelからPDFへの変換は現在サポートされていません",
+        "apple": "• Apple形式は互換性の問題により現在サポートされていません",
+        "archive": "• 圧縮ファイルは内容確認が困難なためサポートされていません",
+        "executable": "• 実行ファイルはセキュリティ上の理由でブロックされています",
+        "encrypted": "• 暗号化ファイルは変換できません",
+        "corrupted": "• 破損したファイルは変換に失敗する可能性があります",
+        "size": "• ファイルサイズは最大100MBまでサポートされています"
+      }
+    },
+    "button": "📋 対応形式を確認"
+  },
+  "warnings": {
+    "unsupportedFile": {
+      "title": "サポートされていないファイル形式",
+      "description": "**{{fileName}}**は{{fileType}}で、現在変換がサポートされていません。",
+      "pdfGuide": {
+        "title": "📄 **PDF変換ガイド:**",
+        "output": "• PDFは変換の**出力先**としてのみ使用できます",
+        "examples": "• 他の文書をPDFに変換: DOCX → PDF、XLSX → PDF、PPTX → PDF",
+        "limitation": "• PDFから他の形式への変換は技術的制約により不可能です"
+      },
+      "alternatives": {
+        "title": "💡 代わりに以下の形式のファイルをお試しください：",
+        "document": "• 文書: DOCX、PPTX、XLSX、TXT（PDFに変換可能）",
+        "image": "• 画像: JPG、PNG、WebP、GIF、BMP",
+        "video": "• 動画: MP4、AVI、MOV、WebM",
+        "audio": "• 音声: MP3、WAV、AAC、FLAC"
+      }
+    },
+    "tokenExpired": "ダウンロードトークンの有効期限が切れました。セキュリティのため、ファイルを再度変換してください。",
+    "tokenInvalid": "ダウンロードトークンの有効期限が切れているか無効です。ファイルを再度変換してください。",
+    "conversionIdMissing": "変換IDがありません。",
+    "networkError": "ネットワークエラーが発生しました。接続を確認してください。",
+    "serverError": "サーバーエラーが発生しました。しばらく後でもう一度お試しください。"
+  },
+  "errors": {
+    "boundary": {
+      "title": "不明なエラーが発生しました。",
+      "message": "ページを更新するか、管理者にお問い合わせください。"
+    },
+    "notFound": {
+      "title": "404 - ページが見つかりません",
+      "description": "お探しのページは存在しないか、削除された可能性があります。",
+      "button": "ホームに戻る"
+    }
+  },
+  "ads": {
+    "left": "[左側広告エリア]",
+    "right": "[右側広告エリア]",
+    "top": "[上部広告エリア]",
+    "bottom": "[下部広告エリア]"
+  },
+  "preview": {
+    "title": "変換結果プレビュー",
+    "unsupported": "このファイルタイプはプレビューをサポートしていません。",
+    "pdfTitle": "PDFプレビュー"
+  },
+  "fileTypes": {
+    "pdf": "PDFファイル（入力変換サポートなし）",
+    "executable": "実行ファイル",
+    "database": "データベースファイル",
+    "font": "フォントファイル",
+    "certificate": "証明書ファイル",
+    "flash": "Flashファイル",
+    "apple": "Apple専用形式（Pages、Numbers、Keynote）",
+    "archive": "圧縮ファイル",
+    "unsupported": "サポートされていないファイル形式"
+  }
+} 
