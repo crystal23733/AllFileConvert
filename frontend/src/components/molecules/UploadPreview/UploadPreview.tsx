@@ -1,9 +1,14 @@
+"use client";
+
 import { FC } from "react";
+import { useTranslation } from "react-i18next";
 import UploadPreviewProps from "./UploadPreview.types";
 import Typography from "@/components/atoms/Typography/Typography";
 import formatSize from "@/util/formatSize";
 
 const UploadPreview: FC<UploadPreviewProps> = ({ files, onRemove, className = "" }) => {
+  const { t } = useTranslation();
+
   if (files.length === 0) return null;
 
   return (
@@ -24,8 +29,9 @@ const UploadPreview: FC<UploadPreviewProps> = ({ files, onRemove, className = ""
               type="button"
               onClick={() => onRemove(idx)}
               className="text-red-400 hover:text-red-600 text-xs px-2"
+              title={t("upload.preview.remove")}
             >
-              삭제
+              {t("upload.preview.remove")}
             </button>
           )}
         </div>

@@ -1,14 +1,19 @@
+"use client";
+
 import { FC } from "react";
+import { useTranslation } from "react-i18next";
 import ResultPreviewProps from "./ResultPreview.types";
 import Typography from "@/components/atoms/Typography/Typography";
 import Image from "next/image";
 
 const ResultPreview: FC<ResultPreviewProps> = ({ url, type, filename, className = "" }) => {
+  const { t } = useTranslation();
+
   if (!url) return null;
   return (
     <div className={`rounded bg-gray-100 p-4 flex flex-col items-center ${className}`}>
       <Typography variant="subtitle" className="mb-2">
-        변환 결과 미리보기
+        {t("preview.title")}
       </Typography>
       {type === "image" && (
         <Image
@@ -25,12 +30,12 @@ const ResultPreview: FC<ResultPreviewProps> = ({ url, type, filename, className 
         <iframe
           src={url}
           className="w-full h-72 rounded shadow"
-          title={filename ?? "PDF 미리보기"}
+          title={filename ?? t("preview.pdfTitle")}
         />
       )}
       {type !== "image" && type !== "video" && type !== "pdf" && (
         <Typography variant="label" className="text-gray-500">
-          미리보기를 지원하지 않는 파일 유형입니다.
+          {t("preview.unsupported")}
         </Typography>
       )}
     </div>
