@@ -1,4 +1,7 @@
+"use client";
+
 import { FC } from "react";
+import { useTranslation } from "react-i18next";
 import StatusPanelProps from "./StatusPanel.types";
 import Typography from "@/components/atoms/Typography/Typography";
 import ProgressBarWithLabel from "@/components/molecules/ProgressBarWithLabel/ProgressBarWithLabel";
@@ -13,6 +16,8 @@ const StatusPanel: FC<StatusPanelProps> = ({
   error,
   className = "",
 }) => {
+  const { t } = useTranslation();
+
   return (
     <section
       className={`max-w-lg mx-auto p-4 bg-white rounded shadow space-y-4 mt-4 ${className}`}
@@ -21,7 +26,7 @@ const StatusPanel: FC<StatusPanelProps> = ({
       {/* 상태에 따라 UI 분기 */}
       {status === "idle" && (
         <Typography variant="body" className="text-center">
-          파일을 업로드해 주세요.
+          {t("conversion.status.idle")}
         </Typography>
       )}
 
@@ -31,11 +36,11 @@ const StatusPanel: FC<StatusPanelProps> = ({
           <div className="flex justify-center pt-2">
             <Spinner />
             {isPolling && (
-              <span className="text-xs text-gray-400 animate-pulse">상태 확인 중…</span>
+              <span className="text-xs text-gray-400 animate-pulse">{t("conversion.progress.checking")}</span>
             )}
           </div>
           <Typography variant="label" className="text-blue-600 text-center">
-            변환이 진행 중입니다. 잠시만 기다려주세요.
+            {t("conversion.progress.processing")}
           </Typography>
         </>
       )}
@@ -44,10 +49,10 @@ const StatusPanel: FC<StatusPanelProps> = ({
         <>
           <ProgressBarWithLabel status="completed" />
           <Typography variant="subtitle" className="text-center text-green-600">
-            변환이 완료되었습니다!
+            {t("conversion.progress.completed")}
           </Typography>
           <Button variant="primary" onClick={onDownload}>
-            다운로드
+            {t("conversion.download.button")}
           </Button>
         </>
       )}
@@ -56,7 +61,7 @@ const StatusPanel: FC<StatusPanelProps> = ({
         <>
           <ProgressBarWithLabel status="failed" />
           <Typography variant="subtitle" className="text-center text-red-600">
-            변환에 실패했습니다. 다시 시도해 주세요.
+            {t("conversion.progress.failed")}
           </Typography>
           {error && (
             <Typography variant="label" className="text-center text-red-400">
