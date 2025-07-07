@@ -197,12 +197,51 @@
       }
     },
     "tokenExpired": "Download token has expired. Please convert the file again for security.",
-    "tokenInvalid": "Download token has expired or is invalid. Please convert the file again.",
-    "conversionIdMissing": "Conversion ID is missing.",
-    "networkError": "Network error occurred. Please check your connection.",
-    "serverError": "Server error occurred. Please try again later."
+    "tokenInvalid": "Download token has expired or is invalid. Please convert the file again."
+  },
+  "feedback": {
+    "title": "User Feedback",
+    "description": "Feel free to report bugs, suggest features, improvements, or any other feedback.",
+    "button": "💬 Send Feedback",
+    "form": {
+      "email": {
+        "label": "Email Address",
+        "placeholder": "hottoplay24@gmail.com",
+        "required": "Please enter your email address.",
+        "invalid": "Please enter a valid email format."
+      },
+      "type": {
+        "label": "Feedback Type",
+        "placeholder": "Please select feedback type"
+      },
+      "message": {
+        "label": "Message",
+        "placeholder": "Please enter detailed information...",
+        "required": "Please enter a message.",
+        "minLength": "Please enter at least 10 characters."
+      }
+    },
+    "types": {
+      "bug": "🐛 Bug Report",
+      "feature": "💡 Feature Request", 
+      "improvement": "⚡ Improvement",
+      "general": "💬 General Inquiry"
+    },
+    "actions": {
+      "send": "Send Feedback",
+      "sending": "Sending...",
+      "cancel": "Cancel"
+    },
+    "messages": {
+      "success": "Thank you for your valuable feedback! We will review and contact you.",
+      "error": "Failed to send feedback. Please try again later.",
+            "networkError": "A network error occurred. Please check your internet connection."
+    }
   },
   "errors": {
+    "conversionIdMissing": "Conversion ID is missing.",
+    "networkError": "Network error occurred. Please check your connection.",
+    "serverError": "Server error occurred. Please try again later.",
     "boundary": {
       "title": "An unknown error occurred.",
       "message": "Please refresh the page or contact the administrator."
