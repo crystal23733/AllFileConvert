@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { useTranslation } from "react-i18next";
 import UploadFormProps from "./UploadForm.types";
 import Dropzone from "../../molecules/DropZone/Dropzone";
 import FormatSelect from "../../molecules/FormatSelect/FormatSelect";
@@ -14,6 +15,8 @@ const UploadForm: FC<UploadFormProps> = ({
   formatOptions,
   className = "",
 }) => {
+  const { t } = useTranslation();
+
   return (
     <form
       className={`space-y-4 max-w-lg mx-auto p-4 bg-white rounded shadow ${className}`}
@@ -28,9 +31,10 @@ const UploadForm: FC<UploadFormProps> = ({
         onChange={onFormatChange}
         options={formatOptions}
         disabled={disabled}
+        label={t("upload.format.label")}
       />
       <Button variant="primary" type="submit" disabled={disabled || isSubmitting}>
-        {isSubmitting ? "업로드 중…" : "변환 요청"}
+        {isSubmitting ? t("upload.button.converting") : t("upload.button.convert")}
       </Button>
     </form>
   );

@@ -1,11 +1,12 @@
 import { Component, ErrorInfo, ReactNode } from "react";
+import { withTranslation, WithTranslation } from "react-i18next";
 
 /**
  * 하위 트리 컴포넌트에서 발생한 JavaScript 오류를 잡아서, 전체 앱이 죽지 않게 fallback UI로 대체 렌더링
  * @property {ReactNode} children - 감싸고자 하는 하위 컴포넌트 트리
  * @property {ReactNode} fallback - 에러 발생 시 대신 보여줄 UI (기본 값: 간단한 에러 메시지)
  */
-interface ErrorBoundaryProps {
+interface ErrorBoundaryProps extends WithTranslation {
   children: ReactNode;
   fallback?: ReactNode;
 }
@@ -20,7 +21,7 @@ interface ErrorBoundaryState {
   error: Error | null;
 }
 
-export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false, error: null };
@@ -43,8 +44,8 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
       return (
         this.props.fallback ?? (
           <div className="p-8 text-center text-red-600">
-            <div className="text-xl mb-2 font-bold">알 수 없는 오류가 발생했습니다.</div>
-            <div className="text-sm text-gray-500">{this.state.error?.message}</div>
+            <div className="text-xl mb-2 font-bold">{this.props.t("errors.boundary.title")}</div>
+            <div className="text-sm text-gray-500">{this.props.t("errors.boundary.message")}</div>
           </div>
         )
       );
@@ -52,3 +53,5 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
     return this.props.children;
   }
 }
+
+export default withTranslation()(ErrorBoundary);

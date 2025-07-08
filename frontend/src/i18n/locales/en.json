@@ -1,0 +1,277 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "reset": "Reset",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "upload": "Upload",
+    "download": "Download",
+    "retry": "Retry",
+    "refresh": "Refresh"
+  },
+  "header": {
+    "title": "AllFileConvert",
+    "subtitle": "Universal File Conversion Service",
+    "languageSelect": "Language Selection"
+  },
+  "footer": {
+    "copyright": "© {{year}} AllFileConvert | Universal File Conversion Service",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "upload": {
+    "title": "File Upload",
+    "dropzone": {
+      "text": "Drag and drop files or <1>click</1> to select",
+      "hint": "Max 200MB, supports mp4/pdf/jpg etc.",
+      "label": "File Upload"
+    },
+    "format": {
+      "label": "Select Conversion Format",
+      "placeholder": "Choose a format"
+    },
+    "button": {
+      "convert": "Convert File",
+      "converting": "Uploading…"
+    },
+    "preview": {
+      "title": "Uploaded Files",
+      "remove": "Remove"
+    }
+  },
+  "conversion": {
+    "status": {
+      "idle": "Please upload a file.",
+      "pending": "Uploading",
+      "processing": "Converting",
+      "completed": "Conversion Complete",
+      "failed": "Conversion Failed"
+    },
+    "progress": {
+      "uploading": "Uploading file...",
+      "converting": "Converting file...",
+      "completed": "Conversion completed successfully!",
+      "failed": "Conversion failed. Please try again.",
+      "processing": "Conversion in progress. Please wait.",
+      "checking": "Checking status…"
+    },
+    "download": {
+      "button": "Download File",
+      "completed": "Download Complete",
+      "error": "An error occurred during download."
+    }
+  },
+  "formats": {
+    "video": {
+      "mp4": "MP4",
+      "avi": "AVI",
+      "mov": "MOV",
+      "webm": "WEBM",
+      "mkv": "MKV",
+      "wmv": "WMV",
+      "flv": "FLV",
+      "m4v": "M4V"
+    },
+    "audio": {
+      "mp3": "MP3",
+      "wav": "WAV",
+      "aac": "AAC",
+      "flac": "FLAC",
+      "ogg": "OGG",
+      "m4a": "M4A"
+    },
+    "image": {
+      "jpg": "JPG",
+      "png": "PNG",
+      "webp": "WEBP",
+      "bmp": "BMP",
+      "gif": "GIF",
+      "svg": "SVG",
+      "tiff": "TIFF",
+      "ico": "ICO",
+      "avif": "AVIF"
+    },
+    "document": {
+      "pdf": "PDF",
+      "docx": "DOCX",
+      "doc": "DOC",
+      "odt": "ODT (OpenDocument Text)",
+      "rtf": "RTF",
+      "txt": "TXT",
+      "xlsx": "XLSX",
+      "xls": "XLS",
+      "ods": "ODS (OpenDocument Spreadsheet)",
+      "csv": "CSV"
+    }
+  },
+  "formatInfo": {
+    "title": "Supported Format Information",
+    "tabs": {
+      "supported": "✅ Supported Formats",
+      "unsupported": "❌ Unsupported Formats"
+    },
+    "supported": {
+      "description": "We support conversions between the following formats:",
+      "categories": {
+        "video": "🎬 Video",
+        "audio": "🎵 Audio",
+        "image": "🖼️ Image",
+        "document": "📝 Text Documents",
+        "spreadsheet": "📊 Spreadsheets"
+      },
+      "examples": {
+        "title": "💡 Conversion Examples",
+        "video": "• **Video:** MP4 → AVI, MOV, WebM, MP3, WAV etc.",
+        "document": "• **Documents:** DOCX → PDF, DOC, ODT, RTF, TXT",
+        "spreadsheet": "• **Spreadsheets:** XLSX → XLS, ODS, CSV, TXT (PDF excluded)",
+        "image": "• **Images:** PNG → JPG, WebP, AVIF etc.",
+        "audio": "• **Audio:** MP3 → WAV, FLAC, AAC etc."
+      },
+      "pdfWarning": {
+        "title": "⚠️ PDF Conversion Limitations",
+        "description": "**Conversion from PDF to other formats is not supported.**\nPDF can only be used as an output target for conversion from other formats. (e.g., DOCX → PDF, XLSX → PDF)"
+      },
+      "koreanSupport": {
+        "title": "🎯 Korean Language Support",
+        "description": "Korean text is fully supported in all document conversions. Korean characters display correctly in PDF conversions without showing as squares (□)."
+      }
+    },
+    "unsupported": {
+      "description": "The following file formats are not supported for security reasons:",
+      "types": {
+        "pdf": "⚠️ PDF files (.pdf) - Cannot be used as input",
+        "presentation": "⚠️ Presentation files (.ppt, .pptx, .odp) - No LibreOffice support",
+        "apple": "🚫 Apple proprietary formats (.pages, .numbers, .keynote)",
+        "archive": "🚫 Archive files (.zip, .rar, .7z)",
+        "executable": "🚫 Executable files (.exe, .app, .deb)",
+        "system": "🚫 System files (.dll, .so, .dylib)",
+        "encrypted": "🚫 Encrypted files (.p7c, .cer)",
+        "database": "🚫 Database files (.sqlite, .mdb)",
+        "font": "🚫 Font files (.ttf, .woff)",
+        "flash": "🚫 Flash files (.swf)"
+      },
+      "warnings": {
+        "title": "⚠️ Important Notes",
+        "pdf": "• **PDF:** Conversion to PDF from other formats is possible, but conversion from PDF to other formats is not supported",
+        "presentation": "• **Presentations:** PPT, PPTX, ODP files are not supported by LibreOffice converter",
+        "spreadsheetPdf": "• **Spreadsheet PDF:** Excel to PDF conversion is currently not supported",
+        "apple": "• Apple formats are not supported due to compatibility issues",
+        "archive": "• Archive files are not supported due to content verification difficulties",
+        "executable": "• Executable files are blocked for security reasons",
+        "encrypted": "• Encrypted files cannot be converted",
+        "corrupted": "• Corrupted files may fail to convert",
+        "size": "• Maximum file size is 100MB"
+      }
+    },
+    "button": "📋 Check Supported Formats"
+  },
+  "warnings": {
+    "unsupportedFile": {
+      "title": "Unsupported File Format",
+      "description": "**{{fileName}}** is a {{fileType}} and is currently not supported for conversion.",
+      "pdfGuide": {
+        "title": "📄 **PDF Conversion Guide:**",
+        "output": "• PDF can only be used as a conversion **output target**",
+        "examples": "• Convert other documents to PDF: DOCX → PDF, XLSX → PDF, PPTX → PDF",
+        "limitation": "• Conversion from PDF to other formats is not possible due to technical limitations"
+      },
+      "alternatives": {
+        "title": "💡 Please try using files in the following formats instead:",
+        "document": "• Documents: DOCX, PPTX, XLSX, TXT (can be converted to PDF)",
+        "image": "• Images: JPG, PNG, WebP, GIF, BMP",
+        "video": "• Videos: MP4, AVI, MOV, WebM",
+        "audio": "• Audio: MP3, WAV, AAC, FLAC"
+      }
+    },
+    "tokenExpired": "Download token has expired. Please convert the file again for security.",
+    "tokenInvalid": "Download token has expired or is invalid. Please convert the file again."
+  },
+  "feedback": {
+    "title": "User Feedback",
+    "description": "Feel free to report bugs, suggest features, improvements, or any other feedback.",
+    "button": "💬 Send Feedback",
+    "form": {
+      "email": {
+        "label": "Email Address",
+        "placeholder": "hottoplay24@gmail.com",
+        "required": "Please enter your email address.",
+        "invalid": "Please enter a valid email format."
+      },
+      "type": {
+        "label": "Feedback Type",
+        "placeholder": "Please select feedback type"
+      },
+      "message": {
+        "label": "Message",
+        "placeholder": "Please enter detailed information...",
+        "required": "Please enter a message.",
+        "minLength": "Please enter at least 10 characters."
+      }
+    },
+    "types": {
+      "bug": "🐛 Bug Report",
+      "feature": "💡 Feature Request", 
+      "improvement": "⚡ Improvement",
+      "general": "💬 General Inquiry"
+    },
+    "actions": {
+      "send": "Send Feedback",
+      "sending": "Sending...",
+      "cancel": "Cancel"
+    },
+    "messages": {
+      "success": "Thank you for your valuable feedback! We will review and contact you.",
+      "error": "Failed to send feedback. Please try again later.",
+            "networkError": "A network error occurred. Please check your internet connection."
+    }
+  },
+  "errors": {
+    "conversionIdMissing": "Conversion ID is missing.",
+    "networkError": "Network error occurred. Please check your connection.",
+    "serverError": "Server error occurred. Please try again later.",
+    "boundary": {
+      "title": "An unknown error occurred.",
+      "message": "Please refresh the page or contact the administrator."
+    },
+    "notFound": {
+      "title": "404 - Page Not Found",
+      "description": "The page you're looking for doesn't exist or has been deleted.",
+      "button": "Go to Home"
+    }
+  },
+  "ads": {
+    "left": "[Left Ad Area]",
+    "right": "[Right Ad Area]",
+    "top": "[Top Ad Area]",
+    "bottom": "[Bottom Ad Area]"
+  },
+  "preview": {
+    "title": "Conversion Result Preview",
+    "unsupported": "Preview not supported for this file type.",
+    "pdfTitle": "PDF Preview"
+  },
+  "fileTypes": {
+    "pdf": "PDF file (not supported as input)",
+    "executable": "Executable file",
+    "database": "Database file",
+    "font": "Font file",
+    "certificate": "Certificate file",
+    "flash": "Flash file",
+    "apple": "Apple proprietary format (Pages, Numbers, Keynote)",
+    "archive": "Archive file",
+    "unsupported": "Unsupported file format"
+  }
+} 

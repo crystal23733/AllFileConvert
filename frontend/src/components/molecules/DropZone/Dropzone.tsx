@@ -1,4 +1,7 @@
+"use client";
+
 import { FC } from "react";
+import { useTranslation, Trans } from "react-i18next";
 import DropzoneProps from "./Dropzone.types";
 import { useDropzone } from "react-dropzone";
 
@@ -9,12 +12,14 @@ const Dropzone: FC<DropzoneProps> = ({
   multiple = false,
   className = "",
 }) => {
+  const { t } = useTranslation();
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     disabled,
     accept,
     multiple,
   });
+
   return (
     <div
       {...getRootProps()}
@@ -28,11 +33,16 @@ const Dropzone: FC<DropzoneProps> = ({
       }
       tabIndex={-1}
     >
-      <input {...getInputProps()} aria-label="파일 업로드" data-testid="dropzone-input" />
+      <input {...getInputProps()} aria-label={t("upload.dropzone.label")} data-testid="dropzone-input" />
       <p className="text-gray-500 text-base">
-        파일을 끌어오거나 <span className="text-blue-600 underline">클릭</span>해서 선택하세요
+        <Trans 
+          i18nKey="upload.dropzone.text"
+          components={{
+            1: <span className="text-blue-600 underline" />
+          }}
+        />
       </p>
-      <p className="text-xs text-gray-400 mt-1">최대 200MB, mp4/pdf/jpg 등 지원</p>
+      <p className="text-xs text-gray-400 mt-1">{t("upload.dropzone.hint")}</p>
     </div>
   );
 };

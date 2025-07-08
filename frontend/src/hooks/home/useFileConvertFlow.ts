@@ -170,8 +170,10 @@ export default ({ initialCategory = "video" }: UseFileConvertFlowOptions = {}) =
     setStatus(conversionStatus);
   }
 
-  // 포맷 리스트
-  const formatOptions = FormatManager.getFormats(category);
+  // 포맷 리스트 - MIME 타입 기반으로 정확한 포맷 제공
+  const formatOptions = files[0]
+    ? FormatManager.getFormatsByMimeType(files[0].type)
+    : FormatManager.getFormats(category);
 
   // 포맷이 변경될 때마다 다운로드 파일명 업데이트
   const updateDownloadFileName = (newFormat: string) => {

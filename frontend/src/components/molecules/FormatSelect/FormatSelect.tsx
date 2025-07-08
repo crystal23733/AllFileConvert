@@ -1,19 +1,27 @@
+"use client";
+
 import { FC } from "react";
+import { useTranslation } from "react-i18next";
 import FormatSelectProps from "./FormatSelect.types";
 
 const FormatSelect: FC<FormatSelectProps> = ({
   value,
   onChange,
   options,
-  label = "변환 포맷 선택",
+  label,
   disabled = false,
   className = "",
   id = "format-select",
 }) => {
+  const { t } = useTranslation();
+  
+  // label이 제공되지 않으면 기본 번역 사용
+  const displayLabel = label || t("upload.format.label");
+
   return (
     <div className={className}>
       <label htmlFor={id} className="block mb-1 text-xs font-medium text-gray-600">
-        {label}
+        {displayLabel}
       </label>
       <select
         id={id}

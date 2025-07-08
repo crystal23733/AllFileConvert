@@ -1,0 +1,277 @@
+{
+  "common": {
+    "loading": "로딩 중...",
+    "error": "오류",
+    "success": "성공",
+    "cancel": "취소",
+    "confirm": "확인",
+    "close": "닫기",
+    "save": "저장",
+    "delete": "삭제",
+    "edit": "편집",
+    "back": "뒤로",
+    "next": "다음",
+    "previous": "이전",
+    "submit": "제출",
+    "reset": "초기화",
+    "search": "검색",
+    "filter": "필터",
+    "sort": "정렬",
+    "upload": "업로드",
+    "download": "다운로드",
+    "retry": "다시 시도",
+    "refresh": "새로고침"
+  },
+  "header": {
+    "title": "AllFileConvert",
+    "subtitle": "모든 파일 변환 서비스",
+    "languageSelect": "언어 선택"
+  },
+  "footer": {
+    "copyright": "© {{year}} AllFileConvert | 모든 파일 변환 서비스",
+    "privacy": "개인정보처리방침",
+    "terms": "이용약관"
+  },
+  "upload": {
+    "title": "파일 업로드",
+    "dropzone": {
+      "text": "파일을 끌어오거나 <1>클릭</1>해서 선택하세요",
+      "hint": "최대 200MB, mp4/pdf/jpg 등 지원",
+      "label": "파일 업로드"
+    },
+    "format": {
+      "label": "변환 포맷 선택",
+      "placeholder": "포맷을 선택하세요"
+    },
+    "button": {
+      "convert": "변환 요청",
+      "converting": "업로드 중…"
+    },
+    "preview": {
+      "title": "업로드된 파일",
+      "remove": "삭제"
+    }
+  },
+  "conversion": {
+    "status": {
+      "idle": "파일을 업로드해 주세요.",
+      "pending": "업로드 중",
+      "processing": "변환 중",
+      "completed": "변환 완료",
+      "failed": "변환 실패"
+    },
+    "progress": {
+      "uploading": "파일 업로드 중...",
+      "converting": "파일 변환 중...",
+      "completed": "변환이 완료되었습니다!",
+      "failed": "변환에 실패했습니다. 다시 시도해 주세요.",
+      "processing": "변환이 진행 중입니다. 잠시만 기다려주세요.",
+      "checking": "상태 확인 중…"
+    },
+    "download": {
+      "button": "파일 다운로드",
+      "completed": "다운로드 완료",
+      "error": "다운로드 중 오류가 발생했습니다."
+    }
+  },
+  "formats": {
+    "video": {
+      "mp4": "MP4",
+      "avi": "AVI", 
+      "mov": "MOV",
+      "webm": "WEBM",
+      "mkv": "MKV",
+      "wmv": "WMV",
+      "flv": "FLV",
+      "m4v": "M4V"
+    },
+    "audio": {
+      "mp3": "MP3",
+      "wav": "WAV",
+      "aac": "AAC",
+      "flac": "FLAC",
+      "ogg": "OGG",
+      "m4a": "M4A"
+    },
+    "image": {
+      "jpg": "JPG",
+      "png": "PNG",
+      "webp": "WEBP",
+      "bmp": "BMP",
+      "gif": "GIF",
+      "svg": "SVG",
+      "tiff": "TIFF",
+      "ico": "ICO",
+      "avif": "AVIF"
+    },
+    "document": {
+      "pdf": "PDF",
+      "docx": "DOCX",
+      "doc": "DOC",
+      "odt": "ODT (OpenDocument Text)",
+      "rtf": "RTF",
+      "txt": "TXT",
+      "xlsx": "XLSX",
+      "xls": "XLS",
+      "ods": "ODS (OpenDocument Spreadsheet)",
+      "csv": "CSV"
+    }
+  },
+  "formatInfo": {
+    "title": "지원 포맷 정보",
+    "tabs": {
+      "supported": "✅ 지원하는 포맷",
+      "unsupported": "❌ 지원하지 않는 포맷"
+    },
+    "supported": {
+      "description": "다음 포맷들 간의 변환을 지원합니다.",
+      "categories": {
+        "video": "🎬 비디오",
+        "audio": "🎵 오디오", 
+        "image": "🖼️ 이미지",
+        "document": "📝 텍스트 문서",
+        "spreadsheet": "📊 스프레드시트"
+      },
+      "examples": {
+        "title": "💡 변환 예시",
+        "video": "• **비디오:** MP4 → AVI, MOV, WebM, MP3, WAV 등",
+        "document": "• **문서:** DOCX → PDF, DOC, ODT, RTF, TXT",
+        "spreadsheet": "• **스프레드시트:** XLSX → XLS, ODS, CSV, TXT (PDF 제외)",
+        "image": "• **이미지:** PNG → JPG, WebP, AVIF 등",
+        "audio": "• **오디오:** MP3 → WAV, FLAC, AAC 등"
+      },
+      "pdfWarning": {
+        "title": "⚠️ PDF 변환 제한",
+        "description": "**PDF에서 다른 포맷으로의 변환은 지원하지 않습니다.**\nPDF는 다른 포맷으로 변환하기 위한 출력 대상으로만 사용할 수 있습니다. (예: DOCX → PDF, XLSX → PDF)"
+      },
+      "koreanSupport": {
+        "title": "🎯 한글 지원",
+        "description": "모든 문서 변환에서 한글이 완벽하게 지원됩니다. PDF 변환 시에도 한글이 네모(□)로 표시되지 않고 정상적으로 보입니다."
+      }
+    },
+    "unsupported": {
+      "description": "보안상의 이유로 다음 파일 형식은 지원하지 않습니다:",
+      "types": {
+        "pdf": "⚠️ PDF 파일 (.pdf) - 입력으로 사용 불가",
+        "presentation": "⚠️ 프레젠테이션 파일 (.ppt, .pptx, .odp) - LibreOffice 지원 없음",
+        "apple": "🚫 Apple 전용 포맷 (.pages, .numbers, .keynote)",
+        "archive": "🚫 압축 파일 (.zip, .rar, .7z)",
+        "executable": "🚫 실행 파일 (.exe, .app, .deb)",
+        "system": "🚫 시스템 파일 (.dll, .so, .dylib)",
+        "encrypted": "🚫 암호화된 파일 (.p7c, .cer)",
+        "database": "🚫 데이터베이스 파일 (.sqlite, .mdb)",
+        "font": "🚫 폰트 파일 (.ttf, .woff)",
+        "flash": "🚫 플래시 파일 (.swf)"
+      },
+      "warnings": {
+        "title": "⚠️ 주의사항",
+        "pdf": "• **PDF:** 다른 포맷에서 PDF로 변환은 가능하지만, PDF에서 다른 포맷으로는 변환할 수 없습니다",
+        "presentation": "• **프레젠테이션:** PPT, PPTX, ODP 파일은 LibreOffice에서 변환을 지원하지 않습니다",
+        "spreadsheetPdf": "• **스프레드시트 PDF:** Excel 파일에서 PDF로의 변환은 현재 지원하지 않습니다",
+        "apple": "• Apple 포맷은 호환성 문제로 현재 지원하지 않습니다",
+        "archive": "• 압축 파일은 내용 확인이 어려워 지원하지 않습니다",
+        "executable": "• 실행 파일은 보안상 업로드가 차단됩니다",
+        "encrypted": "• 암호화된 파일은 변환할 수 없습니다",
+        "corrupted": "• 손상된 파일은 변환이 실패할 수 있습니다",
+        "size": "• 파일 크기는 최대 100MB까지 지원합니다"
+      }
+    },
+    "button": "📋 지원 포맷 확인하기"
+  },
+  "warnings": {
+    "unsupportedFile": {
+      "title": "지원하지 않는 파일 형식",
+      "description": "**{{fileName}}**은(는) {{fileType}}으로 현재 변환을 지원하지 않습니다.",
+      "pdfGuide": {
+        "title": "📄 **PDF 변환 안내:**",
+        "output": "• PDF는 변환의 **출력 대상**으로만 사용할 수 있습니다",
+        "examples": "• 다른 문서를 PDF로 변환: DOCX → PDF, XLSX → PDF, PPTX → PDF", 
+        "limitation": "• PDF에서 다른 포맷으로는 기술적 제약으로 변환할 수 없습니다"
+      },
+      "alternatives": {
+        "title": "💡 대신 다음 형식의 파일을 사용해보세요:",
+        "document": "• 문서: DOCX, PPTX, XLSX, TXT (PDF로 변환 가능)",
+        "image": "• 이미지: JPG, PNG, WebP, GIF, BMP",
+        "video": "• 비디오: MP4, AVI, MOV, WebM",
+        "audio": "• 오디오: MP3, WAV, AAC, FLAC"
+      }
+    },
+    "tokenExpired": "다운로드 토큰이 만료되었습니다. 보안을 위해 파일을 다시 변환해주세요.",
+    "tokenInvalid": "다운로드 토큰이 만료되었거나 유효하지 않습니다. 파일을 다시 변환해주세요."
+  },
+  "feedback": {
+    "title": "사용자 피드백",
+    "description": "버그 신고, 기능 제안, 개선 사항 등을 자유롭게 남겨주세요.",
+    "button": "💬 피드백 보내기",
+    "form": {
+      "email": {
+        "label": "이메일 주소",
+        "placeholder": "hottoplay24@gmail.com",
+        "required": "이메일 주소를 입력해주세요.",
+        "invalid": "올바른 이메일 형식을 입력해주세요."
+      },
+      "type": {
+        "label": "피드백 유형",
+        "placeholder": "피드백 유형을 선택해주세요"
+      },
+      "message": {
+        "label": "메시지",
+        "placeholder": "자세한 내용을 입력해주세요...",
+        "required": "메시지를 입력해주세요.",
+        "minLength": "최소 10자 이상 입력해주세요."
+      }
+    },
+    "types": {
+      "bug": "🐛 버그 신고",
+      "feature": "💡 기능 제안", 
+      "improvement": "⚡ 개선 사항",
+      "general": "💬 일반 문의"
+    },
+    "actions": {
+      "send": "피드백 전송",
+      "sending": "전송 중...",
+      "cancel": "취소"
+    },
+    "messages": {
+      "success": "소중한 피드백 감사합니다! 검토 후 연락드리겠습니다.",
+      "error": "피드백 전송에 실패했습니다. 잠시 후 다시 시도해주세요.",
+            "networkError": "네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요."
+    }
+  },
+  "errors": {
+    "conversionIdMissing": "변환 ID가 없습니다.",
+    "networkError": "네트워크 오류가 발생했습니다. 연결을 확인해주세요.",
+    "serverError": "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+    "boundary": {
+      "title": "알 수 없는 오류가 발생했습니다.",
+      "message": "페이지를 새로고침하거나 관리자에게 문의해주세요."
+    },
+    "notFound": {
+      "title": "404 - 페이지를 찾을 수 없습니다",
+      "description": "존재하지 않는 주소이거나, 페이지가 삭제되었을 수 있습니다.",
+      "button": "홈으로 돌아가기"
+    }
+  },
+  "ads": {
+    "left": "[좌측 광고 영역]",
+    "right": "[우측 광고 영역]", 
+    "top": "[상단 광고 영역]",
+    "bottom": "[하단 광고 영역]"
+  },
+  "preview": {
+    "title": "변환 결과 미리보기",
+    "unsupported": "미리보기를 지원하지 않는 파일 유형입니다.",
+    "pdfTitle": "PDF 미리보기"
+  },
+  "fileTypes": {
+    "pdf": "PDF 파일 (입력 변환 지원 안함)",
+    "executable": "실행 파일",
+    "database": "데이터베이스 파일",
+    "font": "폰트 파일",
+    "certificate": "인증서 파일",
+    "flash": "Flash 파일",
+    "apple": "Apple 전용 포맷 (Pages, Numbers, Keynote)",
+    "archive": "압축 파일",
+    "unsupported": "지원하지 않는 파일 형식"
+  }
+} 

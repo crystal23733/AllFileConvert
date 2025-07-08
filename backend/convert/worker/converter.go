@@ -106,26 +106,35 @@ func (l LibreOfficeTransformer) Supports(mime, target string) bool {
 	baseMime := strings.Split(mime, ";")[0]
 	baseMime = strings.TrimSpace(baseMime)
 
-	// 문서 포맷 지원 확인
-	documentMimes := []string{
-		"application/pdf",
-		"application/msword",
-		"application/vnd.openxmlformats-officedocument.wordprocessingml.document", // docx
-		"application/vnd.ms-powerpoint",
-		"application/vnd.openxmlformats-officedocument.presentationml.presentation", // pptx
-		"application/vnd.ms-excel",
-		"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // xlsx
-		"application/vnd.oasis.opendocument.text",                           // odt
-		"application/vnd.oasis.opendocument.spreadsheet",                    // ods
-		"application/vnd.oasis.opendocument.presentation",                   // odp
-		"text/plain",
-		"text/rtf",
-		"text/csv",
+	// LibreOffice 변환 매트릭스 (실제 테스트 완료된 변환만 포함)
+	supportedConversions := map[string][]string{
+		// Writer 문서들 (텍스트 기반) - 실제 작동 확인됨
+		"application/msword":        {"pdf", "docx", "odt", "rtf", "txt"},
+		"application/x-ole-storage": {"pdf", "docx", "odt", "rtf", "txt"}, // 구버전 DOC 파일
+		"application/vnd.openxmlformats-officedocument.wordprocessingml.document": {"pdf", "doc", "odt", "rtf", "txt"},
+		"application/vnd.oasis.opendocument.text":                                 {"pdf", "docx", "doc", "rtf", "txt"},
+		"text/plain": {"pdf", "docx", "doc", "odt", "rtf"},
+		"text/rtf":   {"pdf", "docx", "doc", "odt", "txt"},
+
+		// Calc 스프레드시트들 (PDF 변환 제외 - 실패함)
+		"application/vnd.ms-excel": {"xlsx", "ods", "csv", "txt"},
+		"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {"xls", "ods", "csv", "txt"},
+		"application/vnd.oasis.opendocument.spreadsheet":                    {"xlsx", "xls", "csv", "txt"},
+		"text/csv": {"xlsx", "xls", "ods"},
+
+		// Impress 프레젠테이션들 - LibreOffice에서 지원하지 않음 (모든 변환 실패)
+		// "application/vnd.ms-powerpoint": {},
+		// "application/vnd.openxmlformats-officedocument.presentationml.presentation": {},
+		// "application/vnd.oasis.opendocument.presentation": {},
+
+		// PDF는 LibreOffice에서 변환 지원하지 않음 (import만 가능, export filter 없음)
 	}
 
-	documentTargets := []string{"pdf", "docx", "doc", "pptx", "ppt", "xlsx", "xls", "txt", "rtf", "odt", "ods", "odp", "csv"}
+	if supportedTargets, exists := supportedConversions[baseMime]; exists {
+		return contains(supportedTargets, target)
+	}
 
-	return contains(documentMimes, baseMime) && contains(documentTargets, target)
+	return false
 }
 
 func (l LibreOfficeTransformer) Transform(in, out string) error {
@@ -146,18 +155,8 @@ func (l LibreOfficeTransformer) Transform(in, out string) error {
 		return err
 	}
 
-	// 파일 내용으로 CSV 여부 확인 (확장자가 없는 경우)
+	// CSV 파일 확인 (확장자 기반으로만 판단 - 내용 분석 제거)
 	isCSV := inputExt == "csv"
-	if !isCSV {
-		// 파일 첫 몇 줄을 읽어서 CSV 형태인지 확인
-		if content, err := os.ReadFile(absIn); err == nil {
-			firstLine := strings.Split(string(content), "\n")[0]
-			// CSV 특징: 쉼표로 구분된 필드
-			if strings.Contains(firstLine, ",") && len(strings.Split(firstLine, ",")) > 1 {
-				isCSV = true
-			}
-		}
-	}
 
 	var format string
 	var args []string
@@ -187,7 +186,12 @@ func (l LibreOfficeTransformer) Transform(in, out string) error {
 		// 일반 문서 변환
 		switch ext {
 		case "pdf":
-			format = "pdf"
+			// PDF 변환 시 한글 폰트 지원을 위한 안정적인 변환
+			args = append(args,
+				"--convert-to", "pdf",
+				"--outdir", absDir,
+				"-env:UserInstallation=file:///tmp/libreoffice",
+				absIn)
 		case "docx":
 			format = "docx"
 		case "doc":
@@ -215,17 +219,24 @@ func (l LibreOfficeTransformer) Transform(in, out string) error {
 		default:
 			format = "pdf" // 기본값
 		}
-		args = append(args, "--convert-to", format, "--outdir", absDir, absIn)
+
+		// PDF가 아닌 경우 기본 변환 명령 사용
+		if ext != "pdf" {
+			args = append(args, "--convert-to", format, "--outdir", absDir, absIn)
+		}
 	}
 
 	log.Info().Strs("args", args).Msg("🔧 LibreOffice 명령 실행")
 	cmd := exec.Command(args[0], args[1:]...)
 
-	// 환경변수 설정 (LibreOffice가 headless 모드에서 안정적으로 실행되도록)
+	// 환경변수 설정 (LibreOffice가 headless 모드에서 안정적으로 실행되고 한글 폰트를 찾도록)
 	cmd.Env = append(os.Environ(),
 		"HOME=/tmp",
 		"TMPDIR=/tmp",
 		"DISPLAY=",
+		"LANG=ko_KR.UTF-8",
+		"LC_ALL=ko_KR.UTF-8",
+		"FONTCONFIG_PATH=/etc/fonts",
 	)
 
 	output, err := cmd.CombinedOutput()
@@ -274,43 +285,99 @@ func (i ImageMagickTransformer) Transform(in, out string) error {
 
 	var cmd *exec.Cmd
 
-	// 파일 내용으로 GIF 여부 확인 (확장자가 없는 경우)
-	isGif := inputExt == "gif"
+	// 확장자가 없는 경우 파일 내용으로 포맷 감지
+	var inputFormat string
 	if inputExt == "" {
-		// 파일 내용 확인
+		// 파일 내용으로 포맷 감지
 		if content, err := exec.Command("file", in).Output(); err == nil {
-			isGif = strings.Contains(strings.ToLower(string(content)), "gif")
+			fileInfo := strings.ToLower(string(content))
+			// ICO 파일 우선 감지 (PNG보다 먼저 체크)
+			if strings.Contains(fileInfo, "icon") || strings.Contains(fileInfo, "ico") || strings.Contains(fileInfo, "ms windows icon") {
+				inputFormat = "ico"
+			} else if strings.Contains(fileInfo, "gif") {
+				inputFormat = "gif"
+			} else if strings.Contains(fileInfo, "png") {
+				inputFormat = "png"
+			} else if strings.Contains(fileInfo, "jpeg") || strings.Contains(fileInfo, "jpg") {
+				inputFormat = "jpeg"
+			} else if strings.Contains(fileInfo, "webp") {
+				inputFormat = "webp"
+			} else if strings.Contains(fileInfo, "bmp") {
+				inputFormat = "bmp"
+			} else if strings.Contains(fileInfo, "tiff") {
+				inputFormat = "tiff"
+			}
 		}
+	} else {
+		inputFormat = inputExt
 	}
+
+	// 파일 내용으로 GIF 여부 확인 (확장자가 없는 경우)
+	isGif := inputFormat == "gif"
 
 	// GIF 파일 특별 처리
 	if isGif {
 		switch outputExt {
 		case "jpg", "jpeg":
 			// GIF → JPG: 첫 번째 프레임만 추출, 배경색 지정
-			cmd = exec.Command("/usr/bin/magick", in+"[0]", "-background", "white", "-flatten", out)
+			if inputFormat != "" && inputExt == "" {
+				// 확장자가 없는 경우 포맷 명시
+				cmd = exec.Command("/usr/bin/magick", fmt.Sprintf("%s:%s[0]", inputFormat, in), "-background", "white", "-flatten", out)
+			} else {
+				cmd = exec.Command("/usr/bin/magick", in+"[0]", "-background", "white", "-flatten", out)
+			}
 		case "png":
 			// GIF → PNG: 첫 번째 프레임만 추출, 투명도 유지
-			cmd = exec.Command("/usr/bin/magick", in+"[0]", out)
+			if inputFormat != "" && inputExt == "" {
+				cmd = exec.Command("/usr/bin/magick", fmt.Sprintf("%s:%s[0]", inputFormat, in), out)
+			} else {
+				cmd = exec.Command("/usr/bin/magick", in+"[0]", out)
+			}
 		case "bmp":
 			// GIF → BMP: 첫 번째 프레임만 추출, 배경색 지정
-			cmd = exec.Command("/usr/bin/magick", in+"[0]", "-background", "white", "-flatten", out)
+			if inputFormat != "" && inputExt == "" {
+				cmd = exec.Command("/usr/bin/magick", fmt.Sprintf("%s:%s[0]", inputFormat, in), "-background", "white", "-flatten", out)
+			} else {
+				cmd = exec.Command("/usr/bin/magick", in+"[0]", "-background", "white", "-flatten", out)
+			}
 		default:
 			// 기본 변환 (webp, tiff, ico, avif 등)
-			cmd = exec.Command("/usr/bin/magick", in, out)
+			if inputFormat != "" && inputExt == "" {
+				cmd = exec.Command("/usr/bin/magick", fmt.Sprintf("%s:%s", inputFormat, in), out)
+			} else {
+				cmd = exec.Command("/usr/bin/magick", in, out)
+			}
 		}
 	} else {
 		// 일반 이미지 변환
 		switch outputExt {
 		case "ico":
 			// ICO 변환: 여러 크기 생성
-			cmd = exec.Command("/usr/bin/magick", in, "-resize", "256x256", "-compress", "None", out)
+			if inputFormat != "" && inputExt == "" {
+				cmd = exec.Command("/usr/bin/magick", fmt.Sprintf("%s:%s", inputFormat, in), "-resize", "256x256", "-compress", "None", out)
+			} else {
+				cmd = exec.Command("/usr/bin/magick", in, "-resize", "256x256", "-compress", "None", out)
+			}
 		case "avif":
 			// AVIF 변환: 품질 설정
-			cmd = exec.Command("/usr/bin/magick", in, "-quality", "80", out)
+			if inputFormat != "" && inputExt == "" {
+				cmd = exec.Command("/usr/bin/magick", fmt.Sprintf("%s:%s", inputFormat, in), "-quality", "80", out)
+			} else {
+				cmd = exec.Command("/usr/bin/magick", in, "-quality", "80", out)
+			}
 		default:
 			// 기본 ImageMagick magick 명령
-			cmd = exec.Command("/usr/bin/magick", in, out)
+			if inputFormat != "" && inputExt == "" {
+				// 확장자가 없는 경우 포맷 명시: format:filename
+				if inputFormat == "ico" {
+					// ICO 파일의 경우 가장 큰 크기 선택 (일반적으로 마지막 인덱스)
+					cmd = exec.Command("/usr/bin/magick", fmt.Sprintf("%s:%s[2]", inputFormat, in), out)
+				} else {
+					cmd = exec.Command("/usr/bin/magick", fmt.Sprintf("%s:%s", inputFormat, in), out)
+				}
+			} else {
+				cmd = exec.Command("/usr/bin/magick", in, out)
+			}
 		}
 	}
 

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import FormatInfoModal from "@/components/atoms/FormatInfoModal/FormatInfoModal";
 import SupportedFormatsTab from "../SupportedFormatsTab/SupportedFormatsTab";
 import UnsupportedFormatsTab from "../UnsupportedFormatsTab/UnsupportedFormatsTab";
@@ -10,6 +11,7 @@ interface SupportedFormatsProps {
 }
 
 const SupportedFormats: React.FC<SupportedFormatsProps> = ({ className = "" }) => {
+  const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"supported" | "unsupported">("supported");
 
@@ -21,7 +23,7 @@ const SupportedFormats: React.FC<SupportedFormatsProps> = ({ className = "" }) =
           onClick={() => setIsModalOpen(true)}
           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors shadow-md"
         >
-          📋 지원 포맷 확인하기
+          {t("formatInfo.button")}
         </button>
       </div>
 
@@ -37,7 +39,7 @@ const SupportedFormats: React.FC<SupportedFormatsProps> = ({ className = "" }) =
                 : "text-gray-500 hover:text-gray-700"
             }`}
           >
-            ✅ 지원하는 포맷
+            {t("formatInfo.tabs.supported")}
           </button>
           <button
             onClick={() => setActiveTab("unsupported")}
@@ -47,7 +49,7 @@ const SupportedFormats: React.FC<SupportedFormatsProps> = ({ className = "" }) =
                 : "text-gray-500 hover:text-gray-700"
             }`}
           >
-            ❌ 지원하지 않는 포맷
+            {t("formatInfo.tabs.unsupported")}
           </button>
         </div>
 

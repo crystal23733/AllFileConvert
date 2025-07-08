@@ -1,12 +1,19 @@
+"use client";
+
 import { FC } from "react";
+import { useTranslation } from "react-i18next";
 import DownloadButtonProps from "./DownloadButton.types";
 
 const DownloadButton: FC<DownloadButtonProps> = ({
   onClick,
   disabled = false,
   className = "",
-  label = "파일 다운로드",
+  label,
 }) => {
+  const { t } = useTranslation();
+  
+  const displayLabel = label || t("conversion.download.button");
+
   return (
     <button
       type="button"
@@ -16,7 +23,7 @@ const DownloadButton: FC<DownloadButtonProps> = ({
       hover:bg-green-700 active:bg-green-800 transition
       disabled:opacity-50 disabled:cursor-not-allowed w-full ${className}`}
     >
-      {label}
+      {displayLabel}
     </button>
   );
 };
