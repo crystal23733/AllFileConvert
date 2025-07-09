@@ -47,6 +47,17 @@ services:
       postgres:
         condition: service_healthy
 
+  feedback:
+    build:
+      context: ./backend/feedback
+    container_name: feedback-service
+    ports:
+      - "8083:8080"
+    env_file:
+      - .env
+    depends_on:
+      - upload
+
   nginx:
     image: nginx:latest
     container_name: nginx-gateway
