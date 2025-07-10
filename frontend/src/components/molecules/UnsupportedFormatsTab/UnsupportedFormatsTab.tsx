@@ -44,7 +44,9 @@ const UnsupportedFormatsTab: React.FC = () => {
       </div>
 
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-6">
-        <h4 className="font-semibold text-yellow-800 mb-2">{t("formatInfo.unsupported.warnings.title")}</h4>
+        <h4 className="font-semibold text-yellow-800 mb-2">
+          {t("formatInfo.unsupported.warnings.title")}
+        </h4>
         <ul className="text-yellow-700 space-y-1">
           {warningItems.map((warning, index) => (
             <li key={index}>{warning}</li>

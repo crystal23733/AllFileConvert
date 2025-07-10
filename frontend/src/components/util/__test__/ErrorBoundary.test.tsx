@@ -10,11 +10,7 @@ const ThrowError = () => {
 
 describe("ErrorBoundary", () => {
   const renderWithI18n = (ui: React.ReactElement) => {
-    return render(
-      <I18nextProvider i18n={i18n}>
-        {ui}
-      </I18nextProvider>
-    );
+    return render(<I18nextProvider i18n={i18n}>{ui}</I18nextProvider>);
   };
 
   it("children이 정상적으로 렌더링된다", () => {
@@ -33,7 +29,9 @@ describe("ErrorBoundary", () => {
       </ErrorBoundary>
     );
     expect(screen.getByText("알 수 없는 오류가 발생했습니다.")).toBeInTheDocument();
-    expect(screen.getByText("페이지를 새로고침하거나 관리자에게 문의해주세요.")).toBeInTheDocument();
+    expect(
+      screen.getByText("페이지를 새로고침하거나 관리자에게 문의해주세요.")
+    ).toBeInTheDocument();
   });
 
   it("fallback 프롭 전달 시 커스텀 UI가 렌더링된다", () => {

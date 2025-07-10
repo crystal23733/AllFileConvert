@@ -11,7 +11,7 @@ const DownloadButton: FC<DownloadButtonProps> = ({
   label,
 }) => {
   const { t } = useTranslation();
-  
+
   const displayLabel = label || t("conversion.download.button");
 
   return (

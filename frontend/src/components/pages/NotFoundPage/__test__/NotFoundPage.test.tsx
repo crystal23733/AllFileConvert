@@ -5,11 +5,7 @@ import NotFoundPage from "../NotFoundPage";
 
 describe("NotFoundPage", () => {
   const renderWithI18n = (ui: React.ReactElement) => {
-    return render(
-      <I18nextProvider i18n={i18n}>
-        {ui}
-      </I18nextProvider>
-    );
+    return render(<I18nextProvider i18n={i18n}>{ui}</I18nextProvider>);
   };
 
   it("404 텍스트가 보인다", () => {

@@ -21,50 +21,50 @@ const AppFooter: FC = () => {
     message: "",
     isSuccess: false,
   });
-  
+
   const feedbackMutation = useFeedback();
 
   const handleFeedbackSubmit = async (feedback: FeedbackRequest) => {
     try {
       await feedbackMutation.mutateAsync(feedback);
       setIsFeedbackModalOpen(false);
-      
+
       // 성공 알림 표시
       setAlertModal({
         isOpen: true,
-        message: t('feedback.messages.success'),
+        message: t("feedback.messages.success"),
         isSuccess: true,
       });
-      
-      console.log('✅ 피드백 전송 완료!');
-    } catch (error: any) {
-      console.error('❌ 피드백 전송 실패:', error);
-      
+
+      console.log("✅ 피드백 전송 완료!");
+    } catch (error: unknown) {
+      console.error("❌ 피드백 전송 실패:", error);
+
       // 에러 메시지 처리
-      let errorMessage = t('feedback.messages.error');
-      
-      if (error?.message) {
+      let errorMessage = t("feedback.messages.error");
+
+      if (error instanceof Error && error.message) {
         switch (error.message) {
-          case 'NETWORK_ERROR':
-            errorMessage = t('feedback.messages.networkError');
+          case "NETWORK_ERROR":
+            errorMessage = t("feedback.messages.networkError");
             break;
-          case 'RATE_LIMIT_EXCEEDED':
-            errorMessage = t('feedback.messages.rateLimitError');
+          case "RATE_LIMIT_EXCEEDED":
+            errorMessage = t("feedback.messages.rateLimitError");
             break;
-          case 'SERVER_ERROR':
-            errorMessage = t('feedback.messages.serverError');
+          case "SERVER_ERROR":
+            errorMessage = t("feedback.messages.serverError");
             break;
-          case 'TIMEOUT_ERROR':
-            errorMessage = t('feedback.messages.timeoutError');
+          case "TIMEOUT_ERROR":
+            errorMessage = t("feedback.messages.timeoutError");
             break;
-          case 'BAD_REQUEST':
-            errorMessage = t('feedback.messages.badRequestError');
+          case "BAD_REQUEST":
+            errorMessage = t("feedback.messages.badRequestError");
             break;
           default:
-            errorMessage = t('feedback.messages.error');
+            errorMessage = t("feedback.messages.error");
         }
       }
-      
+
       // 에러 알림 표시
       setAlertModal({
         isOpen: true,
@@ -93,7 +93,7 @@ const AppFooter: FC = () => {
               onClick={() => setIsFeedbackModalOpen(true)}
               className="text-sm px-4 py-2 text-black"
             >
-              {t('feedback.button')}
+              {t("feedback.button")}
             </Button>
           </div>
 
@@ -101,7 +101,7 @@ const AppFooter: FC = () => {
           <Typography variant="label" className="block text-gray-500">
             {t("footer.copyright", { year: new Date().getFullYear() })}
           </Typography>
-          
+
           {/* 추후 필요시 개인정보처리방침, 이용약관 등 링크 추가 */}
         </div>
       </footer>
@@ -119,7 +119,7 @@ const AppFooter: FC = () => {
         open={alertModal.isOpen}
         message={alertModal.message}
         onClose={handleAlertClose}
-        confirmLabel={t('common.confirm')}
+        confirmLabel={t("common.confirm")}
       />
     </>
   );

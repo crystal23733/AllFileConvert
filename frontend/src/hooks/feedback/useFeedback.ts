@@ -1,7 +1,7 @@
-import { useMutation } from '@tanstack/react-query';
-import { useTranslation } from 'react-i18next';
-import { FeedbackRequest } from '@/types/feedback';
-import feedbackService from '@/services/feedback/FeedbackService';
+import { useMutation } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
+import { FeedbackRequest } from "@/types/feedback";
+import feedbackService from "@/services/feedback/FeedbackService";
 
 /**
  * 피드백 전송을 위한 React Query 훅
@@ -15,16 +15,16 @@ export const useFeedback = () => {
     mutationFn: (feedback: FeedbackRequest) => {
       return feedbackService.sendFeedback(feedback);
     },
-    onSuccess: (data) => {
-      console.log('✅ Feedback sent successfully:', data);
+    onSuccess: data => {
+      console.log("✅ Feedback sent successfully:", data);
       // 성공 시 추가 처리가 필요하면 여기에 추가
     },
     onError: (error: Error) => {
-      console.error('❌ Failed to send feedback:', error);
-      
+      console.error("❌ Failed to send feedback:", error);
+
       // 에러 메시지 처리
       const errorMessage = getErrorMessage(error.message, t);
-      console.error('User-friendly error message:', errorMessage);
+      console.error("User-friendly error message:", errorMessage);
     },
   });
 };
@@ -37,17 +37,25 @@ export const useFeedback = () => {
  */
 function getErrorMessage(errorCode: string, t: (key: string) => string): string {
   switch (errorCode) {
-    case 'NETWORK_ERROR':
-      return t('feedback.messages.networkError');
-    case 'RATE_LIMIT_EXCEEDED':
-      return t('feedback.messages.rateLimitError') || '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.';
-    case 'SERVER_ERROR':
-      return t('feedback.messages.serverError') || '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
-    case 'TIMEOUT_ERROR':
-      return t('feedback.messages.timeoutError') || '요청 시간이 초과되었습니다. 다시 시도해주세요.';
-    case 'BAD_REQUEST':
-      return t('feedback.messages.badRequestError') || '잘못된 요청입니다. 입력 내용을 확인해주세요.';
+    case "NETWORK_ERROR":
+      return t("feedback.messages.networkError");
+    case "RATE_LIMIT_EXCEEDED":
+      return (
+        t("feedback.messages.rateLimitError") || "요청이 너무 많습니다. 잠시 후 다시 시도해주세요."
+      );
+    case "SERVER_ERROR":
+      return (
+        t("feedback.messages.serverError") || "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+      );
+    case "TIMEOUT_ERROR":
+      return (
+        t("feedback.messages.timeoutError") || "요청 시간이 초과되었습니다. 다시 시도해주세요."
+      );
+    case "BAD_REQUEST":
+      return (
+        t("feedback.messages.badRequestError") || "잘못된 요청입니다. 입력 내용을 확인해주세요."
+      );
     default:
-      return t('feedback.messages.error');
+      return t("feedback.messages.error");
   }
-} 
+}

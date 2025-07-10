@@ -14,7 +14,7 @@ const FormatSelect: FC<FormatSelectProps> = ({
   id = "format-select",
 }) => {
   const { t } = useTranslation();
-  
+
   // label이 제공되지 않으면 기본 번역 사용
   const displayLabel = label || t("upload.format.label");
 

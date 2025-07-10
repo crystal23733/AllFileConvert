@@ -36,7 +36,9 @@ const StatusPanel: FC<StatusPanelProps> = ({
           <div className="flex justify-center pt-2">
             <Spinner />
             {isPolling && (
-              <span className="text-xs text-gray-400 animate-pulse">{t("conversion.progress.checking")}</span>
+              <span className="text-xs text-gray-400 animate-pulse">
+                {t("conversion.progress.checking")}
+              </span>
             )}
           </div>
           <Typography variant="label" className="text-blue-600 text-center">

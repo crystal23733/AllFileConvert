@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { FeedbackRequest, FeedbackResponse } from '@/types/feedback';
+import axios from "axios";
+import { FeedbackRequest, FeedbackResponse } from "@/types/feedback";
 
 /**
  * 피드백 관련 API 서비스 클래스
@@ -11,7 +11,7 @@ class FeedbackService {
 
   constructor() {
     // 피드백 서비스는 포트 8084에서 실행 (Docker)
-    this.feedbackURL = process.env.NEXT_PUBLIC_FEEDBACK_API_URL || 'http://localhost';
+    this.feedbackURL = process.env.NEXT_PUBLIC_FEEDBACK_API_URL || "http://localhost";
   }
 
   /**
@@ -22,7 +22,7 @@ class FeedbackService {
    */
   async sendFeedback(feedback: FeedbackRequest): Promise<FeedbackResponse> {
     try {
-      console.log('📧 Sending feedback to backend:', {
+      console.log("📧 Sending feedback to backend:", {
         timestamp: new Date().toISOString(),
         type: feedback.type,
         messageLength: feedback.message.length,
@@ -31,57 +31,60 @@ class FeedbackService {
       });
 
       // 실제 백엔드 API 호출
-      const response = await axios.post(`${this.feedbackURL}/feedback`, {
-        email: feedback.email || "", // 익명 피드백은 빈 문자열
-        type: feedback.type,
-        message: feedback.message,
-        url: feedback.url,
-        userAgent: feedback.userAgent,
-      }, {
-        timeout: 10000, // 10초 타임아웃
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await axios.post(
+        `${this.feedbackURL}/feedback`,
+        {
+          email: feedback.email || "", // 익명 피드백은 빈 문자열
+          type: feedback.type,
+          message: feedback.message,
+          url: feedback.url,
+          userAgent: feedback.userAgent,
         },
-      });
+        {
+          timeout: 10000, // 10초 타임아웃
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      console.log('✅ Feedback sent successfully:', response.data);
+      console.log("✅ Feedback sent successfully:", response.data);
       return response.data;
-
     } catch (error) {
-      console.error('❌ Failed to send feedback:', error);
-      
+      console.error("❌ Failed to send feedback:", error);
+
       // 네트워크 오류 처리
       if (axios.isAxiosError(error)) {
         if (!error.response) {
-          throw new Error('NETWORK_ERROR');
+          throw new Error("NETWORK_ERROR");
         }
-        
+
         const status = error.response.status;
         const data = error.response.data;
-        
+
         // Rate limit 처리 (429)
         if (status === 429) {
-          throw new Error('RATE_LIMIT_EXCEEDED');
+          throw new Error("RATE_LIMIT_EXCEEDED");
         }
-        
+
         // 서버 오류 처리 (5xx)
         if (status >= 500) {
-          throw new Error('SERVER_ERROR');
+          throw new Error("SERVER_ERROR");
         }
-        
+
         // 클라이언트 오류 처리 (4xx)
         if (status >= 400) {
-          throw new Error(data?.message || 'BAD_REQUEST');
+          throw new Error(data?.message || "BAD_REQUEST");
         }
       }
-      
+
       // 타임아웃 오류
-      if ((error as any).code === 'ECONNABORTED') {
-        throw new Error('TIMEOUT_ERROR');
+      if (error && typeof error === "object" && "code" in error && error.code === "ECONNABORTED") {
+        throw new Error("TIMEOUT_ERROR");
       }
-      
+
       // 기타 오류
-      throw new Error('UNKNOWN_ERROR');
+      throw new Error("UNKNOWN_ERROR");
     }
   }
 
@@ -96,7 +99,7 @@ class FeedbackService {
       });
       return response.status === 200;
     } catch (error) {
-      console.warn('⚠️ Feedback service health check failed:', error);
+      console.warn("⚠️ Feedback service health check failed:", error);
       return false;
     }
   }
@@ -105,4 +108,4 @@ class FeedbackService {
 // 싱글톤 인스턴스 생성
 const feedbackService = new FeedbackService();
 
-export default feedbackService; 
+export default feedbackService;

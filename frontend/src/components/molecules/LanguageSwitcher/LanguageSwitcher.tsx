@@ -16,7 +16,7 @@ const LanguageSwitcher: FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newLanguage = e.target.value;
     i18n.changeLanguage(newLanguage);
-    
+
     // HTML lang 속성도 함께 업데이트 (SEO 및 접근성 향상)
     document.documentElement.lang = newLanguage;
   };
@@ -39,14 +39,19 @@ const LanguageSwitcher: FC = () => {
           </option>
         ))}
       </select>
-      
+
       {/* 커스텀 드롭다운 화살표 */}
       <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="w-4 h-4 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </div>
-      
+
       {/* 현재 선택된 언어 표시 (모바일에서 유용) */}
       <span className="sr-only">
         {t("header.languageSelect")}: {currentLanguage.label}
