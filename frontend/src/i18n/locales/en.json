@@ -203,6 +203,10 @@
     "title": "User Feedback",
     "description": "Feel free to report bugs, suggest features, improvements, or any other feedback.",
     "button": "💬 Send Feedback",
+    "anonymous": {
+      "notice": "💡 We send your feedback anonymously. Share your thoughts safely without any personal information collection.",
+      "counter": "Please write at least 10 characters ({{current}}/{{max}})"
+    },
     "form": {
       "email": {
         "label": "Email Address",
@@ -235,7 +239,11 @@
     "messages": {
       "success": "Thank you for your valuable feedback! We will review and contact you.",
       "error": "Failed to send feedback. Please try again later.",
-            "networkError": "A network error occurred. Please check your internet connection."
+      "networkError": "A network error occurred. Please check your internet connection.",
+      "rateLimitError": "Too many requests. Please try again in 5 minutes.",
+      "serverError": "Server error occurred. Please try again later.",
+      "timeoutError": "Request timeout. Please try again.",
+      "badRequestError": "Invalid request. Please check your input."
     }
   },
   "errors": {
