@@ -24,19 +24,7 @@ func main() {
 	// Gin 라우터 설정
 	router := gin.Default()
 
-	// CORS 설정 (프론트엔드 연동용)
-	router.Use(func(c *gin.Context) {
-		c.Header("Access-Control-Allow-Origin", "*")
-		c.Header("Access-Control-Allow-Methods", "POST, OPTIONS")
-		c.Header("Access-Control-Allow-Headers", "Content-Type, Authorization")
-
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(204)
-			return
-		}
-
-		c.Next()
-	})
+	// CORS는 Nginx에서 통합 관리
 
 	// 라우터 등록
 	router.GET("/health", func(c *gin.Context) {
