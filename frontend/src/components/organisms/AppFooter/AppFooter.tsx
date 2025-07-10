@@ -3,6 +3,7 @@
 import Typography from "@/components/atoms/Typography/Typography";
 import Button from "@/components/atoms/Button/Button";
 import FeedbackModal from "@/components/atoms/FeedbackModal/FeedbackModal";
+import AlertModal from "@/components/atoms/AlertModal/AlertModal";
 import { FC, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useFeedback } from "@/hooks/feedback/useFeedback";
@@ -11,6 +12,16 @@ import { FeedbackRequest } from "@/types/feedback";
 const AppFooter: FC = () => {
   const { t } = useTranslation();
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+  const [alertModal, setAlertModal] = useState<{
+    isOpen: boolean;
+    message: string;
+    isSuccess: boolean;
+  }>({
+    isOpen: false,
+    message: "",
+    isSuccess: false,
+  });
+  
   const feedbackMutation = useFeedback();
 
   const handleFeedbackSubmit = async (feedback: FeedbackRequest) => {
@@ -18,13 +29,57 @@ const AppFooter: FC = () => {
       await feedbackMutation.mutateAsync(feedback);
       setIsFeedbackModalOpen(false);
       
-      // 성공 메시지는 별도 알림 시스템이 있을 때 표시
-      // 현재는 콘솔에 로그 출력
+      // 성공 알림 표시
+      setAlertModal({
+        isOpen: true,
+        message: t('feedback.messages.success'),
+        isSuccess: true,
+      });
+      
       console.log('✅ 피드백 전송 완료!');
-    } catch (error) {
-      // 에러는 FeedbackModal 내에서 처리
+    } catch (error: any) {
       console.error('❌ 피드백 전송 실패:', error);
+      
+      // 에러 메시지 처리
+      let errorMessage = t('feedback.messages.error');
+      
+      if (error?.message) {
+        switch (error.message) {
+          case 'NETWORK_ERROR':
+            errorMessage = t('feedback.messages.networkError');
+            break;
+          case 'RATE_LIMIT_EXCEEDED':
+            errorMessage = t('feedback.messages.rateLimitError');
+            break;
+          case 'SERVER_ERROR':
+            errorMessage = t('feedback.messages.serverError');
+            break;
+          case 'TIMEOUT_ERROR':
+            errorMessage = t('feedback.messages.timeoutError');
+            break;
+          case 'BAD_REQUEST':
+            errorMessage = t('feedback.messages.badRequestError');
+            break;
+          default:
+            errorMessage = t('feedback.messages.error');
+        }
+      }
+      
+      // 에러 알림 표시
+      setAlertModal({
+        isOpen: true,
+        message: errorMessage,
+        isSuccess: false,
+      });
     }
+  };
+
+  const handleAlertClose = () => {
+    setAlertModal({
+      isOpen: false,
+      message: "",
+      isSuccess: false,
+    });
   };
 
   return (
@@ -57,6 +112,14 @@ const AppFooter: FC = () => {
         onClose={() => setIsFeedbackModalOpen(false)}
         onSubmit={handleFeedbackSubmit}
         isLoading={feedbackMutation.isPending}
+      />
+
+      {/* 결과 알림 모달 */}
+      <AlertModal
+        open={alertModal.isOpen}
+        message={alertModal.message}
+        onClose={handleAlertClose}
+        confirmLabel={t('common.confirm')}
       />
     </>
   );
