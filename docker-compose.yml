@@ -52,7 +52,7 @@ services:
       context: ./backend/feedback
     container_name: feedback-service
     ports:
-      - "8083:8080"
+      - "8084:8080"
     env_file:
       - .env
     depends_on:
@@ -69,6 +69,7 @@ services:
       - upload
       - convert
       - download
+      - feedback
 
   postgres:
     image: postgres:17
