@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { FeedbackRequest, FeedbackResponse } from '@/types/feedback';
+import axios from "axios";
+import { FeedbackRequest, FeedbackResponse } from "@/types/feedback";
 
 /**
  * 피드백 관련 API 서비스 클래스
@@ -7,10 +7,11 @@ import { FeedbackRequest, FeedbackResponse } from '@/types/feedback';
  * @class
  */
 class FeedbackService {
-  private readonly baseURL: string;
+  private readonly feedbackURL: string;
 
   constructor() {
-    this.baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+    // 피드백 서비스는 포트 8084에서 실행 (Docker)
+    this.feedbackURL = process.env.NEXT_PUBLIC_FEEDBACK_API_URL || "http://localhost";
   }
 
   /**
@@ -21,78 +22,90 @@ class FeedbackService {
    */
   async sendFeedback(feedback: FeedbackRequest): Promise<FeedbackResponse> {
     try {
-      // TODO: 백엔드 API 엔드포인트가 구현되면 실제 API 호출로 변경
-      // const response = await axios.post(`${this.baseURL}/api/feedback`, feedback);
-      // return response.data;
-
-      // 현재는 Mock 응답 (개발용)
-      console.log('📧 Feedback submitted:', {
+      console.log("📧 Sending feedback to backend:", {
         timestamp: new Date().toISOString(),
-        ...feedback,
+        type: feedback.type,
+        messageLength: feedback.message.length,
+        hasEmail: !!feedback.email,
+        url: feedback.url,
       });
 
-      // 2초 지연 후 성공 응답 (실제 API 호출 시뮬레이션)
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // 실제 백엔드 API 호출
+      const response = await axios.post(
+        `${this.feedbackURL}/feedback`,
+        {
+          email: feedback.email || "", // 익명 피드백은 빈 문자열
+          type: feedback.type,
+          message: feedback.message,
+          url: feedback.url,
+          userAgent: feedback.userAgent,
+        },
+        {
+          timeout: 10000, // 10초 타임아웃
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      // 랜덤하게 성공/실패 시뮬레이션 (10% 확률로 실패)
-      if (Math.random() < 0.1) {
-        throw new Error('Network simulation error');
-      }
-
-      return {
-        success: true,
-        message: 'Feedback sent successfully',
-      };
-
+      console.log("✅ Feedback sent successfully:", response.data);
+      return response.data;
     } catch (error) {
-      console.error('Failed to send feedback:', error);
-      
+      console.error("❌ Failed to send feedback:", error);
+
       // 네트워크 오류 처리
       if (axios.isAxiosError(error)) {
         if (!error.response) {
-          throw new Error('NETWORK_ERROR');
+          throw new Error("NETWORK_ERROR");
         }
-        
-        // 서버 오류 처리
+
         const status = error.response.status;
-        if (status >= 500) {
-          throw new Error('SERVER_ERROR');
+        const data = error.response.data;
+
+        // Rate limit 처리 (429)
+        if (status === 429) {
+          throw new Error("RATE_LIMIT_EXCEEDED");
         }
-        
-        // 클라이언트 오류 처리
+
+        // 서버 오류 처리 (5xx)
+        if (status >= 500) {
+          throw new Error("SERVER_ERROR");
+        }
+
+        // 클라이언트 오류 처리 (4xx)
         if (status >= 400) {
-          throw new Error(error.response.data?.message || 'Bad request');
+          throw new Error(data?.message || "BAD_REQUEST");
         }
       }
-      
+
+      // 타임아웃 오류
+      if (error && typeof error === "object" && "code" in error && error.code === "ECONNABORTED") {
+        throw new Error("TIMEOUT_ERROR");
+      }
+
       // 기타 오류
-      throw new Error('UNKNOWN_ERROR');
+      throw new Error("UNKNOWN_ERROR");
     }
   }
 
   /**
-   * 실제 백엔드 API로 피드백을 전송합니다 (미래 구현용)
-   * @param {FeedbackRequest} feedback - 피드백 데이터
-   * @returns {Promise<FeedbackResponse>} 피드백 전송 결과
-   * @throws {Error} 네트워크 오류 또는 서버 오류
+   * 피드백 서비스의 헬스 체크
+   * @returns {Promise<boolean>} 서비스 상태
    */
-  private async sendFeedbackToAPI(feedback: FeedbackRequest): Promise<FeedbackResponse> {
-    const response = await axios.post(`${this.baseURL}/api/feedback`, {
-      email: feedback.email,
-      type: feedback.type,
-      message: feedback.message,
-      metadata: {
-        url: feedback.url,
-        userAgent: feedback.userAgent,
-        timestamp: new Date().toISOString(),
-      },
-    });
-
-    return response.data;
+  async healthCheck(): Promise<boolean> {
+    try {
+      const response = await axios.get(`${this.feedbackURL}/health`, {
+        timeout: 5000,
+      });
+      return response.status === 200;
+    } catch (error) {
+      console.warn("⚠️ Feedback service health check failed:", error);
+      return false;
+    }
   }
 }
 
 // 싱글톤 인스턴스 생성
 const feedbackService = new FeedbackService();
 
-export default feedbackService; 
+export default feedbackService;

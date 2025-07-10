@@ -1,0 +1,26 @@
+# 빌드 스테이지
+FROM golang:1.24-alpine AS builder
+
+# 복사될 위치
+WORKDIR /app
+
+# 의존성 복사 및 다운로드
+COPY go.sum go.mod ./
+RUN go mod download
+
+# 소스코드 복사 및 빌드
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main ./cmd
+
+# 실행 스테이지
+FROM alpine:latest
+
+WORKDIR /root/
+
+# 빌드된 바이너리 복사
+COPY --from=builder /app/main .
+
+EXPOSE 8080
+
+# 실행 명령
+CMD ["./main"] 

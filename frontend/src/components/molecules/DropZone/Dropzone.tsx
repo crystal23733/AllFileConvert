@@ -33,12 +33,16 @@ const Dropzone: FC<DropzoneProps> = ({
       }
       tabIndex={-1}
     >
-      <input {...getInputProps()} aria-label={t("upload.dropzone.label")} data-testid="dropzone-input" />
+      <input
+        {...getInputProps()}
+        aria-label={t("upload.dropzone.label")}
+        data-testid="dropzone-input"
+      />
       <p className="text-gray-500 text-base">
-        <Trans 
+        <Trans
           i18nKey="upload.dropzone.text"
           components={{
-            1: <span className="text-blue-600 underline" />
+            1: <span className="text-blue-600 underline" />,
           }}
         />
       </p>

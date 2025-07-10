@@ -1,4 +1,4 @@
-import { FeedbackRequest } from '@/types/feedback';
+import { FeedbackRequest } from "@/types/feedback";
 
 /**
  * FeedbackModal 컴포넌트의 Props 인터페이스
@@ -13,4 +13,4 @@ export interface FeedbackModalProps {
   onClose: () => void;
   onSubmit: (feedback: FeedbackRequest) => void;
   isLoading?: boolean;
-} 
+}

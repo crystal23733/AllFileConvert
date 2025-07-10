@@ -24,8 +24,20 @@ export const metadata: Metadata = {
     default: "AllFileConvert - 무료 파일 변환 서비스",
     template: "%s | AllFileConvert",
   },
-  description: "무료 온라인 파일 변환 서비스. 동영상, 이미지, 문서, 오디오 파일을 빠르고 안전하게 변환하세요. MP4, JPG, PDF, MP3 등 다양한 포맷 지원.",
-  keywords: ["파일 변환", "온라인 변환", "무료 변환", "MP4", "JPG", "PDF", "MP3", "동영상 변환", "이미지 변환", "문서 변환"],
+  description:
+    "무료 온라인 파일 변환 서비스. 동영상, 이미지, 문서, 오디오 파일을 빠르고 안전하게 변환하세요. MP4, JPG, PDF, MP3 등 다양한 포맷 지원.",
+  keywords: [
+    "파일 변환",
+    "온라인 변환",
+    "무료 변환",
+    "MP4",
+    "JPG",
+    "PDF",
+    "MP3",
+    "동영상 변환",
+    "이미지 변환",
+    "문서 변환",
+  ],
   authors: [{ name: "AllFileConvert" }],
   creator: "AllFileConvert",
   publisher: "AllFileConvert",
@@ -38,14 +50,15 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
     languages: {
-      'ko': '/ko',
-      'en': '/en',
-      'ja': '/ja',
+      ko: "/ko",
+      en: "/en",
+      ja: "/ja",
     },
   },
   openGraph: {
     title: "AllFileConvert - 무료 파일 변환 서비스",
-    description: "무료 온라인 파일 변환 서비스. 동영상, 이미지, 문서, 오디오 파일을 빠르고 안전하게 변환하세요.",
+    description:
+      "무료 온라인 파일 변환 서비스. 동영상, 이미지, 문서, 오디오 파일을 빠르고 안전하게 변환하세요.",
     url: "https://allfileconvert.com",
     siteName: "AllFileConvert",
     locale: "ko_KR",
@@ -54,7 +67,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "AllFileConvert - 무료 파일 변환 서비스",
-    description: "무료 온라인 파일 변환 서비스. 동영상, 이미지, 문서, 오디오 파일을 빠르고 안전하게 변환하세요.",
+    description:
+      "무료 온라인 파일 변환 서비스. 동영상, 이미지, 문서, 오디오 파일을 빠르고 안전하게 변환하세요.",
   },
   robots: {
     index: true,
@@ -62,9 +76,9 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
   verification: {

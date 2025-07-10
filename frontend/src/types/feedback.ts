@@ -43,4 +43,4 @@ export interface FeedbackTypeOption {
   value: FeedbackType;
   label: string;
   icon: string;
-} 
+}

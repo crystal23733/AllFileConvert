@@ -13,11 +13,7 @@ describe("ResultPreview", () => {
   const fileName = "example.jpg";
 
   const renderWithI18n = (ui: React.ReactElement) => {
-    return render(
-      <I18nextProvider i18n={i18n}>
-        {ui}
-      </I18nextProvider>
-    );
+    return render(<I18nextProvider i18n={i18n}>{ui}</I18nextProvider>);
   };
 
   it("이미지 타입이면 <img> 렌더링", () => {

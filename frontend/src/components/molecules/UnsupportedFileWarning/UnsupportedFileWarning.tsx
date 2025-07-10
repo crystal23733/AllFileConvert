@@ -62,9 +62,9 @@ const UnsupportedFileWarning: React.FC<UnsupportedFileWarningProps> = ({
         <div className="flex-1">
           <h3 className="text-red-800 font-semibold mb-1">{t("warnings.unsupportedFile.title")}</h3>
           <p className="text-red-700 text-sm mb-2">
-            {t("warnings.unsupportedFile.description", { 
-              fileName, 
-              fileType: getFileTypeMessage(mimeType) 
+            {t("warnings.unsupportedFile.description", {
+              fileName,
+              fileType: getFileTypeMessage(mimeType),
             })}
           </p>
           {mimeType === "application/pdf" ? (
