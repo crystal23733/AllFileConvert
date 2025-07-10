@@ -20,10 +20,8 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
   
   // 폼 상태 관리
   const [selectedType, setSelectedType] = useState<FeedbackType>('general');
-  const [email, setEmail] = useState('hottoplay24@gmail.com'); // 고정 이메일
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState<{
-    email?: string;
     message?: string;
   }>({});
 
@@ -56,7 +54,6 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
 
   // 폼 초기화
   const resetForm = () => {
-    setEmail('hottoplay24@gmail.com'); // 고정 이메일
     setMessage('');
     setSelectedType('general');
     setErrors({});
@@ -64,7 +61,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
 
   // 폼 유효성 검증
   const validateForm = (): boolean => {
-    const newErrors: { email?: string; message?: string } = {};
+    const newErrors: { message?: string } = {};
 
     // 메시지 검증
     if (!message.trim()) {
@@ -85,8 +82,9 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
       return;
     }
 
+    // 익명 피드백으로 전송 (이메일은 빈 문자열)
     const feedbackData: FeedbackRequest = {
-      email: email.trim(),
+      email: "", // 완전 익명 피드백
       message: message.trim(),
       type: selectedType,
       url: window.location.href,
@@ -129,29 +127,17 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
           <Typography variant="body" className="mt-2 text-black">
             {t('feedback.description')}
           </Typography>
+          
+          {/* 익명 피드백 안내 */}
+          <div className="mt-3 p-3 bg-blue-50 rounded-md border border-blue-200">
+            <Typography variant="body" className="text-blue-700 text-sm">
+              {t('feedback.anonymous.notice')}
+            </Typography>
+          </div>
         </div>
 
         {/* 폼 */}
         <form onSubmit={handleFormSubmit} className="p-6 space-y-4">
-          {/* 이메일 입력 */}
-          <div>
-            <label className="block text-sm font-medium text-black mb-1">
-              {t('feedback.form.email.label')} *
-            </label>
-            <input
-              type="email"
-              value={email}
-              readOnly
-              placeholder={t('feedback.form.email.placeholder')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-black cursor-not-allowed"
-            />
-            {errors.email && (
-              <Typography variant="body" className="text-red-500 text-sm mt-1">
-                {errors.email}
-              </Typography>
-            )}
-          </div>
-
           {/* 피드백 타입 선택 */}
           <div>
             <label className="block text-sm font-medium text-black mb-2">
@@ -199,6 +185,9 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
                 {errors.message}
               </Typography>
             )}
+            <Typography variant="body" className="text-gray-500 text-xs mt-1">
+              {t('feedback.anonymous.counter', { current: message.length, max: 1000 })}
+            </Typography>
           </div>
 
           {/* 버튼 */}
