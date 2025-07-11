@@ -46,13 +46,16 @@ export default ({ initialCategory = "video" }: UseFileConvertFlowOptions = {}) =
     setConversionId(null);
     setStatus("idle");
     setDownloadCompleted(false);
+
     if (selected[0]) {
       const mime = selected[0].type;
 
       // 지원 여부 확인
       const isSupported = FormatManager.isSupported(mime);
       if (!isSupported) {
-        setStatus("failed"); // 지원하지 않는 파일은 바로 실패 상태로
+        // 지원하지 않는 파일은 상태를 "failed"로 설정하지 않음
+        // 대신 idle 상태를 유지하여 사용자가 다른 파일을 선택할 수 있도록 함
+        setOriginalFileName(selected[0].name);
         return;
       }
 
