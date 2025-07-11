@@ -25,12 +25,18 @@ const UploadForm: FC<UploadFormProps> = ({
         onSubmit();
       }}
     >
-      <Dropzone onDrop={onFileDrop} disabled={disabled} />
+      {/* 파일 드롭존은 항상 활성화 (파일 재선택 허용) */}
+      <Dropzone
+        onDrop={onFileDrop}
+        disabled={isSubmitting} // 업로드 중일 때만 비활성화
+      />
+
+      {/* 포맷 선택과 변환 버튼은 disabled 상태에 따라 비활성화 */}
       <FormatSelect
         value={selectedFormat}
         onChange={onFormatChange}
         options={formatOptions}
-        disabled={disabled}
+        disabled={disabled || isSubmitting}
         label={t("upload.format.label")}
       />
       <Button variant="primary" type="submit" disabled={disabled || isSubmitting}>
