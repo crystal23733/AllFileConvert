@@ -32,16 +32,15 @@ i18n
   .use(initReactI18next) // React 통합
   .init({
     resources,
-    fallbackLng: "ko", // 기본 언어는 한국어
+    fallbackLng: "ko", // 기본 언어는 한국어 (localStorage에 저장된 언어가 없을 때만 사용)
     debug: false, // 디버그 로그 비활성화
 
-    // 언어 감지 설정 - SSR 호환성 개선
+    // 언어 감지 설정 - localStorage 우선순위로 변경
     detection: {
-      order: ["htmlTag", "localStorage", "navigator", "path", "subdomain"],
+      order: ["localStorage", "navigator", "htmlTag", "path", "subdomain"], // localStorage를 최우선으로
       caches: ["localStorage"],
       lookupFromPathIndex: 0,
       lookupFromSubdomainIndex: 0,
-      // SSR에서는 localStorage 접근 불가하므로 htmlTag를 우선순위로
       excludeCacheFor: ["cimode"], // cimode는 캐시하지 않음
     },
 
@@ -60,8 +59,8 @@ i18n
     keySeparator: ".",
     nsSeparator: ":",
 
-    // SSR 관련 설정
-    lng: "ko", // 서버사이드에서 기본 언어 명시적 설정
+    // SSR 관련 설정 - lng 제거하여 자동 감지가 작동하도록 함
+    // lng: "ko", // 이 설정을 제거하여 localStorage 우선순위 적용
     preload: ["ko", "en", "ja"], // 모든 언어 사전 로드
 
     // React 관련 설정
@@ -69,5 +68,19 @@ i18n
       useSuspense: false, // SSR에서 Suspense 비활성화
     },
   });
+
+// 언어 변경 시 html lang 속성 업데이트
+i18n.on("languageChanged", lng => {
+  if (typeof document !== "undefined") {
+    document.documentElement.lang = lng;
+  }
+});
+
+// 초기 로드 시 html lang 속성 설정
+i18n.on("initialized", options => {
+  if (typeof document !== "undefined") {
+    document.documentElement.lang = options.lng || "ko";
+  }
+});
 
 export default i18n;
