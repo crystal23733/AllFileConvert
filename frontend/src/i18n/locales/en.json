@@ -23,12 +23,12 @@
     "refresh": "Refresh"
   },
   "header": {
-    "title": "AllFileConvert",
+    "title": "FlipFile",
     "subtitle": "Universal File Conversion Service",
     "languageSelect": "Language Selection"
   },
   "footer": {
-    "copyright": "© {{year}} AllFileConvert | Universal File Conversion Service",
+    "copyright": "© {{year}} FlipFile | Universal File Conversion Service",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service"
   },
@@ -36,7 +36,7 @@
     "title": "File Upload",
     "dropzone": {
       "text": "Drag and drop files or <1>click</1> to select",
-      "hint": "Max 200MB, supports mp4/pdf/jpg etc.",
+      "hint": "Max 100MB, supports mp4/pdf/jpg etc.",
       "label": "File Upload"
     },
     "format": {

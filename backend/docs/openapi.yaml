@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: AllFileConvert API
+  title: FlipFile API
   version: 1.0.0
   description: 파일 업로드 / 변환 / 다운로드 API 명세
 paths:
@@ -92,7 +92,7 @@ paths:
                     example: completed
                   download_url:
                     type: string
-                    example: 'https://cdn.allfileconvert.com/converted/xxx.mp4'
+                    example: 'https://cdn.FlipFile.com/converted/xxx.mp4'
         '404':
           description: 변환 ID 없음
         '500':

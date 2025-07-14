@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: AllFileConvert API
+  title: FlipFile API
   version: 1.0.0
   description: 파일 업로드 / 변환 / 다운로드 API 명세
 

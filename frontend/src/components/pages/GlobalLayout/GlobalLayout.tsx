@@ -43,7 +43,10 @@ const GlobalLayout: FC<GlobalLayoutProps> = ({ children }) => {
           <header className="w-full py-4 bg-white shadow-sm border-b border-gray-200 mb-4">
             <div className="max-w-6xl mx-auto px-4">
               <nav className="flex items-center justify-between">
-                <div className="text-xl font-bold text-gray-900">AllFileConvert</div>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-transparent"></div>
+                  <div className="text-xl font-bold text-gray-900">FlipFile</div>
+                </div>
                 <div className="flex items-center space-x-2" style={{ minWidth: '160px', minHeight: '40px' }}>
                   <span className="text-sm font-medium text-gray-700">Language:</span>
                   <div className="relative">
@@ -90,12 +93,12 @@ const GlobalLayout: FC<GlobalLayoutProps> = ({ children }) => {
       {/* Footer - i18n 사용으로 인한 hydration 오류 방지 */}
       <NoSSR
         fallback={
-          <footer className="w-full py-6 px-4 bg-gray-100 text-center mt-12 border-t border-gray-200">
+          <footer className="w-full py-6 px-4 bg-gray-100 text-center mt-4 border-t border-gray-200">
             <div className="max-w-4xl mx-auto">
               <div className="mb-4">
                 <div className="inline-block px-4 py-2 bg-gray-200 rounded animate-pulse h-8 w-20"></div>
               </div>
-              <div className="text-gray-500 text-sm">© {new Date().getFullYear()} AllFileConvert. All rights reserved.</div>
+              <div className="text-gray-500 text-sm">© {new Date().getFullYear()} FlipFile. All rights reserved.</div>
             </div>
           </footer>
         }

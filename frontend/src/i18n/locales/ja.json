@@ -23,12 +23,12 @@
     "refresh": "更新"
   },
   "header": {
-    "title": "AllFileConvert",
+    "title": "FlipFile",
     "subtitle": "ファイル変換サービス",
     "languageSelect": "言語選択"
   },
   "footer": {
-    "copyright": "© {{year}} AllFileConvert | ファイル変換サービス",
+    "copyright": "© {{year}} FlipFile | ファイル変換サービス",
     "privacy": "プライバシーポリシー",
     "terms": "利用規約"
   },
@@ -36,7 +36,7 @@
     "title": "ファイルアップロード",
     "dropzone": {
       "text": "ファイルをドラッグ＆ドロップするか<1>クリック</1>して選択してください",
-      "hint": "最大200MB、mp4/pdf/jpg等対応",
+      "hint": "最大100MB、mp4/pdf/jpg等対応",
       "label": "ファイルアップロード"
     },
     "format": {
