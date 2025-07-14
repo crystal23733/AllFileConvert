@@ -12,9 +12,10 @@ const AppHeader: FC = () => {
     <header className="w-full py-4 px-4 bg-white shadow flex items-center justify-between sticky top-0 z-50">
       {/* 로고/사이트명 */}
       <div className="flex items-center gap-2">
-        <span className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-          A
-        </span>
+        <div className="w-8 h-8 flex items-center justify-center">
+          <img src="/logo.png" alt="FlipFile" className="w-8 h-8" />
+          <div className="w-8 h-8 bg-transparent"></div>
+        </div>
         <Typography variant="title" className="ml-2">
           {t("header.title")}
         </Typography>
