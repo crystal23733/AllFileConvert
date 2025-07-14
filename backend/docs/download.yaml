@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: AllFileConvert - Download API
+  title: FlipFile - Download API
   version: 1.0.0
   description: 변환 완료된 파일을 다운로드하는 API
 

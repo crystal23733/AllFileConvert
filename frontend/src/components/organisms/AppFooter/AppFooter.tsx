@@ -84,7 +84,7 @@ const AppFooter: FC = () => {
 
   return (
     <>
-      <footer className="w-full py-6 px-4 bg-gray-100 text-center mt-12 border-t border-gray-200">
+      <footer className="w-full py-6 px-4 bg-gray-100 text-center mt-4 border-t border-gray-200">
         <div className="max-w-4xl mx-auto">
           {/* 피드백 버튼 */}
           <div className="mb-4">

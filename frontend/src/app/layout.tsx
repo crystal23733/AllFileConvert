@@ -21,8 +21,8 @@ const geistMono = Geist_Mono({
  */
 export const metadata: Metadata = {
   title: {
-    default: "AllFileConvert - 무료 파일 변환 서비스",
-    template: "%s | AllFileConvert",
+    default: "FlipFile - 무료 파일 변환 서비스",
+    template: "%s | FlipFile",
   },
   description:
     "무료 온라인 파일 변환 서비스. 동영상, 이미지, 문서, 오디오 파일을 빠르고 안전하게 변환하세요. MP4, JPG, PDF, MP3 등 다양한 포맷 지원.",
@@ -38,15 +38,15 @@ export const metadata: Metadata = {
     "이미지 변환",
     "문서 변환",
   ],
-  authors: [{ name: "AllFileConvert" }],
-  creator: "AllFileConvert",
-  publisher: "AllFileConvert",
+  authors: [{ name: "FlipFile" }],
+  creator: "FlipFile",
+  publisher: "FlipFile",
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://allfileconvert.com"), // 실제 도메인으로 변경 필요
+  metadataBase: new URL("https://FlipFile.com"), // 실제 도메인으로 변경 필요
   alternates: {
     canonical: "/",
     languages: {
@@ -56,17 +56,17 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "AllFileConvert - 무료 파일 변환 서비스",
+    title: "FlipFile - 무료 파일 변환 서비스",
     description:
       "무료 온라인 파일 변환 서비스. 동영상, 이미지, 문서, 오디오 파일을 빠르고 안전하게 변환하세요.",
-    url: "https://allfileconvert.com",
-    siteName: "AllFileConvert",
+    url: "https://FlipFile.com",
+    siteName: "FlipFile",
     locale: "ko_KR",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "AllFileConvert - 무료 파일 변환 서비스",
+    title: "FlipFile - 무료 파일 변환 서비스",
     description:
       "무료 온라인 파일 변환 서비스. 동영상, 이미지, 문서, 오디오 파일을 빠르고 안전하게 변환하세요.",
   },
@@ -93,7 +93,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
           <GlobalLayout>{children}</GlobalLayout>

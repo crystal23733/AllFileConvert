@@ -21,7 +21,7 @@ i18n.use(initReactI18next).init({
         upload: {
           dropzone: {
             text: "파일을 끌어오거나 <1>클릭</1>해서 선택하세요",
-            hint: "최대 200MB, mp4/pdf/jpg 등 지원",
+            hint: "최대 100MB, mp4/pdf/jpg 등 지원",
             label: "파일 업로드",
           },
           format: {
@@ -112,7 +112,7 @@ i18n.use(initReactI18next).init({
           pdfTitle: "PDF 미리보기",
         },
         header: {
-          title: "AllFileConvert",
+          title: "FlipFile",
           languageSelect: "언어 선택",
         },
         common: {
@@ -178,7 +178,7 @@ i18n.use(initReactI18next).init({
         upload: {
           dropzone: {
             text: "Drag and drop or <1>click</1> to select files",
-            hint: "Max 200MB, supports mp4/pdf/jpg etc",
+            hint: "Max 100MB, supports mp4/pdf/jpg etc",
             label: "File Upload",
           },
           format: {
@@ -269,7 +269,7 @@ i18n.use(initReactI18next).init({
           pdfTitle: "PDF Preview",
         },
         header: {
-          title: "AllFileConvert",
+          title: "FlipFile",
           languageSelect: "Language Selection",
         },
         common: {
@@ -337,7 +337,7 @@ i18n.use(initReactI18next).init({
         upload: {
           dropzone: {
             text: "ファイルをドラッグ&ドロップまたは<1>クリック</1>で選択",
-            hint: "最大200MB、mp4/pdf/jpgなどをサポート",
+            hint: "最大100MB、mp4/pdf/jpgなどをサポート",
             label: "ファイルアップロード",
           },
           format: {
@@ -429,7 +429,7 @@ i18n.use(initReactI18next).init({
           pdfTitle: "PDFプレビュー",
         },
         header: {
-          title: "AllFileConvert",
+          title: "FlipFile",
           languageSelect: "言語選択",
         },
         common: {

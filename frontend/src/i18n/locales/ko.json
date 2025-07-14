@@ -23,12 +23,12 @@
     "refresh": "새로고침"
   },
   "header": {
-    "title": "AllFileConvert",
+    "title": "FlipFile",
     "subtitle": "모든 파일 변환 서비스",
     "languageSelect": "언어 선택"
   },
   "footer": {
-    "copyright": "© {{year}} AllFileConvert | 모든 파일 변환 서비스",
+    "copyright": "© {{year}} FlipFile | 모든 파일 변환 서비스",
     "privacy": "개인정보처리방침",
     "terms": "이용약관"
   },
@@ -36,7 +36,7 @@
     "title": "파일 업로드",
     "dropzone": {
       "text": "파일을 끌어오거나 <1>클릭</1>해서 선택하세요",
-      "hint": "최대 200MB, mp4/pdf/jpg 등 지원",
+      "hint": "최대 100MB, mp4/pdf/jpg 등 지원",
       "label": "파일 업로드"
     },
     "format": {
