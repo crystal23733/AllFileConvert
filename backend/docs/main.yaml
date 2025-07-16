@@ -1,0 +1,18 @@
+openapi: 3.0.3
+info:
+  title: FlipFile API
+  version: 1.0.0
+  description: 파일 업로드 / 변환 / 다운로드 API 명세
+
+paths: 
+  /upload: 
+    $ref: './upload.yaml#/paths/~1upload'
+
+  /convert:
+    $ref: './convert.yaml#/paths/~1convert'
+  
+  /convert/status/{id}:
+    $ref: './convert.yaml#/paths/~1convert~1status~1{id}'
+
+  /download/{id}:
+    $ref: './download.yaml#/paths/~1download~1{id}'

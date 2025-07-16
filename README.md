@@ -1,6 +1,6 @@
-# 📁 AllFileConvert
+# 📁 FlipFile
 
-AllFileConvert는 다양한 포맷의 영상, 문서, 이미지 파일을 웹에서 빠르게 변환할 수 있는 글로벌 타겟 서비스입니다.  
+FlipFile는 다양한 포맷의 영상, 문서, 이미지 파일을 웹에서 빠르게 변환할 수 있는 글로벌 타겟 서비스입니다.  
 설치 없이 간단한 UI로 변환하고, 광고 기반으로 운영되며 MVP는 회원가입 없이 작동합니다.
 
 ---
@@ -41,7 +41,7 @@ AllFileConvert는 다양한 포맷의 영상, 문서, 이미지 파일을 웹에
 
 ```
 
-allfileconvert/
+FlipFile/
 ├── frontend/
 │   ├── src/
 │   ├── index.html
@@ -64,8 +64,8 @@ allfileconvert/
 ### 1. 설치
 
 ```bash
-git clone https://github.com/yourname/allfileconvert.git
-cd allfileconvert
+git clone https://github.com/yourname/FlipFile.git
+cd FlipFile
 ````
 
 ### 2. 프론트엔드 실행

@@ -1,0 +1,93 @@
+services:
+  upload:
+    build:
+      context: ./backend/upload
+    container_name: upload-service
+    ports:
+      - "8081:8080"
+    env_file:
+      - .env
+    volumes:
+      - shared_files:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  convert:
+    build: 
+      context: ./backend/convert
+    container_name: convert-service
+    ports:
+      - "8082:8080"
+    env_file:
+      - .env
+    volumes:
+      - shared_files:/app/uploads
+      - convert_output:/app/converted
+    depends_on:
+      upload:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+
+  download:
+    build:
+      context: ./backend/download
+    container_name: download-service
+    ports:
+      - "8083:8080"
+    env_file:
+      - .env
+    volumes:
+      - shared_files:/app/uploads
+      - convert_output:/app/converted
+    depends_on:
+      convert:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+
+  feedback:
+    build:
+      context: ./backend/feedback
+    container_name: feedback-service
+    ports:
+      - "8084:8080"
+    env_file:
+      - .env
+    depends_on:
+      - upload
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-gateway
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - upload
+      - convert
+      - download
+      - feedback
+
+  postgres:
+    image: postgres:17
+    container_name: postgres-db
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U Ho -d convert_db || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
+  shared_files:
+  convert_output:
