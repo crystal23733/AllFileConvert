@@ -36,7 +36,7 @@ const GlobalLayout: FC<GlobalLayoutProps> = ({ children }) => {
       >
         <AdArea position="right" />
       </NoSSR>
-      
+
       {/* 상단 Header - i18n 사용으로 인한 hydration 오류 방지 */}
       <NoSSR
         fallback={
@@ -47,7 +47,10 @@ const GlobalLayout: FC<GlobalLayoutProps> = ({ children }) => {
                   <div className="w-8 h-8 bg-transparent"></div>
                   <div className="text-xl font-bold text-gray-900">FlipFile</div>
                 </div>
-                <div className="flex items-center space-x-2" style={{ minWidth: '160px', minHeight: '40px' }}>
+                <div
+                  className="flex items-center space-x-2"
+                  style={{ minWidth: "160px", minHeight: "40px" }}
+                >
                   <span className="text-sm font-medium text-gray-700">Language:</span>
                   <div className="relative">
                     <div className="p-2 pr-8 rounded border bg-white text-gray-700 text-sm w-20 h-8 animate-pulse bg-gray-100"></div>
@@ -60,7 +63,7 @@ const GlobalLayout: FC<GlobalLayoutProps> = ({ children }) => {
       >
         <AppHeader />
       </NoSSR>
-      
+
       {/* 최상단 광고 */}
       <NoSSR
         fallback={
@@ -89,7 +92,7 @@ const GlobalLayout: FC<GlobalLayoutProps> = ({ children }) => {
       >
         <AdArea position="bottom" />
       </NoSSR>
-      
+
       {/* Footer - i18n 사용으로 인한 hydration 오류 방지 */}
       <NoSSR
         fallback={
@@ -98,7 +101,9 @@ const GlobalLayout: FC<GlobalLayoutProps> = ({ children }) => {
               <div className="mb-4">
                 <div className="inline-block px-4 py-2 bg-gray-200 rounded animate-pulse h-8 w-20"></div>
               </div>
-              <div className="text-gray-500 text-sm">© {new Date().getFullYear()} FlipFile. All rights reserved.</div>
+              <div className="text-gray-500 text-sm">
+                © {new Date().getFullYear()} FlipFile. All rights reserved.
+              </div>
             </div>
           </footer>
         }

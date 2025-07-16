@@ -26,15 +26,17 @@ export default function Home() {
   return (
     <div>
       {/* i18n이 사용되는 모든 컴포넌트를 NoSSR로 감싸서 hydration 오류 방지 */}
-      <NoSSR fallback={
-        <div className="space-y-4 max-w-lg mx-auto p-4 bg-white rounded shadow">
-          <div className="w-full p-6 border-2 border-dashed rounded-xl text-center bg-gray-50 border-gray-200">
-            <div className="h-12 bg-gray-200 animate-pulse rounded"></div>
+      <NoSSR
+        fallback={
+          <div className="space-y-4 max-w-lg mx-auto p-4 bg-white rounded shadow">
+            <div className="w-full p-6 border-2 border-dashed rounded-xl text-center bg-gray-50 border-gray-200">
+              <div className="h-12 bg-gray-200 animate-pulse rounded"></div>
+            </div>
+            <div className="h-10 bg-gray-200 animate-pulse rounded"></div>
+            <div className="h-10 bg-gray-200 animate-pulse rounded"></div>
           </div>
-          <div className="h-10 bg-gray-200 animate-pulse rounded"></div>
-          <div className="h-10 bg-gray-200 animate-pulse rounded"></div>
-        </div>
-      }>
+        }
+      >
         <UploadForm
           onFileDrop={flow.handleFileDrop}
           selectedFormat={flow.format}
@@ -72,7 +74,7 @@ export default function Home() {
             }
           }}
         />
-        
+
         <StatusPanel
           status={flow.status}
           downloadUrl={flow.downloadUrl}
