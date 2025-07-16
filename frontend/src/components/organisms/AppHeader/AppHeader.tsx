@@ -2,6 +2,7 @@
 
 import Typography from "@/components/atoms/Typography/Typography";
 import LanguageSwitcher from "@/components/molecules/LanguageSwitcher/LanguageSwitcher";
+import Image from "next/image";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -13,7 +14,7 @@ const AppHeader: FC = () => {
       {/* 로고/사이트명 */}
       <div className="flex items-center gap-2">
         <div className="w-8 h-8 flex items-center justify-center">
-          <img src="/logo.png" alt="FlipFile" className="w-8 h-8" />
+          <Image src="/logo.png" alt="FlipFile" className="w-8 h-8" />
           <div className="w-8 h-8 bg-transparent"></div>
         </div>
         <Typography variant="title" className="ml-2">
