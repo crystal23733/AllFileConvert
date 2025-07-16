@@ -3,8 +3,7 @@ import AdAreaProps from "../AdArea.types";
 /**
  * 기본 스타일 그룹
  */
-export const baseStyle: string =
-  "flex items-center justify-center bg-gray-100 rounded shadow text-gray-500 text-xs";
+export const baseStyle: string = "flex items-center justify-center";
 
 /**
  * 위치에 따른 스타일 그룹

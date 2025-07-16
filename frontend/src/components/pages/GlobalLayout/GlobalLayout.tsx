@@ -16,10 +16,8 @@ const GlobalLayout: FC<GlobalLayoutProps> = ({ children }) => {
         fallback={
           <aside
             role="complementary"
-            className="fixed left-4 top-1/2 transform -translate-y-1/2 w-32 h-64 bg-gray-100 rounded shadow text-gray-500 flex items-center justify-center text-sm z-10"
-          >
-            [좌측 광고 영역]
-          </aside>
+            className="fixed left-4 top-1/2 transform -translate-y-1/2 w-32 h-64 flex items-center justify-center z-10"
+          ></aside>
         }
       >
         <AdArea position="left" />
@@ -28,10 +26,8 @@ const GlobalLayout: FC<GlobalLayoutProps> = ({ children }) => {
         fallback={
           <aside
             role="complementary"
-            className="fixed right-4 top-1/2 transform -translate-y-1/2 w-32 h-64 bg-gray-100 rounded shadow text-gray-500 flex items-center justify-center text-sm z-10"
-          >
-            [우측 광고 영역]
-          </aside>
+            className="fixed right-4 top-1/2 transform -translate-y-1/2 w-32 h-64 flex items-center justify-center z-10"
+          ></aside>
         }
       >
         <AdArea position="right" />
@@ -69,10 +65,8 @@ const GlobalLayout: FC<GlobalLayoutProps> = ({ children }) => {
         fallback={
           <aside
             role="complementary"
-            className="w-full h-24 bg-gray-100 rounded shadow text-gray-500 flex items-center justify-center text-sm mb-4"
-          >
-            [상단 광고 영역]
-          </aside>
+            className="w-full h-24 flex items-center justify-center mb-4"
+          ></aside>
         }
       >
         <AdArea position="top" />
@@ -84,10 +78,8 @@ const GlobalLayout: FC<GlobalLayoutProps> = ({ children }) => {
         fallback={
           <aside
             role="complementary"
-            className="w-full h-24 bg-gray-100 rounded shadow text-gray-500 flex items-center justify-center text-sm mt-4"
-          >
-            [하단 광고 영역]
-          </aside>
+            className="w-full h-24 flex items-center justify-center mt-4"
+          ></aside>
         }
       >
         <AdArea position="bottom" />
