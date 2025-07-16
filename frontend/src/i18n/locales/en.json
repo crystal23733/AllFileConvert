@@ -260,12 +260,6 @@
       "button": "Go to Home"
     }
   },
-  "ads": {
-    "left": "[Left Ad Area]",
-    "right": "[Right Ad Area]",
-    "top": "[Top Ad Area]",
-    "bottom": "[Bottom Ad Area]"
-  },
   "preview": {
     "title": "Conversion Result Preview",
     "unsupported": "Preview not supported for this file type.",

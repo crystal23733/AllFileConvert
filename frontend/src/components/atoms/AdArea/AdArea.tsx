@@ -1,19 +1,15 @@
 "use client";
 
 import { FC } from "react";
-import { useTranslation } from "react-i18next";
 import AdAreaProps from "./AdArea.types";
 import { baseStyle, positionStyle } from "./style/AdArea.style";
 
 /**
  * ! 구글 애드센스 승인 후 수정 필요
  */
-const AdArea: FC<AdAreaProps> = ({ position, className = "", children }) => {
-  const { t } = useTranslation();
-
+const AdArea: FC<AdAreaProps> = ({ position, className = "" }) => {
   return (
     <aside role="complementary" className={`${baseStyle} ${positionStyle[position]} ${className}`}>
-      {children ?? t(`ads.${position}`)}
       {/* 구글 애드센스 광고 코드 */}
       {/* <ins
         className="adsbygoogle"
