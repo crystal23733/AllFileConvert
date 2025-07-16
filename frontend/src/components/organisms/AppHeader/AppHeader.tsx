@@ -14,7 +14,7 @@ const AppHeader: FC = () => {
       {/* 로고/사이트명 */}
       <div className="flex items-center gap-2">
         <div className="w-8 h-8 flex items-center justify-center">
-          <Image src="/logo.png" alt="FlipFile" className="w-8 h-8" />
+          <Image src="/logo.png" alt="FlipFile" width={32} height={32} />
           <div className="w-8 h-8 bg-transparent"></div>
         </div>
         <Typography variant="title" className="ml-2">
