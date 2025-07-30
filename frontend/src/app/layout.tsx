@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://FlipFile.com"), // 실제 도메인으로 변경 필요
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://flipfile.com"), // 환경변수로 관리
   alternates: {
     canonical: "/",
     languages: {
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     title: "FlipFile - 무료 파일 변환 서비스",
     description:
       "무료 온라인 파일 변환 서비스. 동영상, 이미지, 문서, 오디오 파일을 빠르고 안전하게 변환하세요.",
-    url: "https://FlipFile.com",
+    url: process.env.NEXT_PUBLIC_SITE_URL || "https://flipfile.com",
     siteName: "FlipFile",
     locale: "ko_KR",
     type: "website",
