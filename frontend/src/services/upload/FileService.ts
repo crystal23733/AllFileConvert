@@ -16,11 +16,14 @@ export interface FileUploadResponse {
  */
 class FileService {
   private static instance: FileService;
+  private readonly apiBaseURL: string;
 
   /**
    * 외부에서 직접 생성하지 못하도록 생성자 숨김
    */
-  private constructor() {}
+  private constructor() {
+    this.apiBaseURL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost";
+  }
 
   /**
    * 전역에서 FileService 인스턴스를 반환
@@ -42,7 +45,7 @@ class FileService {
     formData.append("file", file);
 
     const response: AxiosResponse<FileUploadResponse> = await axios.post(
-      "http://localhost/upload",
+      `${this.apiBaseURL}/upload`,
       formData,
       {
         headers: { "Content-Type": "multipart/form-data" },

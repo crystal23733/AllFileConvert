@@ -18,7 +18,11 @@ export interface ConvertStatusResponse {
  */
 class ConvertStatusService {
   private static instance: ConvertStatusService;
-  private constructor() {}
+  private readonly apiBaseURL: string;
+
+  private constructor() {
+    this.apiBaseURL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost";
+  }
 
   /**
    * 전역에서 ConvertStatusService 인스턴스를 반환
@@ -37,7 +41,7 @@ class ConvertStatusService {
    */
   async getStatus(conversionId: string): Promise<ConvertStatusResponse> {
     const response: AxiosResponse<ConvertStatusResponse> = await axios.get(
-      `http://localhost/convert/status/${conversionId}`
+      `${this.apiBaseURL}/convert/status/${conversionId}`
     );
     return response.data;
   }
