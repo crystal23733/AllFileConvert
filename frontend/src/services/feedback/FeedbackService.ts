@@ -11,7 +11,7 @@ class FeedbackService {
 
   constructor() {
     // 피드백 서비스는 포트 8084에서 실행 (Docker)
-    this.feedbackURL = process.env.NEXT_PUBLIC_FEEDBACK_API_URL || "http://localhost";
+    this.feedbackURL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost";
   }
 
   /**

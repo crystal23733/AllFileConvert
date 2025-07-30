@@ -24,11 +24,14 @@ export interface ConvertResponse {
  */
 class ConvertService {
   private static instance: ConvertService;
+  private readonly apiBaseURL: string;
 
   /**
    * 외부에서 직접 생성하지 못하도록 생성자 숨김
    */
-  private constructor() {}
+  private constructor() {
+    this.apiBaseURL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost";
+  }
 
   /**
    * 전역에서 ConversionService 인스턴스를 반환
@@ -46,7 +49,7 @@ class ConvertService {
    */
   async convert(data: ConvertRequest): Promise<ConvertResponse> {
     const response: AxiosResponse<ConvertResponse> = await axios.post(
-      "http://localhost/convert",
+      `${this.apiBaseURL}/convert`,
       data
     );
     return response.data;
