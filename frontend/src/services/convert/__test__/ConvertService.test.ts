@@ -4,6 +4,7 @@ import ConvertService, { ConvertRequest, ConvertResponse } from "../ConvertServi
 
 describe("ConvertService", () => {
   const mock = new MockAdapter(axios);
+  const apiBaseURL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost";
 
   afterEach(() => {
     mock.reset();
@@ -13,7 +14,7 @@ describe("ConvertService", () => {
     const request: ConvertRequest = { file_id: "abc123", target_format: "mp4" };
     const response: ConvertResponse = { conversion_id: "xyz789" };
 
-    mock.onPost("http://localhost/convert", request).reply(200, response);
+    mock.onPost(`${apiBaseURL}/convert`, request).reply(200, response);
 
     const result = await ConvertService.convert(request);
 
@@ -22,7 +23,7 @@ describe("ConvertService", () => {
 
   it("HTTP 오류 발생", async () => {
     const request: ConvertRequest = { file_id: "fail", target_format: "mp4" };
-    mock.onPost("/api/convert", request).reply(500);
+    mock.onPost(`${apiBaseURL}/convert`, request).reply(500);
 
     await expect(ConvertService.convert(request)).rejects.toThrow();
   });
