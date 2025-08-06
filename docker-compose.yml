@@ -1,14 +1,48 @@
 services:
+  # === INTERNET GATEWAY (nginx만 외부 접근 허용) ===
+  nginx:
+    build:
+      context: ./nginx  # 커스텀 Dockerfile 사용
+    container_name: nginx-gateway
+    ports:
+      - "80:80"      # 외부 접근 허용
+      - "443:443"    # 외부 접근 허용
+    environment:
+      - NGINX_HOST=${NGINX_HOST:-localhost}
+      - CORS_ORIGIN=${CORS_ORIGIN:-*}
+      # 서비스 주소 숨김 (보안)
+      - UPLOAD_SERVICE_HOST=${UPLOAD_SERVICE_HOST:-upload-service}
+      - UPLOAD_SERVICE_PORT=${UPLOAD_SERVICE_PORT:-8080}
+      - CONVERT_SERVICE_HOST=${CONVERT_SERVICE_HOST:-convert-service}
+      - CONVERT_SERVICE_PORT=${CONVERT_SERVICE_PORT:-8080}
+      - DOWNLOAD_SERVICE_HOST=${DOWNLOAD_SERVICE_HOST:-download-service}
+      - DOWNLOAD_SERVICE_PORT=${DOWNLOAD_SERVICE_PORT:-8080}
+      - FEEDBACK_SERVICE_HOST=${FEEDBACK_SERVICE_HOST:-feedback-service}
+      - FEEDBACK_SERVICE_PORT=${FEEDBACK_SERVICE_PORT:-8080}
+    networks:
+      - public-subnet     # 외부와 통신
+      - private-subnet    # 내부 서비스와 통신
+    depends_on:
+      - upload
+      - convert
+      - download
+      - feedback
+
+  # === PRIVATE SUBNET (애플리케이션 서버들) ===
   upload:
     build:
       context: ./backend/upload
     container_name: upload-service
-    ports:
-      - "8081:8080"
+    # 포트 노출 제거 - nginx를 통해서만 접근
     env_file:
       - .env
+    environment:
+      - PORT=${UPLOAD_SERVICE_PORT:-8080}  # 다양한 포트 사용
     volumes:
       - shared_files:/app/uploads
+    networks:
+      - private-subnet    # nginx와 통신
+      - database-subnet   # DB와 통신
     depends_on:
       postgres:
         condition: service_healthy
@@ -17,13 +51,17 @@ services:
     build: 
       context: ./backend/convert
     container_name: convert-service
-    ports:
-      - "8082:8080"
+    # 포트 노출 제거
     env_file:
       - .env
+    environment:
+      - PORT=${CONVERT_SERVICE_PORT:-8080}  # 다양한 포트 사용
     volumes:
       - shared_files:/app/uploads
       - convert_output:/app/converted
+    networks:
+      - private-subnet    # nginx와 통신
+      - database-subnet   # DB와 통신
     depends_on:
       upload:
         condition: service_started
@@ -34,13 +72,17 @@ services:
     build:
       context: ./backend/download
     container_name: download-service
-    ports:
-      - "8083:8080"
+    # 포트 노출 제거
     env_file:
       - .env
+    environment:
+      - PORT=${DOWNLOAD_SERVICE_PORT:-8080}  # 다양한 포트 사용
     volumes:
       - shared_files:/app/uploads
       - convert_output:/app/converted
+    networks:
+      - private-subnet    # nginx와 통신
+      - database-subnet   # DB와 통신
     depends_on:
       convert:
         condition: service_started
@@ -51,40 +93,29 @@ services:
     build:
       context: ./backend/feedback
     container_name: feedback-service
-    ports:
-      - "8084:8080"
+    # 포트 노출 제거
     env_file:
       - .env
-    depends_on:
-      - upload
-
-  nginx:
-    image: nginx:latest
-    container_name: nginx-gateway
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     environment:
-      - NGINX_HOST=${NGINX_HOST:-localhost}
-      - CORS_ORIGIN=${CORS_ORIGIN:-*}
+      - PORT=${FEEDBACK_SERVICE_PORT:-8080}  # 다양한 포트 사용
+    networks:
+      - private-subnet    # nginx와 통신
+      - database-subnet   # DB와 통신
     depends_on:
       - upload
-      - convert
-      - download
-      - feedback
 
+  # === DATABASE SUBNET (가장 격리된 영역) ===
   postgres:
     image: postgres:17
     container_name: postgres-db
     restart: always
-    ports:
-      - "5432:5432"
+    # 포트 노출 제거 - 내부에서만 접근
     volumes:
       - pgdata:/var/lib/postgresql/data
     env_file:
       - .env
+    networks:
+      - database-subnet   # DB 전용 네트워크
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U Ho -d convert_db || exit 1"]
       interval: 5s
@@ -95,3 +126,31 @@ volumes:
   pgdata:
   shared_files:
   convert_output:
+
+# === VPC 스타일 네트워크 구성 ===
+networks:
+  # Public Subnet (nginx만)
+  public-subnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+          gateway: 172.20.0.1
+
+  # Private Subnet (애플리케이션 서버들)
+  private-subnet:
+    driver: bridge
+    internal: false  # nginx가 외부와 통신 필요
+    ipam:
+      config:
+        - subnet: 172.21.0.0/24
+          gateway: 172.21.0.1
+
+  # Database Subnet (가장 격리)
+  database-subnet:
+    driver: bridge
+    internal: true   # 외부 인터넷 완전 차단
+    ipam:
+      config:
+        - subnet: 172.22.0.0/24
+          gateway: 172.22.0.1
