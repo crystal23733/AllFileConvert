@@ -72,8 +72,9 @@ http {
     }
 
     location /upload {
+      # 레이트 리미팅 (프로덕션에서만)
       limit_req zone=upload burst=5 nodelay;
-
+      
       proxy_pass http://${UPLOAD_SERVICE_HOST}:${UPLOAD_SERVICE_PORT};
       proxy_set_header Host $host;
       proxy_set_header X-Real-IP $remote_addr;
@@ -87,8 +88,9 @@ http {
     }
 
     location /convert {
-      limit_req zone=upload burst=5 nodelay;
-
+      # 레이트 리미팅 (프로덕션에서만)
+      limit_req zone=convert burst=3 nodelay;
+      
       proxy_pass http://${CONVERT_SERVICE_HOST}:${CONVERT_SERVICE_PORT};
       proxy_set_header Host $host;
       proxy_set_header X-Real-IP $remote_addr;
@@ -102,8 +104,9 @@ http {
     }
 
     location /download {
-      limit_req zone=upload burst=5 nodelay;
-
+      # 레이트 리미팅 (프로덕션에서만)
+      limit_req zone=api burst=10 nodelay;
+      
       proxy_pass http://${DOWNLOAD_SERVICE_HOST}:${DOWNLOAD_SERVICE_PORT};
       proxy_set_header Host $host;
       proxy_set_header X-Real-IP $remote_addr;
@@ -112,8 +115,9 @@ http {
     }
 
     location /feedback {
-      limit_req zone=upload burst=5 nodelay;
-
+      # 레이트 리미팅 (프로덕션에서만)
+      limit_req zone=api burst=10 nodelay;
+      
       proxy_pass http://${FEEDBACK_SERVICE_HOST}:${FEEDBACK_SERVICE_PORT};
       proxy_set_header Host $host;
       proxy_set_header X-Real-IP $remote_addr;
