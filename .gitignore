@@ -5,3 +5,46 @@ test-files/
 test-results/
 generate-test-report.py
 create-video-sample.py
+.env.*
+!.env.example
+
+# === SSL 인증서 ===
+*.pem
+*.key
+*.crt
+nginx/ssl/
+
+# === 로그 파일 ===
+*.log
+logs/
+nginx/logs/
+
+# === 임시 파일 ===
+uploads/
+converted/
+tmp/
+
+# === IDE 설정 ===
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# === OS 파일 ===
+.DS_Store
+Thumbs.db
+
+# === Node.js ===
+node_modules/
+npm-debug.log*
+
+# === Go ===
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+vendor/
+
+# === Docker ===
+docker-compose.override.yml
