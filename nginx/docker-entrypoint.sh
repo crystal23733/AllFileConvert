@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# 환경변수가 설정되지 않은 경우 기본값 사용
+export UPLOAD_SERVICE_HOST=${UPLOAD_SERVICE_HOST:-upload-service}
+export UPLOAD_SERVICE_PORT=${UPLOAD_SERVICE_PORT:-8080}
+export CONVERT_SERVICE_HOST=${CONVERT_SERVICE_HOST:-convert-service}
+export CONVERT_SERVICE_PORT=${CONVERT_SERVICE_PORT:-8080}
+export DOWNLOAD_SERVICE_HOST=${DOWNLOAD_SERVICE_HOST:-download-service}
+export DOWNLOAD_SERVICE_PORT=${DOWNLOAD_SERVICE_PORT:-8080}
+export FEEDBACK_SERVICE_HOST=${FEEDBACK_SERVICE_HOST:-feedback-service}
+export FEEDBACK_SERVICE_PORT=${FEEDBACK_SERVICE_PORT:-8080}
+
+# 템플릿 파일에서 환경변수 치환하여 실제 nginx.conf 생성
+envsubst '${UPLOAD_SERVICE_HOST},${UPLOAD_SERVICE_PORT},${CONVERT_SERVICE_HOST},${CONVERT_SERVICE_PORT},${DOWNLOAD_SERVICE_HOST},${DOWNLOAD_SERVICE_PORT},${FEEDBACK_SERVICE_HOST},${FEEDBACK_SERVICE_PORT}' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
+
+# nginx 실행
+exec nginx -g "daemon off;"

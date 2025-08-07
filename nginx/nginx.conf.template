@@ -11,22 +11,57 @@ http {
   client_body_timeout 60s;
   client_header_timeout 60s;
 
-  # Rate Limiting (프로덕션에서만 적용)
+  # Rate Limiting (실제 IP 기반)
   limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
   limit_req_zone $binary_remote_addr zone=upload:10m rate=5r/s;
   limit_req_zone $binary_remote_addr zone=convert:10m rate=3r/s;
-
-  # IP 차단 설정
-  geo $blocked_ip {
+  
+  # 단일 IP 과도 요청 방지 (실제 IP 기반)
+  limit_req_zone $binary_remote_addr zone=strict:10m rate=1r/s;
+  
+  # 국가별 차단 예시 (실제 IP 기반)
+  geo $blocked_country {
     default 0;
-    # 차단할 IP 대역 (필요시 추가)
-    # 10.0.0.0/8 1;
+    # 예시: 특정 국가 IP 대역 차단 (필요시 활성화)
+    # 1.0.0.0/8 1;     # 예시 IP 대역
   }
 
-  # 로그 설정
+  # 악성 IP 차단 설정 (실제 IP 기반)
+  geo $blocked_ip {
+    default 0;
+    # 입력 예시: 123.456.789.0/24 1; (악성 IP 대역)
+    # 10.0.0.0/8 1;        # 내부 IP 차단
+    # 192.168.0.0/16 1;    # 내부 IP 차단  
+  }
+  
+  # 수상한 패턴 감지
+  map $http_user_agent $blocked_agent {
+    default 0;
+    ~*bot 1;              # 봇 차단
+    ~*crawler 1;          # 크롤러 차단
+    ~*scanner 1;          # 스캐너 차단
+    "" 1;                 # 빈 User-Agent 차단
+  }
+  
+  # 비정상적인 요청 헤더 감지
+  map $http_x_forwarded_for $suspicious_xff {
+    default 0;
+    ~*".*,.*,.*,.*" 1;    # 너무 많은 프록시 경유
+  }
+
+  # 로그 설정 (실제 IP 기록)
   log_format main '$remote_addr - $remote_user [$time_local] "$request" '
                   '$status $body_bytes_sent "$http_referer" '
                   '"$http_user_agent" "$http_x_forwarded_for"';
+                  
+  # 보안 로그 형식 (실제 IP + 차단 이유)
+  log_format security '$remote_addr - [$time_local] "$request" '
+                      '$status "$http_user_agent" '
+                      'blocked_ip=$blocked_ip blocked_agent=$blocked_agent '
+                      'cf_ip="$http_cf_connecting_ip" cf_country="$http_cf_ipcountry"';
+                      
+  # 보안 로그 파일
+  access_log /var/log/nginx/security.log security;
 
   access_log /var/log/nginx/access.log main;
   error_log /var/log/nginx/error.log warn;
@@ -37,8 +72,24 @@ http {
     # 환경에 따른 server_name (환경변수로 제어)
     server_name localhost api.flipfile.com;
 
-    # IP 차단 검사
+    # 다단계 보안 검사
+    # 1단계: 악성 IP 차단
     if ($blocked_ip) {
+      return 403;
+    }
+    
+    # 2단계: 국가별 차단 (필요시)
+    if ($blocked_country) {
+      return 403;
+    }
+    
+    # 3단계: 수상한 User-Agent 차단
+    if ($blocked_agent) {
+      return 403;
+    }
+    
+    # 4단계: 비정상적인 프록시 채인 차단
+    if ($suspicious_xff) {
       return 403;
     }
 
@@ -72,8 +123,9 @@ http {
     }
 
     location /upload {
+      # 레이트 리미팅 (프로덕션에서만)
       limit_req zone=upload burst=5 nodelay;
-
+      
       proxy_pass http://${UPLOAD_SERVICE_HOST}:${UPLOAD_SERVICE_PORT};
       proxy_set_header Host $host;
       proxy_set_header X-Real-IP $remote_addr;
@@ -87,8 +139,11 @@ http {
     }
 
     location /convert {
-      limit_req zone=upload burst=5 nodelay;
-
+      # 레이트 리미팅 (프로덕션에서만)
+      limit_req zone=convert burst=3 nodelay;
+      # 추가 엄격한 제한 (변환은 CPU 집약적)
+      limit_req zone=strict burst=1 nodelay;
+      
       proxy_pass http://${CONVERT_SERVICE_HOST}:${CONVERT_SERVICE_PORT};
       proxy_set_header Host $host;
       proxy_set_header X-Real-IP $remote_addr;
@@ -102,8 +157,9 @@ http {
     }
 
     location /download {
-      limit_req zone=upload burst=5 nodelay;
-
+      # 레이트 리미팅 (프로덕션에서만)
+      limit_req zone=api burst=10 nodelay;
+      
       proxy_pass http://${DOWNLOAD_SERVICE_HOST}:${DOWNLOAD_SERVICE_PORT};
       proxy_set_header Host $host;
       proxy_set_header X-Real-IP $remote_addr;
@@ -112,8 +168,9 @@ http {
     }
 
     location /feedback {
-      limit_req zone=upload burst=5 nodelay;
-
+      # 레이트 리미팅 (프로덕션에서만)
+      limit_req zone=api burst=10 nodelay;
+      
       proxy_pass http://${FEEDBACK_SERVICE_HOST}:${FEEDBACK_SERVICE_PORT};
       proxy_set_header Host $host;
       proxy_set_header X-Real-IP $remote_addr;
@@ -126,6 +183,18 @@ http {
       access_log off;
       return 200 "healthy";
       add_header Content-Type text/plain;
+    }
+    
+    # 보안 상태 대시보드 (관리자용)
+    location /security-status {
+      # 관리자 IP만 허용 (필요시 수정)
+      allow 127.0.0.1;
+      allow YOUR_ADMIN_IP/32;
+      deny all;
+      
+      access_log off;
+      return 200 '{"blocked_ips": "$blocked_ip", "blocked_agents": "$blocked_agent", "real_ip": "$remote_addr", "cf_country": "$http_cf_ipcountry"}';
+      add_header Content-Type application/json;
     }
 
     # 봇 차단
