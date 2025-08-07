@@ -189,7 +189,7 @@ http {
     location /security-status {
       # 관리자 IP만 허용 (필요시 수정)
       allow 127.0.0.1;
-      allow YOUR_ADMIN_IP/32;
+      # allow YOUR_ADMIN_IP/32;
       deny all;
       
       access_log off;
