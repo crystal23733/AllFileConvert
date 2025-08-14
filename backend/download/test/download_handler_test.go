@@ -35,16 +35,17 @@ func TestDownloadHandler_Success(t *testing.T) {
 
 	testToken := "test-download-token-123"
 	conv := model.Conversion{
-		ID:            "test123",
-		FileID:        "file123",
-		Status:        "completed",
-		DownloadURL:   "/download/test123",
-		DownloadToken: testToken,
-		DownloadCount: 0,
-		TargetFormat:  "mp4",
-		CreatedAt:     time.Now(),
-		UpdatedAt:     time.Now(),
-		DeleteAfter:   time.Now().Add(30 * time.Minute),
+		ID:             "test123",
+		FileID:         "file123",
+		Status:         "completed",
+		DownloadURL:    "/download/test123",
+		DownloadToken:  testToken,
+		TokenExpiresAt: time.Now().Add(10 * time.Minute), // 토큰 10분 유효
+		DownloadCount:  0,
+		TargetFormat:   "mp4",
+		CreatedAt:      time.Now(),
+		UpdatedAt:      time.Now(),
+		DeleteAfter:    time.Now().Add(30 * time.Minute),
 	}
 	db.Create(&conv)
 
@@ -75,9 +76,9 @@ func TestDownloadHandler_Success(t *testing.T) {
 		t.Errorf("DownloadCount 증가 실패: 기대값 1, 실제값 %d", updatedConv.DownloadCount)
 	}
 
-	// 토큰이 무효화되었는지 확인 (일회용)
-	if updatedConv.DownloadToken != "" {
-		t.Errorf("토큰이 무효화되지 않음: %s", updatedConv.DownloadToken)
+	// 토큰이 유지되는지 확인 (시간 기반 만료)
+	if updatedConv.DownloadToken == "" {
+		t.Errorf("토큰이 유지되어야 함")
 	}
 }
 
@@ -86,10 +87,11 @@ func TestDownloadHandler_InvalidToken(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	conv := model.Conversion{
-		ID:            "test456",
-		Status:        "completed",
-		DownloadToken: "valid-token",
-		TargetFormat:  "pdf",
+		ID:             "test456",
+		Status:         "completed",
+		DownloadToken:  "valid-token",
+		TokenExpiresAt: time.Now().Add(10 * time.Minute), // 토큰 10분 유효
+		TargetFormat:   "pdf",
 	}
 	db.Create(&conv)
 

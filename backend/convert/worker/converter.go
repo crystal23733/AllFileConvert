@@ -543,11 +543,12 @@ func RunConversion(db *gorm.DB, conv *model.Conversion, file model.File) {
 
 	db.Model(&model.Conversion{}).Where("id = ?", conv.ID).
 		Updates(map[string]interface{}{
-			"status":         "completed",
-			"download_url":   s3url,
-			"download_token": downloadToken,
-			"updated_at":     time.Now(),
-			"delete_after":   time.Now().Add(30 * time.Minute),
+			"status":           "completed",
+			"download_url":     s3url,
+			"download_token":   downloadToken,
+			"token_expires_at": time.Now().Add(10 * time.Minute), // 토큰 10분 유효
+			"updated_at":       time.Now(),
+			"delete_after":     time.Now().Add(30 * time.Minute),
 		})
 
 	log.Info().Str("conversion_id", conv.ID).Str("download_token", downloadToken).Msg("🎉 변환 작업 완료")

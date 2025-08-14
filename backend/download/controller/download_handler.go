@@ -62,24 +62,24 @@ func DownloadHandler(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		// 3.보안 토큰 검증 (일회용 토큰)
+		// 3.보안 토큰 검증 (시간 기반 만료)
 		if conv.DownloadToken == "" || req.Token != conv.DownloadToken {
 			tx.Rollback()
-			log.Warn().Str("conversion_id", id).Msg("❌ 다운로드 토큰 불일치 또는 만료됨")
-			c.JSON(http.StatusForbidden, gin.H{"error": "유효하지 않거나 만료된 다운로드 토큰입니다"})
+			log.Warn().Str("conversion_id", id).Msg("❌ 다운로드 토큰 불일치")
+			c.JSON(http.StatusForbidden, gin.H{"error": "유효하지 않은 다운로드 토큰입니다"})
 			return
 		}
 
-		// 4.토큰 즉시 무효화 (일회용으로 만들기)
-		if err := tx.Model(&conv).Update("download_token", "").Error; err != nil {
+		// 4.토큰 만료 시간 검증
+		if time.Now().After(conv.TokenExpiresAt) {
 			tx.Rollback()
-			log.Error().Err(err).Msg("❌ 토큰 무효화 실패")
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "다운로드 처리 중 오류가 발생했습니다"})
+			log.Warn().Str("conversion_id", id).Time("expired_at", conv.TokenExpiresAt).Msg("❌ 다운로드 토큰 만료됨")
+			c.JSON(http.StatusForbidden, gin.H{"error": "다운로드 토큰이 만료되었습니다. 보안을 위해 파일을 다시 변환해주세요"})
 			return
 		}
-		log.Info().Msg("🔒 일회용 토큰 무효화 완료")
+		log.Info().Time("expires_at", conv.TokenExpiresAt).Msg("✅ 토큰 유효성 확인 완료")
 
-		// 5.다운로드 수 증가
+		// 5.다운로드 수 증가 (토큰은 유지)
 		updates := map[string]interface{}{
 			"download_count": conv.DownloadCount + 1,
 			"delete_after":   time.Now().Add(1 * time.Minute), // 1분 후 삭제 (즉시 삭제 대비)
