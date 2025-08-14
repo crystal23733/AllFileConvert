@@ -70,7 +70,11 @@ http {
     listen 80;
 
     # 환경에 따른 server_name (환경변수로 제어)
+<<<<<<< HEAD
     server_name localhost api.flipfile.com;
+=======
+    server_name localhost api.filpfile.com;
+>>>>>>> release/v1.1.3
 
     # 다단계 보안 검사
     # 1단계: 악성 IP 차단
@@ -107,8 +111,8 @@ http {
     real_ip_header CF-Connecting-IP;
 
     set $cors_origin "*";
-    if ($host = "api.flipfile.com") {
-      set $cors_origin "https://www.flipfile.com";
+    if ($host = "api.filpfile.com") {
+      set $cors_origin "https://www.filpfile.com";
     }
 
     # CORS 설정 (개발용)
