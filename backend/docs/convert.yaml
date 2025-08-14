@@ -64,7 +64,7 @@ paths:
                     example: "completed"
                   download_url:
                     type: string
-                    example: "https://cdn.FlipFile.com/converted/xxx.mp4"
+                    example: "https://cdn.FilpFile.com/converted/xxx.mp4"
         '404':
           description: 변환 ID 없음
         '500':
