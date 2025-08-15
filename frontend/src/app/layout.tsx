@@ -83,8 +83,10 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    // Google Search Console 인증 코드 (실제 사용 시 추가)
-    // google: 'your-google-verification-code',
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+    other: {
+      "naver-site-verification": process.env.NEXT_PUBLIC_NAVER_SITE_VERIFICATION || "",
+    },
   },
 };
 
