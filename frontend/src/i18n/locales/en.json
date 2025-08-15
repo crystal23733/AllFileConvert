@@ -23,12 +23,12 @@
     "refresh": "Refresh"
   },
   "header": {
-    "title": "FlipFile",
+    "title": "FilpFile",
     "subtitle": "Universal File Conversion Service",
     "languageSelect": "Language Selection"
   },
   "footer": {
-    "copyright": "© {{year}} FlipFile | Universal File Conversion Service",
+    "copyright": "© {{year}} FilpFile | Universal File Conversion Service",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service"
   },
