@@ -41,7 +41,7 @@ const GlobalLayout: FC<GlobalLayoutProps> = ({ children }) => {
               <nav className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 bg-transparent"></div>
-                  <div className="text-xl font-bold text-gray-900">FlipFile</div>
+                  <div className="text-xl font-bold text-gray-900">FilpFile</div>
                 </div>
                 <div
                   className="flex items-center space-x-2"
@@ -94,7 +94,7 @@ const GlobalLayout: FC<GlobalLayoutProps> = ({ children }) => {
                 <div className="inline-block px-4 py-2 bg-gray-200 rounded animate-pulse h-8 w-20"></div>
               </div>
               <div className="text-gray-500 text-sm">
-                © {new Date().getFullYear()} FlipFile. All rights reserved.
+                © {new Date().getFullYear()} FilpFile. All rights reserved.
               </div>
             </div>
           </footer>

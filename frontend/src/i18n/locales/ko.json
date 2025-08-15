@@ -23,12 +23,12 @@
     "refresh": "새로고침"
   },
   "header": {
-    "title": "FlipFile",
+    "title": "FilpFile",
     "subtitle": "모든 파일 변환 서비스",
     "languageSelect": "언어 선택"
   },
   "footer": {
-    "copyright": "© {{year}} FlipFile | 모든 파일 변환 서비스",
+    "copyright": "© {{year}} FilpFile | 모든 파일 변환 서비스",
     "privacy": "개인정보처리방침",
     "terms": "이용약관"
   },
