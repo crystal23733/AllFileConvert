@@ -112,7 +112,7 @@ i18n.use(initReactI18next).init({
           pdfTitle: "PDF 미리보기",
         },
         header: {
-          title: "FlipFile",
+          title: "FilpFile",
           languageSelect: "언어 선택",
         },
         common: {
@@ -269,7 +269,7 @@ i18n.use(initReactI18next).init({
           pdfTitle: "PDF Preview",
         },
         header: {
-          title: "FlipFile",
+          title: "FilpFile",
           languageSelect: "Language Selection",
         },
         common: {
@@ -429,7 +429,7 @@ i18n.use(initReactI18next).init({
           pdfTitle: "PDFプレビュー",
         },
         header: {
-          title: "FlipFile",
+          title: "FilpFile",
           languageSelect: "言語選択",
         },
         common: {

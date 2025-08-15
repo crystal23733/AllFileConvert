@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: FlipFile - Convert API
+  title: FilpFile - Convert API
   version: 1.0.0
   description: 파일 변환 요청 및 상태 확인 API
 

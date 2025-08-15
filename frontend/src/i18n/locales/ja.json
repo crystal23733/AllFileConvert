@@ -23,12 +23,12 @@
     "refresh": "更新"
   },
   "header": {
-    "title": "FlipFile",
+    "title": "FilpFile",
     "subtitle": "ファイル変換サービス",
     "languageSelect": "言語選択"
   },
   "footer": {
-    "copyright": "© {{year}} FlipFile | ファイル変換サービス",
+    "copyright": "© {{year}} FilpFile | ファイル変換サービス",
     "privacy": "プライバシーポリシー",
     "terms": "利用規約"
   },
