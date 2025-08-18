@@ -27,29 +27,15 @@ func NewFeedbackHandler(emailService *service.EmailService, rateLimiter *util.Ra
 
 // HandleFeedback은 POST /feedback 요청을 처리합니다.
 func (h *FeedbackHandler) HandleFeedback(c *gin.Context) {
-	clientIP := c.ClientIP()
 	trackingID := uuid.New().String()
 
-	// Rate limiting 체크
-	if !h.rateLimiter.Allow(clientIP) {
-		log.Warn().
-			Str("ip", clientIP).
-			Str("tracking_id", trackingID).
-			Msg("Rate limit 초과")
-
-		c.JSON(http.StatusTooManyRequests, model.FeedbackResponse{
-			Success: false,
-			Message: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요. (5분에 3회 제한)",
-		})
-		return
-	}
+	// Rate limiting은 Nginx에서 처리하므로 제거
 
 	// 요청 데이터 파싱 및 검증
 	var req model.FeedbackRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		log.Warn().
 			Err(err).
-			Str("ip", clientIP).
 			Str("tracking_id", trackingID).
 			Msg("잘못된 요청 형식")
 
@@ -60,12 +46,11 @@ func (h *FeedbackHandler) HandleFeedback(c *gin.Context) {
 		return
 	}
 
-	// 이메일 전송
-	err := h.emailService.SendFeedback(req.Type, req.Message, req.Email, clientIP)
+	// 이메일 전송 (IP 매개변수 제거)
+	err := h.emailService.SendFeedback(req.Type, req.Message, req.Email)
 	if err != nil {
 		log.Error().
 			Err(err).
-			Str("ip", clientIP).
 			Str("type", req.Type).
 			Str("tracking_id", trackingID).
 			Msg("피드백 처리 실패")
@@ -77,9 +62,7 @@ func (h *FeedbackHandler) HandleFeedback(c *gin.Context) {
 		return
 	}
 
-	// 성공 로그 (개인정보 제외)
 	log.Info().
-		Str("ip", clientIP).
 		Str("type", req.Type).
 		Str("tracking_id", trackingID).
 		Int("message_length", len(req.Message)).

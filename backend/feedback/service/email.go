@@ -39,7 +39,7 @@ func NewEmailService() *EmailService {
 }
 
 // SendFeedback은 피드백을 이메일로 전송합니다.
-func (s *EmailService) SendFeedback(feedbackType, message, userEmail, clientIP string) error {
+func (s *EmailService) SendFeedback(feedbackType, message, userEmail string) error {
 	if s.host == "" || s.to == "" {
 		log.Warn().Msg("SMTP 설정이 완료되지 않음. 이메일 전송 스킵")
 		return nil // 개발 환경에서는 에러로 처리하지 않음
@@ -59,7 +59,6 @@ func (s *EmailService) SendFeedback(feedbackType, message, userEmail, clientIP s
 
 🔸 피드백 타입: %s
 🔸 접수 시간: %s
-🔸 클라이언트 IP: %s
 🔸 사용자: %s %s
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -78,7 +77,6 @@ func (s *EmailService) SendFeedback(feedbackType, message, userEmail, clientIP s
 %s`,
 		getFeedbackTypeKorean(feedbackType),
 		time.Now().Format("2006-01-02 15:04:05"),
-		clientIP,
 		userInfo,
 		getAnonymousIndicator(isAnonymous),
 		message,
@@ -101,7 +99,6 @@ func (s *EmailService) SendFeedback(feedbackType, message, userEmail, clientIP s
 
 	log.Info().
 		Str("type", feedbackType).
-		Str("ip", clientIP).
 		Bool("anonymous", isAnonymous).
 		Msg("피드백 이메일 전송 시도")
 
@@ -109,7 +106,6 @@ func (s *EmailService) SendFeedback(feedbackType, message, userEmail, clientIP s
 		log.Error().
 			Err(err).
 			Str("type", feedbackType).
-			Str("ip", clientIP).
 			Bool("anonymous", isAnonymous).
 			Msg("피드백 이메일 전송 실패")
 		return fmt.Errorf("이메일 전송 실패: %w", err)
@@ -117,7 +113,6 @@ func (s *EmailService) SendFeedback(feedbackType, message, userEmail, clientIP s
 
 	log.Info().
 		Str("type", feedbackType).
-		Str("ip", clientIP).
 		Bool("anonymous", isAnonymous).
 		Msg("피드백 이메일 전송 성공")
 
