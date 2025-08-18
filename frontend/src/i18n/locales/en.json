@@ -237,7 +237,7 @@
       "cancel": "Cancel"
     },
     "messages": {
-      "success": "Thank you for your valuable feedback! We will review and contact you.",
+      "success": "Thank you for your valuable feedback! We will review and reflect it in service improvements.",
       "error": "Failed to send feedback. Please try again later.",
       "networkError": "A network error occurred. Please check your internet connection.",
       "rateLimitError": "Too many requests. Please try again in 5 minutes.",
