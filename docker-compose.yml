@@ -114,11 +114,21 @@ services:
       - pgdata:/var/lib/postgresql/data
     env_file:
       - .env
+    environment:
+      # PostgreSQL 성능 최적화 설정
+      - POSTGRES_SHARED_PRELOAD_LIBRARIES=pg_stat_statements
+      - POSTGRES_MAX_CONNECTIONS=100
+      - POSTGRES_SHARED_BUFFERS=256MB
+      - POSTGRES_EFFECTIVE_CACHE_SIZE=1GB
+      - POSTGRES_MAINTENANCE_WORK_MEM=64MB
+      - POSTGRES_CHECKPOINT_COMPLETION_TARGET=0.9
+      - POSTGRES_WAL_BUFFERS=16MB
+      - POSTGRES_DEFAULT_STATISTICS_TARGET=100
     networks:
       - database-subnet   # DB 전용 네트워크
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U Ho -d convert_db || exit 1"]
-      interval: 5s
+      interval: 10s  # 5초에서 10초로 변경 (부하 감소)
       timeout: 5s
       retries: 5
 
