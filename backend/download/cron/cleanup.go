@@ -15,16 +15,37 @@ import (
 
 // StartCleanupWorker는 변환이 완료된 파일을 1시간 단위로 파일을 삭제하는 명령을 수행합니다.
 func StartCleanupWorker(db *gorm.DB) {
-	ticker := time.NewTicker(1 * time.Minute)
+	// 인덱스 생성 (성능 개선)
+	createIndexes(db)
+
+	// 1분에서 5분으로 변경하여 DB 부하 감소
+	ticker := time.NewTicker(5 * time.Minute)
 
 	go func() {
 		for range ticker.C {
+			log.Info().Msg("🧹 정리 작업 시작")
+
 			var targets []model.Conversion
-			db.Where("status = ? AND delete_after < ?", "completed", time.Now()).Find(&targets)
+			// 배치 처리로 한 번에 최대 100개만 처리
+			result := db.Where("status = ? AND delete_after < ?", "completed", time.Now()).
+				Limit(100).
+				Find(&targets)
+
+			if result.Error != nil {
+				log.Error().Err(result.Error).Msg("❌ 정리 대상 조회 실패")
+				continue
+			}
+
+			if len(targets) == 0 {
+				log.Debug().Msg("정리할 파일 없음")
+				continue
+			}
+
+			log.Info().Int("count", len(targets)).Msg("정리 대상 파일 발견")
 
 			for _, conv := range targets {
 				deleted := false
-				
+
 				// 1. 로컬 파일 삭제 시도
 				localFilePath := filepath.Join("converted", conv.ID+"."+conv.TargetFormat)
 				if _, err := os.Stat(localFilePath); err == nil {
@@ -47,12 +68,28 @@ func StartCleanupWorker(db *gorm.DB) {
 
 				// 3. 파일 삭제가 성공했거나 파일이 없으면 DB 상태 업데이트
 				if deleted {
-					db.Model(&conv).Update("status", "deleted")
-					log.Info().Str("id", conv.ID).Msg("변환 파일 정리 완료")
+					result := db.Model(&conv).Update("status", "deleted")
+					if result.Error != nil {
+						log.Error().Err(result.Error).Str("id", conv.ID).Msg("❌ DB 상태 업데이트 실패")
+					} else {
+						log.Info().Str("id", conv.ID).Msg("✅ 변환 파일 정리 완료")
+					}
 				}
 			}
+
+			log.Info().Int("processed", len(targets)).Msg("🧹 정리 작업 완료")
 		}
 	}()
+}
+
+// createIndexes는 성능 향상을 위한 인덱스를 생성합니다.
+func createIndexes(db *gorm.DB) {
+	// conversions 테이블에 복합 인덱스 생성 (status, delete_after)
+	if err := db.Exec("CREATE INDEX IF NOT EXISTS idx_conversions_status_delete_after ON conversions(status, delete_after)").Error; err != nil {
+		log.Warn().Err(err).Msg("인덱스 생성 실패 (이미 존재할 수 있음)")
+	} else {
+		log.Info().Msg("✅ 정리 작업용 인덱스 생성 완료")
+	}
 }
 
 // deleteFromR2는 R2 클라우드에서 파일을 삭제합니다.
